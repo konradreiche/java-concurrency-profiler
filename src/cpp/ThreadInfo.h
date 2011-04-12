@@ -36,6 +36,7 @@ public:
 
 	string name;
 	int priority;
+	string state;
 	bool isContextClassLoaderSet;
 };
 

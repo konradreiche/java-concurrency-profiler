@@ -40,5 +40,10 @@ public class JVM extends Observable {
 		setChanged();
 		notifyObservers();
 	}
+	
+	public void clearThreads() {
+		threads.clear();
+		notifyObservers();
+	}
 
 }

@@ -5,12 +5,10 @@ import java.awt.GridLayout;
 import java.io.IOException;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -39,38 +37,36 @@ public class MainFrame extends JFrame {
 			InstantiationException, IllegalAccessException,
 			UnsupportedLookAndFeelException {
 
-		this.setLayout(new GridLayout(2, 1));
-		
-		JPanel jvmNavigationPanel = new JPanel();
-		jvmNavigationPanel.add(new JLabel("VMs"));
-		
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		this.profiler = profiler;
 		this.setPreferredSize(new Dimension(500, 400));
+		this.setLayout(new GridLayout(1, 1));
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
-		JPanel panel = new JPanel(false);
-		panel.setLayout(new GridLayout(1, 1));
-
 		tableModel = new ThreadTableModel();
 		listModel = new DefaultListModel();
 		this.table = new JTable(tableModel);
 		this.list = new JList(listModel);
 		
+		
+		// creates the thread table in a scrollable Panel
+		JScrollPane scrollPane = new JScrollPane(table);
+		
+		// creates a tabbed panel
+		JTabbedPane tabbedPane = new JTabbedPane();
+		
+		// adds the scrollable panel to the tabbed panel
+		tabbedPane.add("Overview", scrollPane);
+		
+
 		for (JVM jvm : profiler.getIDsToJVMs().values()) {
 			listModel.addElement("JVM " + "(pid: " + jvm.getId() + ")");
 		}
-			
+
 		table.setFillsViewportHeight(true);
-
-		JComponent pane = panel;
-		tabbedPane.addTab("Overview", pane);
-
-		JScrollPane scrollPane = new JScrollPane(table);
-		jvmNavigationPanel.add(list);
-		this.add(jvmNavigationPanel);
-		pane.add(scrollPane);
-		this.add(tabbedPane);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, list,tabbedPane);
+		this.add(splitPane);
 
 		this.setSize(500, 400);
 		this.setVisible(true);
