@@ -24,15 +24,17 @@ using namespace std;
 
 class ThreadInfo {
 public:
-	ThreadInfo(string name, int priority, bool isContextClassLoaderSet) :
-		name(name), priority(priority), isContextClassLoaderSet(
+	ThreadInfo(string name, int priority, string state,
+			bool isContextClassLoaderSet) :
+		name(name), priority(priority), state(state), isContextClassLoaderSet(
 				isContextClassLoaderSet) {
 	}
 
 	virtual ~ThreadInfo();
 
 	static string getXML(int JVM_ID, ThreadInfo threadInfo, bool lifeCycle);
-	static string getXML(int JVM_ID, vector<ThreadInfo> allThreadInfos, bool lifeCycle);
+	static string getXML(int JVM_ID, vector<ThreadInfo> allThreadInfos,
+			bool lifeCycle);
 
 	string name;
 	int priority;

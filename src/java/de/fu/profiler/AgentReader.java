@@ -66,11 +66,12 @@ public class AgentReader {
 			String name = xpath.evaluate("name", threadNodes.item(i));
 			int priority = Integer.parseInt(xpath.evaluate("priority",
 					threadNodes.item(i)));
+			String state = xpath.evaluate("state", threadNodes.item(i));
 			boolean ccl = Boolean.parseBoolean(xpath.evaluate(
 					"isContextClassLoaderSet", threadNodes.item(i)));
 
 			if (isStart) {
-				jvm.addThread(new ThreadInfo(name, priority, ccl));
+				jvm.addThread(new ThreadInfo(name, priority, state, ccl));
 			}
 		}
 	}

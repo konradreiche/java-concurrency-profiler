@@ -43,6 +43,11 @@ string ThreadInfo::getXML(int JVM_ID, ThreadInfo threadInfo, bool lifeCycle) {
 	TiXmlText *threadPriority = new TiXmlText(numberString.c_str());
 	threadPriorityElement->LinkEndChild(threadPriority);
 
+	TiXmlElement *threadStateElement = new TiXmlElement("state");
+	threadElement->LinkEndChild(threadStateElement);
+	TiXmlText *threadState = new TiXmlText(threadInfo.state.c_str());
+	threadStateElement->LinkEndChild(threadState);
+
 	TiXmlElement *threadIsContextClassLoaderSetElement = new TiXmlElement(
 			"isContextClassLoaderSet");
 	threadElement->LinkEndChild(threadIsContextClassLoaderSetElement);
@@ -95,6 +100,11 @@ string ThreadInfo::getXML(int JVM_ID, vector<ThreadInfo> allThreadInfos, bool li
 		numberString = boost::lexical_cast<string>((*it).priority);
 		TiXmlText *threadPriority = new TiXmlText(numberString.c_str());
 		threadPriorityElement->LinkEndChild(threadPriority);
+
+		TiXmlElement *threadStateElement = new TiXmlElement("state");
+		currentThreadElement->LinkEndChild(threadStateElement);
+		TiXmlText *threadState = new TiXmlText((*it).state.c_str());
+		threadStateElement->LinkEndChild(threadState);
 
 		TiXmlElement *threadIsContextClassLoaderSetElement = new TiXmlElement(
 				"isContextClassLoaderSet");

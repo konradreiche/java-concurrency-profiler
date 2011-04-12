@@ -65,6 +65,50 @@ static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
 	}
 }
 
+static ThreadInfo getThreadInfo(jthread thread) {
+	jvmtiThreadInfo jvmtiThreadInfo;
+	jint thr_st_ptr;
+	jvmtiError error;
+
+	// ensures the stack variables are garbage free (TODO: ???)
+	(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
+	error = jvmti->GetThreadInfo(thread, &jvmtiThreadInfo);
+	check_jvmti_error(jvmti, error, "Cannot get thread information.");
+
+	error = jvmti->GetThreadState(thread, &thr_st_ptr);
+	check_jvmti_error(jvmti, error, "Cannot get thread state.");
+
+	string threadState;
+	switch (thr_st_ptr & JVMTI_JAVA_LANG_THREAD_STATE_MASK) {
+	case JVMTI_JAVA_LANG_THREAD_STATE_NEW:
+		threadState = "NEW";
+		break;
+	case JVMTI_JAVA_LANG_THREAD_STATE_TERMINATED:
+		threadState = "TERMINATED";
+		break;
+	case JVMTI_JAVA_LANG_THREAD_STATE_RUNNABLE:
+		threadState = "RUNNABLE";
+		break;
+	case JVMTI_JAVA_LANG_THREAD_STATE_BLOCKED:
+		threadState = "BLOCKED";
+		break;
+	case JVMTI_JAVA_LANG_THREAD_STATE_WAITING:
+		threadState = "WAITING";
+		break;
+	case JVMTI_JAVA_LANG_THREAD_STATE_TIMED_WAITING:
+		threadState = "TIMED_WAITING";
+		break;
+	default:
+		threadState = "NONE";
+		break;
+	}
+
+	ThreadInfo threadInfo(jvmtiThreadInfo.name, jvmtiThreadInfo.priority,
+			threadState, jvmtiThreadInfo.context_class_loader == NULL);
+
+	return threadInfo;
+}
+
 /* Enter a critical section by doing a JVMTI Raw Monitor Enter */
 static void enter_critical_section(jvmtiEnv *jvmti) {
 	jvmtiError error;
@@ -101,16 +145,7 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 
 	enter_critical_section(jvmti);
 	{
-		jvmtiError error;
-		jvmtiThreadInfo jvmtiThreadInfo;
-
-		(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
-		error = jvmti->GetThreadInfo(thread, &jvmtiThreadInfo);
-		check_jvmti_error(jvmti, error, "Cannot get thread information.");
-
-		ThreadInfo threadInfo(jvmtiThreadInfo.name, jvmtiThreadInfo.priority,
-				jvmtiThreadInfo.context_class_loader == NULL);
-
+		ThreadInfo threadInfo = getThreadInfo(thread);
 		agentSocket.send(ThreadInfo::getXML(JVM_ID, threadInfo, true));
 	}
 	exit_critical_section(jvmti);
@@ -122,16 +157,7 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 
 	enter_critical_section(jvmti);
 	{
-		jvmtiError error;
-		jvmtiThreadInfo jvmtiThreadInfo;
-
-		(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
-		error = jvmti->GetThreadInfo(thread, &jvmtiThreadInfo);
-		check_jvmti_error(jvmti, error, "Cannot get thread information.");
-
-		ThreadInfo threadInfo(jvmtiThreadInfo.name, jvmtiThreadInfo.priority,
-				jvmtiThreadInfo.context_class_loader == NULL);
-
+		ThreadInfo threadInfo = getThreadInfo(thread);
 		agentSocket.send(ThreadInfo::getXML(JVM_ID, threadInfo, false));
 	}
 	exit_critical_section(jvmti);
@@ -167,14 +193,7 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				// ensures the stack variables are garbage free (TODO: ???)
-				(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
-				jvmti->GetThreadInfo(threads[i], &jvmtiThreadInfo);
-
-				ThreadInfo currentThreadInfo(jvmtiThreadInfo.name,
-						jvmtiThreadInfo.priority,
-						jvmtiThreadInfo.context_class_loader == NULL);
-
+				ThreadInfo currentThreadInfo = getThreadInfo(threads[i]);
 				allThreadInfos.push_back(currentThreadInfo);
 			}
 
@@ -183,7 +202,6 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 
 		}
 		exit_critical_section(jvmti);
-
 	}
 }
 
@@ -253,7 +271,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				JVMTI_EVENT_THREAD_START, (jthread) NULL);
 
 		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
-						JVMTI_EVENT_THREAD_END, (jthread) NULL);
+				JVMTI_EVENT_THREAD_END, (jthread) NULL);
 
 		check_jvmti_error(jvmti_env, error, "Cannot set event notification");
 
@@ -261,7 +279,6 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		 * get all available threads and send them via socket
 		 */
 		jint threadCount;
-		jvmtiThreadInfo jvmtiThreadInfo;
 		jthread *threads;
 
 		vector<ThreadInfo> allThreadInfos;
@@ -270,15 +287,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				// ensures the stack variables are garbage free (TODO: ???)
-				(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
-				jvmti->GetThreadInfo(threads[i], &jvmtiThreadInfo);
-
-				ThreadInfo currentThreadInfo(jvmtiThreadInfo.name,
-						jvmtiThreadInfo.priority,
-						jvmtiThreadInfo.context_class_loader == NULL);
-
-				allThreadInfos.push_back(currentThreadInfo);
+				allThreadInfos.push_back(getThreadInfo(threads[i]));
 			}
 
 			string xml = ThreadInfo::getXML(JVM_ID, allThreadInfos, true);
@@ -286,7 +295,6 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		}
 	}
 	exit_critical_section(jvmti);
-
 }
 
 /* JVMTI callback function. */
