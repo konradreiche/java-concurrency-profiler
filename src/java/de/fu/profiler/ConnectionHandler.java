@@ -1,56 +1,66 @@
 package de.fu.profiler;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Observer;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
+import de.fu.profiler.controller.ThreadTableModel;
+import de.fu.profiler.model.JVM;
+import de.fu.profiler.model.ThreadInfo;
+import de.fu.profiler.protobuf.AgentMessageProtos;
 import de.fu.profiler.view.MainFrame;
 
 public class ConnectionHandler implements Runnable {
 
 	Socket socket;
 	MainFrame mainFrame;
-	AgentReader agentReader;
 
-	public ConnectionHandler(Socket socket, MainFrame mainFrame) throws ParserConfigurationException {
+	public ConnectionHandler(Socket socket, MainFrame mainFrame)
+			throws ParserConfigurationException {
 		super();
 		this.socket = socket;
 		this.mainFrame = mainFrame;
-		this.agentReader = new AgentReader(mainFrame);
 	}
 
 	@Override
 	public void run() {
 
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
 
-			StringBuilder xmlMessage = new StringBuilder();
+			AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
+					.parseDelimitedFrom(socket.getInputStream());
 
-			while (true) {
+			int jvm_id = agentMessage.getJvmId();
+			JVM jvm = null;
 
-				String message = in.readLine();
-				if (message == null) {
-					break;
-				}
-
-				xmlMessage.append(message);
-				xmlMessage.append("\n");
-				if (message.equals("</message>")) {
-					System.out.println(xmlMessage);
-					agentReader.readAgentData(xmlMessage.toString());
+			synchronized (mainFrame) {
+				jvm = mainFrame.getProfiler().getIDsToJVMs().get(jvm_id);
+				if (jvm == null) {
+					jvm = new JVM(jvm_id, "default");
+					mainFrame.getProfiler().getIDsToJVMs().put(jvm_id, jvm);
+					((ThreadTableModel) mainFrame.getTableModel())
+							.setCurrentJVM(jvm);
+					jvm.addObserver((Observer) mainFrame.getTableModel());
 				}
 			}
 
+			boolean isStart = agentMessage.getThreads().getLifeCycle()
+					.equals("start") ? true : false;
+
+			for (de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread thread : agentMessage
+					.getThreads().getThreadList()) {
+
+				if (isStart) {
+					jvm.addThread(new ThreadInfo(thread.getName(), thread
+							.getPriority(), thread.getState(), thread
+							.getIsContextClassLoaderSet()));
+				}
+
+			}
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

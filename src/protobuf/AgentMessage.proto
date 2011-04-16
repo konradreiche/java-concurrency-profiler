@@ -1,0 +1,25 @@
+option java_package = "de.fu.profiler.protobuf";
+option java_outer_classname = "AgentMessageProtos";
+
+message AgentMessage {
+
+	required string timestamp = 1;
+	required int32 jvm_id = 2;
+
+	message Threads {
+
+		required string lifeCycle = 1;
+
+		message Thread {
+
+	   		required string name = 1;
+			required int32 priority = 2;
+			required string state = 3;
+			required bool isContextClassLoaderSet = 4;
+		}
+
+		repeated Thread thread = 2;
+	}
+
+	optional Threads threads = 3;
+}

@@ -8,7 +8,15 @@
 #include <vector>
 
 #include "AgentSocket.h"
-#include "ThreadInfo.h"
+#include "AgentMessage.pb.h"
+
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+
+#include <boost/asio.hpp>
+#include <boost/lexical_cast.hpp>
+
+using namespace google::protobuf::io;
 
 /* ------------------------------------------------------------------- */
 /* Some constant maximum sizes */
@@ -20,7 +28,7 @@
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static AgentSocket agentSocket("127.0.0.1", "50000");
+static AgentSocket agentSocket("192.168.1.101", "50000");
 static int JVM_ID;
 
 /* Global agent data structure */
@@ -65,7 +73,31 @@ static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
 	}
 }
 
-static ThreadInfo getThreadInfo(jthread thread) {
+static void commitAgentMessage(AgentMessage agentMessage) {
+
+	time_t ltime;
+	ltime = time(NULL);
+	agentMessage.set_timestamp(asctime(localtime(&ltime)));
+	agentMessage.set_jvm_id(JVM_ID);
+
+	boost::asio::streambuf b;
+	std::ostream os(&b);
+
+	ZeroCopyOutputStream *raw_output = new OstreamOutputStream(&os);
+	CodedOutputStream *coded_output = new CodedOutputStream(raw_output);
+
+	coded_output->WriteVarint32(agentMessage.ByteSize());
+	agentMessage.SerializeToCodedStream(coded_output);
+
+	delete coded_output;
+	delete raw_output;
+
+	agentSocket.send(b);
+}
+
+static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
+		bool lifeCycle) {
+
 	jvmtiThreadInfo jvmtiThreadInfo;
 	jint thr_st_ptr;
 	jvmtiError error;
@@ -78,7 +110,7 @@ static ThreadInfo getThreadInfo(jthread thread) {
 	error = jvmti->GetThreadState(thread, &thr_st_ptr);
 	check_jvmti_error(jvmti, error, "Cannot get thread state.");
 
-	string threadState;
+	std::string threadState;
 	switch (thr_st_ptr & JVMTI_JAVA_LANG_THREAD_STATE_MASK) {
 	case JVMTI_JAVA_LANG_THREAD_STATE_NEW:
 		threadState = "NEW";
@@ -103,10 +135,17 @@ static ThreadInfo getThreadInfo(jthread thread) {
 		break;
 	}
 
-	ThreadInfo threadInfo(jvmtiThreadInfo.name, jvmtiThreadInfo.priority,
-			threadState, jvmtiThreadInfo.context_class_loader == NULL);
+	AgentMessage::Threads *threads = agentMessage.mutable_threads();
+	threads->set_lifecycle(lifeCycle ? "start" : "end");
 
-	return threadInfo;
+	AgentMessage::Threads::Thread *newThread = threads->add_thread();
+	newThread->set_name(jvmtiThreadInfo.name);
+	newThread->set_priority(jvmtiThreadInfo.priority);
+	newThread->set_state(threadState);
+	newThread->set_iscontextclassloaderset(jvmtiThreadInfo.context_class_loader
+			== NULL);
+
+	return agentMessage;
 }
 
 /* Enter a critical section by doing a JVMTI Raw Monitor Enter */
@@ -145,8 +184,9 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 
 	enter_critical_section(jvmti);
 	{
-		ThreadInfo threadInfo = getThreadInfo(thread);
-		agentSocket.send(ThreadInfo::getXML(JVM_ID, threadInfo, true));
+		AgentMessage agentMessage;
+		agentMessage = mergeThreadData(agentMessage, thread, true);
+		commitAgentMessage(agentMessage);
 	}
 	exit_critical_section(jvmti);
 }
@@ -157,8 +197,9 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 
 	enter_critical_section(jvmti);
 	{
-		ThreadInfo threadInfo = getThreadInfo(thread);
-		agentSocket.send(ThreadInfo::getXML(JVM_ID, threadInfo, false));
+		AgentMessage agentMessage;
+		agentMessage = mergeThreadData(agentMessage, thread, false);
+		commitAgentMessage(agentMessage);
 	}
 	exit_critical_section(jvmti);
 }
@@ -187,19 +228,17 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 		jvmtiThreadInfo jvmtiThreadInfo;
 		jthread *threads;
 
-		vector<ThreadInfo> allThreadInfos;
+		AgentMessage agentMessage;
+		agentMessage.set_timestamp("PLACEHOLDER - keep cool 8)");
+
 		error = jvmti->GetAllThreads(&threadCount, &threads);
 		check_jvmti_error(jvmti, error, "Cannot get all threads.");
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				ThreadInfo currentThreadInfo = getThreadInfo(threads[i]);
-				allThreadInfos.push_back(currentThreadInfo);
+				agentMessage = mergeThreadData(agentMessage, threads[i], true);
 			}
-
-			string xml = ThreadInfo::getXML(JVM_ID, allThreadInfos, false);
-			agentSocket.send(xml);
-
+			commitAgentMessage(agentMessage);
 		}
 		exit_critical_section(jvmti);
 	}
@@ -281,17 +320,17 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		jint threadCount;
 		jthread *threads;
 
-		vector<ThreadInfo> allThreadInfos;
+		AgentMessage agentMessage;
+		agentMessage.set_timestamp("PLACEHOLDER - keep cool 8)");
+
 		error = jvmti->GetAllThreads(&threadCount, &threads);
 		check_jvmti_error(jvmti, error, "Cannot get all threads.");
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				allThreadInfos.push_back(getThreadInfo(threads[i]));
+				agentMessage = mergeThreadData(agentMessage, threads[i], true);
 			}
-
-			string xml = ThreadInfo::getXML(JVM_ID, allThreadInfos, true);
-			agentSocket.send(xml);
+			commitAgentMessage(agentMessage);
 		}
 	}
 	exit_critical_section(jvmti);

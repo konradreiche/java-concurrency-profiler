@@ -17,7 +17,7 @@ class AgentSocket {
 public:
 	AgentSocket(std::string ip, std::string port);
 	virtual ~AgentSocket();
-	void send(std::string message);
+	void send(boost::asio::streambuf &b);
 
 private:
 	std::string ip;

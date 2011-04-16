@@ -19,7 +19,7 @@ AgentSocket::~AgentSocket() {
 
 }
 
-void AgentSocket::send(string message) {
+void AgentSocket::send(boost::asio::streambuf &b) {
 
 	try {
 		boost::asio::io_service io_service;
@@ -41,7 +41,7 @@ void AgentSocket::send(string message) {
 		}
 
 		boost::system::error_code ignored_error;
-		boost::asio::write(socket, boost::asio::buffer(message),
+		size_t n = boost::asio::write(socket, b.data(),
 				boost::asio::transfer_all(), ignored_error);
 
 		socket.close();

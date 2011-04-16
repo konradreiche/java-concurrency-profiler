@@ -26,7 +26,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	public String getState() {
 		return state;
 	}
-	
+
 	public boolean isContextClassLoaderSet() {
 		return isContextClassLoaderSet;
 	}
