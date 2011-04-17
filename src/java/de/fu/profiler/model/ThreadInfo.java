@@ -35,5 +35,10 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	public int compareTo(ThreadInfo threadInfo) {
 		return this.name.compareTo(threadInfo.name);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return this.name.equals(((ThreadInfo)o).name);
+	}
 
 }

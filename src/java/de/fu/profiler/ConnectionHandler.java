@@ -53,9 +53,17 @@ public class ConnectionHandler implements Runnable {
 					.getThreads().getThreadList()) {
 
 				if (isStart) {
-					jvm.addThread(new ThreadInfo(thread.getName(), thread
-							.getPriority(), thread.getState(), thread
-							.getIsContextClassLoaderSet()));
+
+					ThreadInfo threadInfo = new ThreadInfo(thread.getName(),
+							thread.getPriority(), thread.getState(),
+							thread.getIsContextClassLoaderSet());
+					
+					if (jvm.getThreads().contains(threadInfo)) {
+						jvm.getThreads().remove(threadInfo);
+						System.out.println("Updating Thread " + threadInfo.getName());
+					}
+					
+					jvm.addThread(threadInfo);
 				}
 
 			}

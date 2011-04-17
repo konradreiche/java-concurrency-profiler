@@ -229,8 +229,6 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 		jthread *threads;
 
 		AgentMessage agentMessage;
-		agentMessage.set_timestamp("PLACEHOLDER - keep cool 8)");
-
 		error = jvmti->GetAllThreads(&threadCount, &threads);
 		check_jvmti_error(jvmti, error, "Cannot get all threads.");
 
@@ -321,8 +319,6 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		jthread *threads;
 
 		AgentMessage agentMessage;
-		agentMessage.set_timestamp("PLACEHOLDER - keep cool 8)");
-
 		error = jvmti->GetAllThreads(&threadCount, &threads);
 		check_jvmti_error(jvmti, error, "Cannot get all threads.");
 
