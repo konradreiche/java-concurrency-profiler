@@ -23,6 +23,11 @@ public final class AgentMessageProtos {
     boolean hasThreads();
     de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads getThreads();
     de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ThreadsOrBuilder getThreadsOrBuilder();
+    
+    // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
+    boolean hasContendedMonitor();
+    de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor getContendedMonitor();
+    de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitorOrBuilder getContendedMonitorOrBuilder();
   }
   public static final class AgentMessage extends
       com.google.protobuf.GeneratedMessage
@@ -100,19 +105,23 @@ public final class AgentMessageProtos {
       public interface ThreadOrBuilder
           extends com.google.protobuf.MessageOrBuilder {
         
-        // required string name = 1;
+        // required int32 id = 1;
+        boolean hasId();
+        int getId();
+        
+        // required string name = 2;
         boolean hasName();
         String getName();
         
-        // required int32 priority = 2;
+        // required int32 priority = 3;
         boolean hasPriority();
         int getPriority();
         
-        // required string state = 3;
+        // required string state = 4;
         boolean hasState();
         String getState();
         
-        // required bool isContextClassLoaderSet = 4;
+        // required bool isContextClassLoaderSet = 5;
         boolean hasIsContextClassLoaderSet();
         boolean getIsContextClassLoaderSet();
       }
@@ -145,11 +154,21 @@ public final class AgentMessageProtos {
         }
         
         private int bitField0_;
-        // required string name = 1;
-        public static final int NAME_FIELD_NUMBER = 1;
+        // required int32 id = 1;
+        public static final int ID_FIELD_NUMBER = 1;
+        private int id_;
+        public boolean hasId() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        public int getId() {
+          return id_;
+        }
+        
+        // required string name = 2;
+        public static final int NAME_FIELD_NUMBER = 2;
         private Object name_;
         public boolean hasName() {
-          return ((bitField0_ & 0x00000001) == 0x00000001);
+          return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         public String getName() {
           Object ref = name_;
@@ -177,21 +196,21 @@ public final class AgentMessageProtos {
           }
         }
         
-        // required int32 priority = 2;
-        public static final int PRIORITY_FIELD_NUMBER = 2;
+        // required int32 priority = 3;
+        public static final int PRIORITY_FIELD_NUMBER = 3;
         private int priority_;
         public boolean hasPriority() {
-          return ((bitField0_ & 0x00000002) == 0x00000002);
+          return ((bitField0_ & 0x00000004) == 0x00000004);
         }
         public int getPriority() {
           return priority_;
         }
         
-        // required string state = 3;
-        public static final int STATE_FIELD_NUMBER = 3;
+        // required string state = 4;
+        public static final int STATE_FIELD_NUMBER = 4;
         private Object state_;
         public boolean hasState() {
-          return ((bitField0_ & 0x00000004) == 0x00000004);
+          return ((bitField0_ & 0x00000008) == 0x00000008);
         }
         public String getState() {
           Object ref = state_;
@@ -219,17 +238,18 @@ public final class AgentMessageProtos {
           }
         }
         
-        // required bool isContextClassLoaderSet = 4;
-        public static final int ISCONTEXTCLASSLOADERSET_FIELD_NUMBER = 4;
+        // required bool isContextClassLoaderSet = 5;
+        public static final int ISCONTEXTCLASSLOADERSET_FIELD_NUMBER = 5;
         private boolean isContextClassLoaderSet_;
         public boolean hasIsContextClassLoaderSet() {
-          return ((bitField0_ & 0x00000008) == 0x00000008);
+          return ((bitField0_ & 0x00000010) == 0x00000010);
         }
         public boolean getIsContextClassLoaderSet() {
           return isContextClassLoaderSet_;
         }
         
         private void initFields() {
+          id_ = 0;
           name_ = "";
           priority_ = 0;
           state_ = "";
@@ -240,6 +260,10 @@ public final class AgentMessageProtos {
           byte isInitialized = memoizedIsInitialized;
           if (isInitialized != -1) return isInitialized == 1;
           
+          if (!hasId()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
           if (!hasName()) {
             memoizedIsInitialized = 0;
             return false;
@@ -264,16 +288,19 @@ public final class AgentMessageProtos {
                             throws java.io.IOException {
           getSerializedSize();
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
-            output.writeBytes(1, getNameBytes());
+            output.writeInt32(1, id_);
           }
           if (((bitField0_ & 0x00000002) == 0x00000002)) {
-            output.writeInt32(2, priority_);
+            output.writeBytes(2, getNameBytes());
           }
           if (((bitField0_ & 0x00000004) == 0x00000004)) {
-            output.writeBytes(3, getStateBytes());
+            output.writeInt32(3, priority_);
           }
           if (((bitField0_ & 0x00000008) == 0x00000008)) {
-            output.writeBool(4, isContextClassLoaderSet_);
+            output.writeBytes(4, getStateBytes());
+          }
+          if (((bitField0_ & 0x00000010) == 0x00000010)) {
+            output.writeBool(5, isContextClassLoaderSet_);
           }
           getUnknownFields().writeTo(output);
         }
@@ -286,19 +313,23 @@ public final class AgentMessageProtos {
           size = 0;
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
             size += com.google.protobuf.CodedOutputStream
-              .computeBytesSize(1, getNameBytes());
+              .computeInt32Size(1, id_);
           }
           if (((bitField0_ & 0x00000002) == 0x00000002)) {
             size += com.google.protobuf.CodedOutputStream
-              .computeInt32Size(2, priority_);
+              .computeBytesSize(2, getNameBytes());
           }
           if (((bitField0_ & 0x00000004) == 0x00000004)) {
             size += com.google.protobuf.CodedOutputStream
-              .computeBytesSize(3, getStateBytes());
+              .computeInt32Size(3, priority_);
           }
           if (((bitField0_ & 0x00000008) == 0x00000008)) {
             size += com.google.protobuf.CodedOutputStream
-              .computeBoolSize(4, isContextClassLoaderSet_);
+              .computeBytesSize(4, getStateBytes());
+          }
+          if (((bitField0_ & 0x00000010) == 0x00000010)) {
+            size += com.google.protobuf.CodedOutputStream
+              .computeBoolSize(5, isContextClassLoaderSet_);
           }
           size += getUnknownFields().getSerializedSize();
           memoizedSerializedSize = size;
@@ -422,14 +453,16 @@ public final class AgentMessageProtos {
           
           public Builder clear() {
             super.clear();
-            name_ = "";
+            id_ = 0;
             bitField0_ = (bitField0_ & ~0x00000001);
-            priority_ = 0;
+            name_ = "";
             bitField0_ = (bitField0_ & ~0x00000002);
-            state_ = "";
+            priority_ = 0;
             bitField0_ = (bitField0_ & ~0x00000004);
-            isContextClassLoaderSet_ = false;
+            state_ = "";
             bitField0_ = (bitField0_ & ~0x00000008);
+            isContextClassLoaderSet_ = false;
+            bitField0_ = (bitField0_ & ~0x00000010);
             return this;
           }
           
@@ -471,17 +504,21 @@ public final class AgentMessageProtos {
             if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
               to_bitField0_ |= 0x00000001;
             }
-            result.name_ = name_;
+            result.id_ = id_;
             if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
               to_bitField0_ |= 0x00000002;
             }
-            result.priority_ = priority_;
+            result.name_ = name_;
             if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
               to_bitField0_ |= 0x00000004;
             }
-            result.state_ = state_;
+            result.priority_ = priority_;
             if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
               to_bitField0_ |= 0x00000008;
+            }
+            result.state_ = state_;
+            if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+              to_bitField0_ |= 0x00000010;
             }
             result.isContextClassLoaderSet_ = isContextClassLoaderSet_;
             result.bitField0_ = to_bitField0_;
@@ -500,6 +537,9 @@ public final class AgentMessageProtos {
           
           public Builder mergeFrom(de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread other) {
             if (other == de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread.getDefaultInstance()) return this;
+            if (other.hasId()) {
+              setId(other.getId());
+            }
             if (other.hasName()) {
               setName(other.getName());
             }
@@ -517,6 +557,10 @@ public final class AgentMessageProtos {
           }
           
           public final boolean isInitialized() {
+            if (!hasId()) {
+              
+              return false;
+            }
             if (!hasName()) {
               
               return false;
@@ -559,23 +603,28 @@ public final class AgentMessageProtos {
                   }
                   break;
                 }
-                case 10: {
+                case 8: {
                   bitField0_ |= 0x00000001;
+                  id_ = input.readInt32();
+                  break;
+                }
+                case 18: {
+                  bitField0_ |= 0x00000002;
                   name_ = input.readBytes();
                   break;
                 }
-                case 16: {
-                  bitField0_ |= 0x00000002;
+                case 24: {
+                  bitField0_ |= 0x00000004;
                   priority_ = input.readInt32();
                   break;
                 }
-                case 26: {
-                  bitField0_ |= 0x00000004;
+                case 34: {
+                  bitField0_ |= 0x00000008;
                   state_ = input.readBytes();
                   break;
                 }
-                case 32: {
-                  bitField0_ |= 0x00000008;
+                case 40: {
+                  bitField0_ |= 0x00000010;
                   isContextClassLoaderSet_ = input.readBool();
                   break;
                 }
@@ -585,10 +634,31 @@ public final class AgentMessageProtos {
           
           private int bitField0_;
           
-          // required string name = 1;
+          // required int32 id = 1;
+          private int id_ ;
+          public boolean hasId() {
+            return ((bitField0_ & 0x00000001) == 0x00000001);
+          }
+          public int getId() {
+            return id_;
+          }
+          public Builder setId(int value) {
+            bitField0_ |= 0x00000001;
+            id_ = value;
+            onChanged();
+            return this;
+          }
+          public Builder clearId() {
+            bitField0_ = (bitField0_ & ~0x00000001);
+            id_ = 0;
+            onChanged();
+            return this;
+          }
+          
+          // required string name = 2;
           private Object name_ = "";
           public boolean hasName() {
-            return ((bitField0_ & 0x00000001) == 0x00000001);
+            return ((bitField0_ & 0x00000002) == 0x00000002);
           }
           public String getName() {
             Object ref = name_;
@@ -604,48 +674,48 @@ public final class AgentMessageProtos {
             if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000001;
+  bitField0_ |= 0x00000002;
             name_ = value;
             onChanged();
             return this;
           }
           public Builder clearName() {
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000002);
             name_ = getDefaultInstance().getName();
             onChanged();
             return this;
           }
           void setName(com.google.protobuf.ByteString value) {
-            bitField0_ |= 0x00000001;
+            bitField0_ |= 0x00000002;
             name_ = value;
             onChanged();
           }
           
-          // required int32 priority = 2;
+          // required int32 priority = 3;
           private int priority_ ;
           public boolean hasPriority() {
-            return ((bitField0_ & 0x00000002) == 0x00000002);
+            return ((bitField0_ & 0x00000004) == 0x00000004);
           }
           public int getPriority() {
             return priority_;
           }
           public Builder setPriority(int value) {
-            bitField0_ |= 0x00000002;
+            bitField0_ |= 0x00000004;
             priority_ = value;
             onChanged();
             return this;
           }
           public Builder clearPriority() {
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000004);
             priority_ = 0;
             onChanged();
             return this;
           }
           
-          // required string state = 3;
+          // required string state = 4;
           private Object state_ = "";
           public boolean hasState() {
-            return ((bitField0_ & 0x00000004) == 0x00000004);
+            return ((bitField0_ & 0x00000008) == 0x00000008);
           }
           public String getState() {
             Object ref = state_;
@@ -661,39 +731,39 @@ public final class AgentMessageProtos {
             if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000008;
             state_ = value;
             onChanged();
             return this;
           }
           public Builder clearState() {
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000008);
             state_ = getDefaultInstance().getState();
             onChanged();
             return this;
           }
           void setState(com.google.protobuf.ByteString value) {
-            bitField0_ |= 0x00000004;
+            bitField0_ |= 0x00000008;
             state_ = value;
             onChanged();
           }
           
-          // required bool isContextClassLoaderSet = 4;
+          // required bool isContextClassLoaderSet = 5;
           private boolean isContextClassLoaderSet_ ;
           public boolean hasIsContextClassLoaderSet() {
-            return ((bitField0_ & 0x00000008) == 0x00000008);
+            return ((bitField0_ & 0x00000010) == 0x00000010);
           }
           public boolean getIsContextClassLoaderSet() {
             return isContextClassLoaderSet_;
           }
           public Builder setIsContextClassLoaderSet(boolean value) {
-            bitField0_ |= 0x00000008;
+            bitField0_ |= 0x00000010;
             isContextClassLoaderSet_ = value;
             onChanged();
             return this;
           }
           public Builder clearIsContextClassLoaderSet() {
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000010);
             isContextClassLoaderSet_ = false;
             onChanged();
             return this;
@@ -1331,6 +1401,350 @@ public final class AgentMessageProtos {
       // @@protoc_insertion_point(class_scope:AgentMessage.Threads)
     }
     
+    public interface ContendedMonitorOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+      
+      // required int32 threadId = 1;
+      boolean hasThreadId();
+      int getThreadId();
+    }
+    public static final class ContendedMonitor extends
+        com.google.protobuf.GeneratedMessage
+        implements ContendedMonitorOrBuilder {
+      // Use ContendedMonitor.newBuilder() to construct.
+      private ContendedMonitor(Builder builder) {
+        super(builder);
+      }
+      private ContendedMonitor(boolean noInit) {}
+      
+      private static final ContendedMonitor defaultInstance;
+      public static ContendedMonitor getDefaultInstance() {
+        return defaultInstance;
+      }
+      
+      public ContendedMonitor getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+      
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.fu.profiler.protobuf.AgentMessageProtos.internal_static_AgentMessage_ContendedMonitor_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.fu.profiler.protobuf.AgentMessageProtos.internal_static_AgentMessage_ContendedMonitor_fieldAccessorTable;
+      }
+      
+      private int bitField0_;
+      // required int32 threadId = 1;
+      public static final int THREADID_FIELD_NUMBER = 1;
+      private int threadId_;
+      public boolean hasThreadId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public int getThreadId() {
+        return threadId_;
+      }
+      
+      private void initFields() {
+        threadId_ = 0;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+        
+        if (!hasThreadId()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+      
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt32(1, threadId_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+      
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+      
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, threadId_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+      
+      @java.lang.Override
+      protected Object writeReplace() throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+      
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+      
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitorOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return de.fu.profiler.protobuf.AgentMessageProtos.internal_static_AgentMessage_ContendedMonitor_descriptor;
+        }
+        
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return de.fu.profiler.protobuf.AgentMessageProtos.internal_static_AgentMessage_ContendedMonitor_fieldAccessorTable;
+        }
+        
+        // Construct using de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+        
+        private Builder(BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+        
+        public Builder clear() {
+          super.clear();
+          threadId_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          return this;
+        }
+        
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+        
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDescriptor();
+        }
+        
+        public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor getDefaultInstanceForType() {
+          return de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDefaultInstance();
+        }
+        
+        public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor build() {
+          de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+        
+        private de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor buildParsed()
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(
+              result).asInvalidProtocolBufferException();
+          }
+          return result;
+        }
+        
+        public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor buildPartial() {
+          de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor result = new de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.threadId_ = threadId_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+        
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor) {
+            return mergeFrom((de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+        
+        public Builder mergeFrom(de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor other) {
+          if (other == de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDefaultInstance()) return this;
+          if (other.hasThreadId()) {
+            setThreadId(other.getThreadId());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+        
+        public final boolean isInitialized() {
+          if (!hasThreadId()) {
+            
+            return false;
+          }
+          return true;
+        }
+        
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder(
+              this.getUnknownFields());
+          while (true) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  this.setUnknownFields(unknownFields.build());
+                  onChanged();
+                  return this;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                threadId_ = input.readInt32();
+                break;
+              }
+            }
+          }
+        }
+        
+        private int bitField0_;
+        
+        // required int32 threadId = 1;
+        private int threadId_ ;
+        public boolean hasThreadId() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        public int getThreadId() {
+          return threadId_;
+        }
+        public Builder setThreadId(int value) {
+          bitField0_ |= 0x00000001;
+          threadId_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearThreadId() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          threadId_ = 0;
+          onChanged();
+          return this;
+        }
+        
+        // @@protoc_insertion_point(builder_scope:AgentMessage.ContendedMonitor)
+      }
+      
+      static {
+        defaultInstance = new ContendedMonitor(true);
+        defaultInstance.initFields();
+      }
+      
+      // @@protoc_insertion_point(class_scope:AgentMessage.ContendedMonitor)
+    }
+    
     private int bitField0_;
     // required string timestamp = 1;
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
@@ -1387,10 +1801,24 @@ public final class AgentMessageProtos {
       return threads_;
     }
     
+    // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
+    public static final int CONTENDEDMONITOR_FIELD_NUMBER = 4;
+    private de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor contendedMonitor_;
+    public boolean hasContendedMonitor() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor getContendedMonitor() {
+      return contendedMonitor_;
+    }
+    public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitorOrBuilder getContendedMonitorOrBuilder() {
+      return contendedMonitor_;
+    }
+    
     private void initFields() {
       timestamp_ = "";
       jvmId_ = 0;
       threads_ = de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.getDefaultInstance();
+      contendedMonitor_ = de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1411,6 +1839,12 @@ public final class AgentMessageProtos {
           return false;
         }
       }
+      if (hasContendedMonitor()) {
+        if (!getContendedMonitor().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -1426,6 +1860,9 @@ public final class AgentMessageProtos {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(3, threads_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, contendedMonitor_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1447,6 +1884,10 @@ public final class AgentMessageProtos {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, threads_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, contendedMonitor_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1563,6 +2004,7 @@ public final class AgentMessageProtos {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getThreadsFieldBuilder();
+          getContendedMonitorFieldBuilder();
         }
       }
       private static Builder create() {
@@ -1581,6 +2023,12 @@ public final class AgentMessageProtos {
           threadsBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000004);
+        if (contendedMonitorBuilder_ == null) {
+          contendedMonitor_ = de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDefaultInstance();
+        } else {
+          contendedMonitorBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
       
@@ -1635,6 +2083,14 @@ public final class AgentMessageProtos {
         } else {
           result.threads_ = threadsBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (contendedMonitorBuilder_ == null) {
+          result.contendedMonitor_ = contendedMonitor_;
+        } else {
+          result.contendedMonitor_ = contendedMonitorBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1660,6 +2116,9 @@ public final class AgentMessageProtos {
         if (other.hasThreads()) {
           mergeThreads(other.getThreads());
         }
+        if (other.hasContendedMonitor()) {
+          mergeContendedMonitor(other.getContendedMonitor());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -1675,6 +2134,12 @@ public final class AgentMessageProtos {
         }
         if (hasThreads()) {
           if (!getThreads().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasContendedMonitor()) {
+          if (!getContendedMonitor().isInitialized()) {
             
             return false;
           }
@@ -1722,6 +2187,15 @@ public final class AgentMessageProtos {
               }
               input.readMessage(subBuilder, extensionRegistry);
               setThreads(subBuilder.buildPartial());
+              break;
+            }
+            case 34: {
+              de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.Builder subBuilder = de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.newBuilder();
+              if (hasContendedMonitor()) {
+                subBuilder.mergeFrom(getContendedMonitor());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setContendedMonitor(subBuilder.buildPartial());
               break;
             }
           }
@@ -1877,6 +2351,96 @@ public final class AgentMessageProtos {
         return threadsBuilder_;
       }
       
+      // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
+      private de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor contendedMonitor_ = de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor, de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.Builder, de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitorOrBuilder> contendedMonitorBuilder_;
+      public boolean hasContendedMonitor() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor getContendedMonitor() {
+        if (contendedMonitorBuilder_ == null) {
+          return contendedMonitor_;
+        } else {
+          return contendedMonitorBuilder_.getMessage();
+        }
+      }
+      public Builder setContendedMonitor(de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor value) {
+        if (contendedMonitorBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          contendedMonitor_ = value;
+          onChanged();
+        } else {
+          contendedMonitorBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder setContendedMonitor(
+          de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.Builder builderForValue) {
+        if (contendedMonitorBuilder_ == null) {
+          contendedMonitor_ = builderForValue.build();
+          onChanged();
+        } else {
+          contendedMonitorBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder mergeContendedMonitor(de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor value) {
+        if (contendedMonitorBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              contendedMonitor_ != de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDefaultInstance()) {
+            contendedMonitor_ =
+              de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.newBuilder(contendedMonitor_).mergeFrom(value).buildPartial();
+          } else {
+            contendedMonitor_ = value;
+          }
+          onChanged();
+        } else {
+          contendedMonitorBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder clearContendedMonitor() {
+        if (contendedMonitorBuilder_ == null) {
+          contendedMonitor_ = de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.getDefaultInstance();
+          onChanged();
+        } else {
+          contendedMonitorBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.Builder getContendedMonitorBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getContendedMonitorFieldBuilder().getBuilder();
+      }
+      public de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitorOrBuilder getContendedMonitorOrBuilder() {
+        if (contendedMonitorBuilder_ != null) {
+          return contendedMonitorBuilder_.getMessageOrBuilder();
+        } else {
+          return contendedMonitor_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor, de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.Builder, de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitorOrBuilder> 
+          getContendedMonitorFieldBuilder() {
+        if (contendedMonitorBuilder_ == null) {
+          contendedMonitorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor, de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.Builder, de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitorOrBuilder>(
+                  contendedMonitor_,
+                  getParentForChildren(),
+                  isClean());
+          contendedMonitor_ = null;
+        }
+        return contendedMonitorBuilder_;
+      }
+      
       // @@protoc_insertion_point(builder_scope:AgentMessage)
     }
     
@@ -1903,6 +2467,11 @@ public final class AgentMessageProtos {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_AgentMessage_Threads_Thread_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_AgentMessage_ContendedMonitor_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_AgentMessage_ContendedMonitor_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1912,15 +2481,17 @@ public final class AgentMessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022AgentMessage.proto\"\200\002\n\014AgentMessage\022\021\n" +
+      "\n\022AgentMessage.proto\"\354\002\n\014AgentMessage\022\021\n" +
       "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022&\n\007thre" +
-      "ads\030\003 \001(\0132\025.AgentMessage.Threads\032\244\001\n\007Thr" +
-      "eads\022\021\n\tlifeCycle\030\001 \002(\t\022,\n\006thread\030\002 \003(\0132" +
-      "\034.AgentMessage.Threads.Thread\032X\n\006Thread\022" +
-      "\014\n\004name\030\001 \002(\t\022\020\n\010priority\030\002 \002(\005\022\r\n\005state" +
-      "\030\003 \002(\t\022\037\n\027isContextClassLoaderSet\030\004 \002(\010B" +
-      "-\n\027de.fu.profiler.protobufB\022AgentMessage" +
-      "Protos"
+      "ads\030\003 \001(\0132\025.AgentMessage.Threads\0228\n\020cont" +
+      "endedMonitor\030\004 \001(\0132\036.AgentMessage.Conten" +
+      "dedMonitor\032\260\001\n\007Threads\022\021\n\tlifeCycle\030\001 \002(" +
+      "\t\022,\n\006thread\030\002 \003(\0132\034.AgentMessage.Threads" +
+      ".Thread\032d\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 " +
+      "\002(\t\022\020\n\010priority\030\003 \002(\005\022\r\n\005state\030\004 \002(\t\022\037\n\027" +
+      "isContextClassLoaderSet\030\005 \002(\010\032$\n\020Contend" +
+      "edMonitor\022\020\n\010threadId\030\001 \002(\005B-\n\027de.fu.pro",
+      "filer.protobufB\022AgentMessageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1932,7 +2503,7 @@ public final class AgentMessageProtos {
           internal_static_AgentMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_descriptor,
-              new java.lang.String[] { "Timestamp", "JvmId", "Threads", },
+              new java.lang.String[] { "Timestamp", "JvmId", "Threads", "ContendedMonitor", },
               de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.class,
               de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Builder.class);
           internal_static_AgentMessage_Threads_descriptor =
@@ -1948,9 +2519,17 @@ public final class AgentMessageProtos {
           internal_static_AgentMessage_Threads_Thread_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_Threads_Thread_descriptor,
-              new java.lang.String[] { "Name", "Priority", "State", "IsContextClassLoaderSet", },
+              new java.lang.String[] { "Id", "Name", "Priority", "State", "IsContextClassLoaderSet", },
               de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread.class,
               de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread.Builder.class);
+          internal_static_AgentMessage_ContendedMonitor_descriptor =
+            internal_static_AgentMessage_descriptor.getNestedTypes().get(1);
+          internal_static_AgentMessage_ContendedMonitor_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_AgentMessage_ContendedMonitor_descriptor,
+              new java.lang.String[] { "ThreadId", },
+              de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.class,
+              de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.Builder.class);
           return null;
         }
       };

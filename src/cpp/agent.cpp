@@ -30,6 +30,7 @@ static jvmtiCapabilities capa;
 
 static AgentSocket agentSocket("192.168.1.101", "50000");
 static int JVM_ID;
+static int THREAD_ID = 1;
 
 /* Global agent data structure */
 
@@ -100,6 +101,7 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 
 	jvmtiThreadInfo jvmtiThreadInfo;
 	jint thr_st_ptr;
+	jlong thr_id_ptr;
 	jvmtiError error;
 
 	// ensures the stack variables are garbage free (TODO: ???)
@@ -135,10 +137,18 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 		break;
 	}
 
+	jvmti->GetTag(thread,&thr_id_ptr);
+	if (thr_id_ptr == 0) {
+		jvmti->SetTag(thread,THREAD_ID);
+		++THREAD_ID;
+		jvmti->GetTag(thread,&thr_id_ptr);
+	}
+
 	AgentMessage::Threads *threads = agentMessage.mutable_threads();
 	threads->set_lifecycle(lifeCycle ? "start" : "end");
 
 	AgentMessage::Threads::Thread *newThread = threads->add_thread();
+	newThread->set_id(thr_id_ptr);
 	newThread->set_name(jvmtiThreadInfo.name);
 	newThread->set_priority(jvmtiThreadInfo.priority);
 	newThread->set_state(threadState);
@@ -176,6 +186,12 @@ void describe(jvmtiError err) {
 	} else {
 		printf("error [%d]", err);
 	}
+}
+
+// Monitor wait callback
+static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
+		jthread thread, jobject object) {
+
 }
 
 // Thread Start callback
@@ -309,6 +325,9 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
 				JVMTI_EVENT_THREAD_END, (jthread) NULL);
+
+		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
+				JVMTI_EVENT_MONITOR_CONTENDED_ENTER, (jthread) NULL);
 
 		check_jvmti_error(jvmti_env, error, "Cannot set event notification");
 
@@ -492,6 +511,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	capa.can_generate_exception_events = 1;
 	capa.can_generate_vm_object_alloc_events = 1;
 	capa.can_tag_objects = 1;
+	capa.can_generate_monitor_events = 1;
 
 	error = jvmti->AddCapabilities(&capa);
 	check_jvmti_error(jvmti, error,
@@ -505,6 +525,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	callbacks.VMObjectAlloc = &callbackVMObjectAlloc;/* JVMTI_EVENT_VM_OBJECT_ALLOC */
 	callbacks.ThreadStart = &callbackThreadStart;/* JVMTI_EVENT_THREAD_START */
 	callbacks.ThreadEnd = &callbackThreadEnd;/* JVMTI_EVENT_THREAD_END */
+	callbacks.MonitorContendedEnter = &callbackMonitorContendedEnter;/* JVMTI_EVENT_MONITOR_CONTENDED_ENTER*/
 
 	error = jvmti->SetEventCallbacks(&callbacks, (jint) sizeof(callbacks));
 	check_jvmti_error(jvmti, error, "Cannot set jvmti callbacks");

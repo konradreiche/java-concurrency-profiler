@@ -13,7 +13,7 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 
 	private static final long serialVersionUID = -737908470678111339L;
 
-	String[] columnNames = { "Name", "Priority", "State", "Context Class Loader" };
+	String[] columnNames = { "ID", "Name", "Priority", "State", "Context Class Loader" };
 	
 	JVM jvm;
 
@@ -56,12 +56,14 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 
 		switch (columnIndex) {
 		case 0:
-			return threadInfo.getName();
+			return threadInfo.getId();
 		case 1:
-			return threadInfo.getPriority();
+			return threadInfo.getName();
 		case 2:
-			return threadInfo.getState();
+			return threadInfo.getPriority();
 		case 3:
+			return threadInfo.getState();
+		case 4:
 			return threadInfo.isContextClassLoaderSet();
 		default:
 			return null;

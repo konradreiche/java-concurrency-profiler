@@ -12,14 +12,21 @@ message AgentMessage {
 
 		message Thread {
 
-	   		required string name = 1;
-			required int32 priority = 2;
-			required string state = 3;
-			required bool isContextClassLoaderSet = 4;
+			required int32 id = 1;
+	   		required string name = 2;
+			required int32 priority = 3;
+			required string state = 4;
+			required bool isContextClassLoaderSet = 5;
 		}
 
 		repeated Thread thread = 2;
 	}
 
+	message ContendedMonitor {
+
+		required int32 threadId = 1;
+	}
+
 	optional Threads threads = 3;
+	optional ContendedMonitor contendedMonitor = 4;
 }
