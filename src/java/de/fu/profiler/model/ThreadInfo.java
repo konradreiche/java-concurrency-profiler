@@ -7,6 +7,8 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	final int priority;
 	final String state;
 	final boolean isContextClassLoaderSet;
+	
+	int contendedMonitorWaitCount;
 
 	public ThreadInfo(int id, String name, int priority, String state,
 			boolean ccl) {
@@ -38,6 +40,11 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 		return isContextClassLoaderSet;
 	}
 
+	public void incContendedMonitorWait() {
+		++contendedMonitorWaitCount;
+		System.out.println("Hurray, now it is " + contendedMonitorWaitCount + " on " + name);
+	}
+	
 	@Override
 	public int compareTo(ThreadInfo threadInfo) {
 		return new Integer(id).compareTo(new Integer(threadInfo.id));

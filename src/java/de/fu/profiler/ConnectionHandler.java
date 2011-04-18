@@ -46,28 +46,37 @@ public class ConnectionHandler implements Runnable {
 				}
 			}
 
-			boolean isStart = agentMessage.getThreads().getLifeCycle()
-					.equals("start") ? true : false;
+			if (agentMessage.getThreads().isInitialized()) {
+				boolean isStart = agentMessage.getThreads().getLifeCycle()
+						.equals("start") ? true : false;
 
-			for (de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread thread : agentMessage
-					.getThreads().getThreadList()) {
+				for (de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread thread : agentMessage
+						.getThreads().getThreadList()) {
 
-				if (isStart) {
+					if (isStart) {
 
-					ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
-							thread.getName(), thread.getPriority(),
-							thread.getState(),
-							thread.getIsContextClassLoaderSet());
+						ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
+								thread.getName(), thread.getPriority(),
+								thread.getState(),
+								thread.getIsContextClassLoaderSet());
 
-					if (jvm.getThreads().contains(threadInfo)) {
-						jvm.getThreads().remove(threadInfo);
-						System.out.println("Updating Thread "
-								+ threadInfo.getName());
+						if (jvm.getThreads().contains(threadInfo)) {
+							jvm.getThreads().remove(threadInfo);
+							System.out.println("Updating Thread "
+									+ threadInfo.getName());
+						}
+
+						jvm.addThread(threadInfo);
 					}
-
-					jvm.addThread(threadInfo);
 				}
+			}
 
+			if (agentMessage.getContendedMonitor().isInitialized()) {
+				for (ThreadInfo t : jvm.getThreads()) {
+					if (t.getId() == agentMessage.getContendedMonitor().getThreadId()) {
+						t.incContendedMonitorWait();
+					}
+				}
 			}
 
 		} catch (IOException e) {

@@ -192,6 +192,12 @@ void describe(jvmtiError err) {
 static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 		jthread thread, jobject object) {
 
+	jlong thr_id_ptr;
+	jvmti->GetTag(thread,&thr_id_ptr);
+
+	AgentMessage agentMessage;
+	agentMessage.mutable_contendedmonitor()->set_threadid(thr_id_ptr);
+	commitAgentMessage(agentMessage);
 }
 
 // Thread Start callback
