@@ -9,11 +9,12 @@
 
 #include "AgentSocket.h"
 #include "AgentMessage.pb.h"
+#include "Agent.h"
+#include "AgentHelper.h"
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-#include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
 
 using namespace google::protobuf::io;
@@ -72,28 +73,6 @@ static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
 				(errnum_str == NULL ? "Unknown" : errnum_str),
 				(str == NULL ? "" : str));
 	}
-}
-
-static void commitAgentMessage(AgentMessage agentMessage) {
-
-	time_t ltime;
-	ltime = time(NULL);
-	agentMessage.set_timestamp(asctime(localtime(&ltime)));
-	agentMessage.set_jvm_id(JVM_ID);
-
-	boost::asio::streambuf b;
-	std::ostream os(&b);
-
-	ZeroCopyOutputStream *raw_output = new OstreamOutputStream(&os);
-	CodedOutputStream *coded_output = new CodedOutputStream(raw_output);
-
-	coded_output->WriteVarint32(agentMessage.ByteSize());
-	agentMessage.SerializeToCodedStream(coded_output);
-
-	delete coded_output;
-	delete raw_output;
-
-	agentSocket.send(b);
 }
 
 static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
@@ -197,7 +176,7 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *j
 
 	AgentMessage agentMessage;
 	agentMessage.mutable_contendedmonitor()->set_threadid(thr_id_ptr);
-	commitAgentMessage(agentMessage);
+	Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
 }
 
 // Thread Start callback
@@ -208,7 +187,7 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 	{
 		AgentMessage agentMessage;
 		agentMessage = mergeThreadData(agentMessage, thread, true);
-		commitAgentMessage(agentMessage);
+		Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
 	}
 	exit_critical_section(jvmti);
 }
@@ -221,7 +200,7 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 	{
 		AgentMessage agentMessage;
 		agentMessage = mergeThreadData(agentMessage, thread, false);
-		commitAgentMessage(agentMessage);
+		Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
 	}
 	exit_critical_section(jvmti);
 }
@@ -258,7 +237,7 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 			for (int i = 0; i < threadCount; ++i) {
 				agentMessage = mergeThreadData(agentMessage, threads[i], true);
 			}
-			commitAgentMessage(agentMessage);
+			Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
 		}
 		exit_critical_section(jvmti);
 	}
@@ -351,7 +330,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 			for (int i = 0; i < threadCount; ++i) {
 				agentMessage = mergeThreadData(agentMessage, threads[i], true);
 			}
-			commitAgentMessage(agentMessage);
+			Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
 		}
 	}
 	exit_critical_section(jvmti);
