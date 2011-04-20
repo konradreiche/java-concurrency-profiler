@@ -1,3 +1,7 @@
+/**
+ * The agent profiler collects data based on specified callback events which occur inside the JVM.
+ */
+
 #include <iostream>
 #include <string>
 
@@ -19,9 +23,7 @@
 
 using namespace google::protobuf::io;
 
-/* ------------------------------------------------------------------- */
-/* Some constant maximum sizes */
-
+/** Some constant maximum sizes */
 #define MAX_TOKEN_LENGTH        16
 #define MAX_THREAD_NAME_LENGTH  512
 #define MAX_METHOD_NAME_LENGTH  1024
@@ -33,13 +35,12 @@ static AgentSocket agentSocket("192.168.1.101", "50000");
 static int JVM_ID;
 static int THREAD_ID = 1;
 
-/* Global agent data structure */
-
+/** Global agent data structure */
 typedef struct {
-	/* JVMTI Environment */
+	/** JVMTI Environment */
 	jvmtiEnv *jvmti;
 	jboolean vm_is_started;
-	/* Data access Lock */
+	/** Data access Lock */
 	jrawMonitorID lock;
 } GlobalAgentData;
 
@@ -56,7 +57,7 @@ static int num_interface_refs;
 static int num_static_field_refs;
 static int num_constant_pool_refs;
 
-/* Every JVMTI interface returns an error code, which should be checked
+/** Every JVMTI interface returns an error code, which should be checked
  *   to avoid any cascading errors down the line.
  *   The interface GetErrorName() returns the actual enumeration constant
  *   name, making the error messages much easier to understand.
@@ -75,6 +76,16 @@ static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
 	}
 }
 
+/**
+ * Inserts the data accessible by jthread into an AgentMessage.
+ *
+ * @todo memset ensures the stack variable are garbage free - what does that mean?
+ *
+ * @param agentMessage the agent message containing valuable information which are send by the socket.
+ * @param thread the thread containing valueable information.
+ * @param lifeCycle whether the thread is a new one (true) or a finished one (false).
+ * @return the extended agent message.
+ */
 static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 		bool lifeCycle) {
 
@@ -83,7 +94,6 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 	jlong thr_id_ptr;
 	jvmtiError error;
 
-	// ensures the stack variables are garbage free (TODO: ???)
 	(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
 	error = jvmti->GetThreadInfo(thread, &jvmtiThreadInfo);
 	check_jvmti_error(jvmti, error, "Cannot get thread information.");
@@ -116,11 +126,11 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 		break;
 	}
 
-	jvmti->GetTag(thread,&thr_id_ptr);
+	jvmti->GetTag(thread, &thr_id_ptr);
 	if (thr_id_ptr == 0) {
-		jvmti->SetTag(thread,THREAD_ID);
+		jvmti->SetTag(thread, THREAD_ID);
 		++THREAD_ID;
-		jvmti->GetTag(thread,&thr_id_ptr);
+		jvmti->GetTag(thread, &thr_id_ptr);
 	}
 
 	AgentMessage::Threads *threads = agentMessage.mutable_threads();
@@ -137,7 +147,7 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 	return agentMessage;
 }
 
-/* Enter a critical section by doing a JVMTI Raw Monitor Enter */
+/** Enter a critical section by doing a JVMTI Raw Monitor Enter */
 static void enter_critical_section(jvmtiEnv *jvmti) {
 	jvmtiError error;
 
@@ -145,7 +155,7 @@ static void enter_critical_section(jvmtiEnv *jvmti) {
 	check_jvmti_error(jvmti, error, "Cannot enter with raw monitor");
 }
 
-/* Exit a critical section by doing a JVMTI Raw Monitor Exit */
+/** Exit a critical section by doing a JVMTI Raw Monitor Exit */
 static void exit_critical_section(jvmtiEnv *jvmti) {
 	jvmtiError error;
 
@@ -153,10 +163,13 @@ static void exit_critical_section(jvmtiEnv *jvmti) {
 	check_jvmti_error(jvmti, error, "Cannot exit with raw monitor");
 }
 
+/**
+ * @todo investigate if it is possible to assign the error to a string
+ *
+ * @param err
+ */
 void describe(jvmtiError err) {
 	jvmtiError err0;
-
-	// TODO: investigate if it is possible to assign the error to a string
 	char *descr;
 
 	err0 = jvmti->GetErrorName(err, &descr);
@@ -167,19 +180,19 @@ void describe(jvmtiError err) {
 	}
 }
 
-// Monitor wait callback
-static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
-		jthread thread, jobject object) {
+/** Monitor wait callback */
+static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
+		JNIEnv *jni_env, jthread thread, jobject object) {
 
 	jlong thr_id_ptr;
-	jvmti->GetTag(thread,&thr_id_ptr);
+	jvmti->GetTag(thread, &thr_id_ptr);
 
 	AgentMessage agentMessage;
 	agentMessage.mutable_contendedmonitor()->set_threadid(thr_id_ptr);
-	Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
+	Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 }
 
-// Thread Start callback
+/** A new thread is started */
 static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 		jthread thread) {
 
@@ -187,12 +200,12 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 	{
 		AgentMessage agentMessage;
 		agentMessage = mergeThreadData(agentMessage, thread, true);
-		Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
 }
 
-// Thread End callback
+/** Thread End callback */
 static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 		jthread thread) {
 
@@ -200,12 +213,12 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 	{
 		AgentMessage agentMessage;
 		agentMessage = mergeThreadData(agentMessage, thread, false);
-		Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
 }
 
-// Exception callback
+/** Exception callback */
 static void JNICALL callbackException(jvmtiEnv *jvmti_env, JNIEnv* env,
 		jthread thr, jmethodID method, jlocation location, jobject exception,
 		jmethodID catch_method, jlocation catch_location) {
@@ -217,7 +230,7 @@ static void JNICALL callbackException(jvmtiEnv *jvmti_env, JNIEnv* env,
 	exit_critical_section(jvmti);
 
 }
-// VM Death callback
+/** VM Death callback */
 static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 	enter_critical_section(jvmti);
 	{
@@ -237,13 +250,13 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 			for (int i = 0; i < threadCount; ++i) {
 				agentMessage = mergeThreadData(agentMessage, threads[i], true);
 			}
-			Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
+			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
 		exit_critical_section(jvmti);
 	}
 }
 
-/* Get a name for a jthread */
+/** Get a name for a jthread */
 static void get_thread_name(jvmtiEnv *jvmti, jthread thread, char *tname,
 		int maxlen) {
 	jvmtiThreadInfo info;
@@ -281,7 +294,7 @@ static void get_thread_name(jvmtiEnv *jvmti, jthread thread, char *tname,
 	}
 }
 
-// VM init callback
+/** VM init callback */
 static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		jthread thread) {
 	enter_critical_section(jvmti);
@@ -330,13 +343,13 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 			for (int i = 0; i < threadCount; ++i) {
 				agentMessage = mergeThreadData(agentMessage, threads[i], true);
 			}
-			Agent::Helper::commitAgentMessage(agentMessage,agentSocket,JVM_ID);
+			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
 	}
 	exit_critical_section(jvmti);
 }
 
-/* JVMTI callback function. */
+/** JVMTI callback function. */
 static jvmtiIterationControl JNICALL
 reference_object(jvmtiObjectReferenceKind reference_kind, jlong class_tag,
 		jlong size, jlong* tag_ptr, jlong referrer_tag, jint referrer_index,

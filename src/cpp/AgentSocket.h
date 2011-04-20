@@ -17,6 +17,11 @@ class AgentSocket {
 public:
 	AgentSocket(std::string ip, std::string port);
 	virtual ~AgentSocket();
+	/**
+	 * Sends the streambuf data to a specified socket and closed it.
+	 *
+	 * @param b
+	 */
 	void send(boost::asio::streambuf &b);
 
 private:

@@ -24,8 +24,16 @@ namespace Agent {
 
 namespace Helper {
 
-void commitAgentMessage(AgentMessage agentMessage,
-		AgentSocket agentSocket, int JVM_ID);
+/**
+ * Sends an agent message via socket to the listening interface.
+ * The message is serialized to a byte stream.
+ *
+ * @param agentMessage
+ * @param agentSocket
+ * @param JVM_ID
+ */
+void commitAgentMessage(AgentMessage agentMessage, AgentSocket agentSocket,
+		int JVM_ID);
 
 }
 }

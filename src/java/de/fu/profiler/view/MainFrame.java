@@ -20,52 +20,85 @@ import de.fu.profiler.controller.ThreadTableModel;
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.Profiler;
 
+/**
+ * The graphical user interface of the profiler.
+ * 
+ * @author Konrad Johannes Reiche
+ * 
+ */
 public class MainFrame extends JFrame {
 
 	/**
-	 * generated serial UID
+	 * Generated serial version ID
 	 */
 	private static final long serialVersionUID = -6342475722971843766L;
 
+	/**
+	 * The profiler itself.
+	 */
 	Profiler profiler;
+
+	/**
+	 * The table displays the threads of the JVM.
+	 */
 	JTable table;
+
+	/**
+	 * The table model for displaying the threads of the JVM.
+	 */
 	TableModel tableModel;
+
+	/**
+	 * The list model for displaying the available JVMs.
+	 */
 	DefaultListModel listModel;
+
+	/**
+	 * The list for displaying the available JVMs.
+	 */
 	JList list;
 
+	/**
+	 * Initializes the elements for the graphical interface.
+	 * 
+	 * @param profiler
+	 *            the profiler itself.
+	 * @throws ClassNotFoundException
+	 *             if the <code>LookAndFeel</code> class could not be found
+	 * @throws InstantiationException
+	 *             if a new instance of the class couldn't be created
+	 * @throws IllegalAccessException
+	 *             if the class or initializer isn't accessible
+	 * @throws UnsupportedLookAndFeelException
+	 *             if <code>lnf.isSupportedLookAndFeel()</code> is false
+	 */
 	public MainFrame(Profiler profiler) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException,
 			UnsupportedLookAndFeelException {
 
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		this.profiler = profiler;
 		this.setPreferredSize(new Dimension(500, 400));
 		this.setLayout(new GridLayout(1, 1));
-		
+
 		tableModel = new ThreadTableModel();
 		listModel = new DefaultListModel();
 		this.table = new JTable(tableModel);
 		this.list = new JList(listModel);
-		
-		
-		// creates the thread table in a scrollable Panel
+
 		JScrollPane scrollPane = new JScrollPane(table);
-		
-		// creates a tabbed panel
 		JTabbedPane tabbedPane = new JTabbedPane();
-		
-		// adds the scrollable panel to the tabbed panel
 		tabbedPane.add("Overview", scrollPane);
-		
 
 		for (JVM jvm : profiler.getIDsToJVMs().values()) {
 			listModel.addElement("JVM " + "(pid: " + jvm.getId() + ")");
 		}
 
 		table.setFillsViewportHeight(true);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, list,tabbedPane);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				list, tabbedPane);
 		this.add(splitPane);
 
 		this.setSize(500, 400);

@@ -4,31 +4,59 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Observer;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import de.fu.profiler.controller.ThreadTableModel;
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ThreadInfo;
-import de.fu.profiler.protobuf.AgentMessageProtos;
 import de.fu.profiler.view.MainFrame;
 
+/**
+ * Handles incoming connects and parses the incoming data. Based on the incoming
+ * data the model is updated.
+ * 
+ * @author Konrad Johannes Reiche
+ * 
+ */
 public class ConnectionHandler implements Runnable {
 
+	/**
+	 * The client socket.
+	 */
 	Socket socket;
+
+	/**
+	 * The main frame of the graphical interface.
+	 */
 	MainFrame mainFrame;
 
-	public ConnectionHandler(Socket socket, MainFrame mainFrame)
-			throws ParserConfigurationException {
+	/**
+	 * Standard constructor.
+	 * 
+	 * @param socket
+	 *            the client socket
+	 * @param mainFrame
+	 *            the main frame of the graphical interface
+	 */
+	public ConnectionHandler(Socket socket, MainFrame mainFrame) {
 		super();
 		this.socket = socket;
 		this.mainFrame = mainFrame;
 	}
 
+	/**
+	 * Parses one protobuf message and updates the model due to the stored
+	 * information. The message fields are checked for being set. If the message
+	 * fields are set their information can be used to update the model.
+	 * <p>
+	 * The model is chosen based on the generated id of the profiled JVM. Access
+	 * to the list of JVMs has to be synchronized as access to it might be done
+	 * by many {@link ConnectionHandler}.
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 
 		try {
-
 			AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
 					.parseDelimitedFrom(socket.getInputStream());
 
@@ -50,7 +78,7 @@ public class ConnectionHandler implements Runnable {
 				boolean isStart = agentMessage.getThreads().getLifeCycle()
 						.equals("start") ? true : false;
 
-				for (de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread thread : agentMessage
+				for (de.fu.profiler.AgentMessageProtos.AgentMessage.Threads.Thread thread : agentMessage
 						.getThreads().getThreadList()) {
 
 					if (isStart) {
@@ -73,14 +101,15 @@ public class ConnectionHandler implements Runnable {
 
 			if (agentMessage.getContendedMonitor().isInitialized()) {
 				for (ThreadInfo t : jvm.getThreads()) {
-					if (t.getId() == agentMessage.getContendedMonitor().getThreadId()) {
+					if (t.getId() == agentMessage.getContendedMonitor()
+							.getThreadId()) {
 						t.incContendedMonitorWait();
 					}
 				}
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("IOException: " + e.getMessage());
 			e.printStackTrace();
 		}
 

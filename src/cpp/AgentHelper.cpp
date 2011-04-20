@@ -5,11 +5,9 @@
  *      Author: Konrad Johannes Reiche
  */
 
-
 #include "AgentHelper.h"
 
 using namespace google::protobuf::io;
-
 
 void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 		AgentSocket agentSocket, int JVM_ID) {

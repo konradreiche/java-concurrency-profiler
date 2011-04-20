@@ -1,5 +1,3 @@
-
-
 public class ThreadPlayground {
 
 	public static class SimpleTask implements Runnable {

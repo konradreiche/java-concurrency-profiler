@@ -4,43 +4,77 @@ import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ThreadInfo;
 
+/**
+ * Provides a {@link TableModel} for displaying the profiled threads in a
+ * {@link JTable}.
+ * 
+ * @author Konrad Johannes Reiche
+ * 
+ */
 public class ThreadTableModel extends AbstractTableModel implements Observer {
 
-	private static final long serialVersionUID = -737908470678111339L;
+	/**
+	 * generated serial version ID
+	 */
+	private static final long serialVersionUID = 226417728835659052L;
 
-	String[] columnNames = { "ID", "Name", "Priority", "State", "Context Class Loader" };
-	
+	/**
+	 * Column names. 
+	 */
+	String[] columnNames = { "ID", "Name", "Priority", "State",
+			"Context Class Loader" };
+
+	/**
+	 * The current actively profiled JVM. 
+	 */
 	JVM jvm;
 
+	/**
+	 * Standard constructor.
+	 */
 	public ThreadTableModel() {
 		super();
 	}
 
+	/**
+	 * @see javax.swing.table.TableModel#getRowCount()
+	 */
 	@Override
 	public int getRowCount() {
-		
+
 		if (jvm == null) {
 			return 0;
 		} else {
-			return jvm.getThreads().size();			
-		}		
+			return jvm.getThreads().size();
+		}
 	}
 
+	/**
+	 * @see javax.swing.table.TableModel#getColumnCount()
+	 */
 	@Override
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
+	/**
+	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+	 */
 	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
 
+	/**
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
+	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
@@ -49,7 +83,7 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 		for (int i = 0; i <= rowIndex && it.hasNext(); ++i) {
 			threadInfo = it.next();
 		}
-		
+
 		if (threadInfo == null) {
 			return null;
 		}
@@ -69,11 +103,14 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 			return null;
 		}
 	}
-	
+
 	public void setCurrentJVM(JVM jvm) {
 		this.jvm = jvm;
 	}
 
+	/**
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		fireTableDataChanged();
