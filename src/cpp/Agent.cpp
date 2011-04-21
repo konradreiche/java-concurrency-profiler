@@ -104,25 +104,25 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 	std::string threadState;
 	switch (thr_st_ptr & JVMTI_JAVA_LANG_THREAD_STATE_MASK) {
 	case JVMTI_JAVA_LANG_THREAD_STATE_NEW:
-		threadState = "NEW";
+		threadState = "New";
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_TERMINATED:
-		threadState = "TERMINATED";
+		threadState = "Terminated";
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_RUNNABLE:
-		threadState = "RUNNABLE";
+		threadState = "Runnable";
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_BLOCKED:
-		threadState = "BLOCKED";
+		threadState = "Blocked";
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_WAITING:
-		threadState = "WAITING";
+		threadState = "Waiting";
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_TIMED_WAITING:
-		threadState = "TIMED_WAITING";
+		threadState = "Timed Waiting";
 		break;
 	default:
-		threadState = "NONE";
+		threadState = "null";
 		break;
 	}
 

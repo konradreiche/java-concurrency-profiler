@@ -8,6 +8,10 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import org.jfree.data.general.DatasetChangeEvent;
+import org.jfree.data.general.DatasetChangeListener;
+import org.jfree.data.general.DefaultPieDataset;
+
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ThreadInfo;
 
@@ -26,21 +30,26 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 	private static final long serialVersionUID = 226417728835659052L;
 
 	/**
-	 * Column names. 
+	 * Column names.
 	 */
 	String[] columnNames = { "ID", "Name", "Priority", "State",
 			"Context Class Loader" };
 
 	/**
-	 * The current actively profiled JVM. 
+	 * The current actively profiled JVM.
 	 */
 	JVM jvm;
 
+	DefaultPieDataset threadPieChartDataset;
+
 	/**
 	 * Standard constructor.
+	 * 
+	 * @param threadPieChartDataset
 	 */
-	public ThreadTableModel() {
+	public ThreadTableModel(DefaultPieDataset threadPieChartDataset) {
 		super();
+		this.threadPieChartDataset = threadPieChartDataset;
 	}
 
 	/**
@@ -109,11 +118,20 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 	}
 
 	/**
+	 * Updates the table and the pie chart diagram.
+	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
+
+		for (ThreadInfo thread : jvm.getThreads()) {
+			int currentValue = threadPieChartDataset
+					.getValue(thread.getState()).intValue();
+			currentValue++;
+			threadPieChartDataset.setValue(thread.getState(), currentValue);
+		}
+
 		fireTableDataChanged();
 	}
-
 }
