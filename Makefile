@@ -1,5 +1,6 @@
 INCLUDES = -I/usr/lib/jvm/java-1.6.0-openjdk/include
 CC = g++
+PROTOBUF = protoc
 CCFLAGS = -fPIC
 
 OUT = bin/cpp
@@ -18,7 +19,10 @@ bin/cpp/%.o : src/cpp/%.cc src/cpp/%.h
 	${CC} $(INCLUDES) -c $(CCFLAGS) -o $@ $<
 
 libagent : $(OBJECTS)
+	${PROTOBUF} -I=src/protobuf --java_out=./src/java src/protobuf/AgentMessage.proto
+	${PROTOBUF} -I=src/protobuf --cpp_out=./src/cpp src/protobuf/AgentMessage.proto
 	${CC} -shared -o bin/cpp/libagent.so $(OBJECTS) $(LIBS)
+	
 
 all: libagent
 

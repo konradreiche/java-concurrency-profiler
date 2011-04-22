@@ -13,12 +13,14 @@
 
 namespace Agent {
 
-void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
-		jthread thread);
-
-void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env, jthread,
+void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env, jthread thread,
 		jobject object, jlong timeout);
 
+void JNICALL MonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
+		jthread thread, jobject object, jboolean timed_out);
+
+void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
+		jthread thread);
 }
 
 #endif /* AGENT_H_ */

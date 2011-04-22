@@ -1,4 +1,4 @@
-option java_package = "de.fu.profiler.protobuf";
+option java_package = "de.fu.profiler";
 option java_outer_classname = "AgentMessageProtos";
 
 message AgentMessage {
@@ -17,6 +17,7 @@ message AgentMessage {
 			required int32 priority = 3;
 			required string state = 4;
 			required bool isContextClassLoaderSet = 5;
+			required bool isWaitingOnMonitor = 6;
 		}
 
 		repeated Thread thread = 2;

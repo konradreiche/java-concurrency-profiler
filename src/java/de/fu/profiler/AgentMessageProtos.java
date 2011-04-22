@@ -124,6 +124,10 @@ public final class AgentMessageProtos {
         // required bool isContextClassLoaderSet = 5;
         boolean hasIsContextClassLoaderSet();
         boolean getIsContextClassLoaderSet();
+        
+        // required bool isWaitingOnMonitor = 6;
+        boolean hasIsWaitingOnMonitor();
+        boolean getIsWaitingOnMonitor();
       }
       public static final class Thread extends
           com.google.protobuf.GeneratedMessage
@@ -248,12 +252,23 @@ public final class AgentMessageProtos {
           return isContextClassLoaderSet_;
         }
         
+        // required bool isWaitingOnMonitor = 6;
+        public static final int ISWAITINGONMONITOR_FIELD_NUMBER = 6;
+        private boolean isWaitingOnMonitor_;
+        public boolean hasIsWaitingOnMonitor() {
+          return ((bitField0_ & 0x00000020) == 0x00000020);
+        }
+        public boolean getIsWaitingOnMonitor() {
+          return isWaitingOnMonitor_;
+        }
+        
         private void initFields() {
           id_ = 0;
           name_ = "";
           priority_ = 0;
           state_ = "";
           isContextClassLoaderSet_ = false;
+          isWaitingOnMonitor_ = false;
         }
         private byte memoizedIsInitialized = -1;
         public final boolean isInitialized() {
@@ -280,6 +295,10 @@ public final class AgentMessageProtos {
             memoizedIsInitialized = 0;
             return false;
           }
+          if (!hasIsWaitingOnMonitor()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
           memoizedIsInitialized = 1;
           return true;
         }
@@ -301,6 +320,9 @@ public final class AgentMessageProtos {
           }
           if (((bitField0_ & 0x00000010) == 0x00000010)) {
             output.writeBool(5, isContextClassLoaderSet_);
+          }
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
+            output.writeBool(6, isWaitingOnMonitor_);
           }
           getUnknownFields().writeTo(output);
         }
@@ -330,6 +352,10 @@ public final class AgentMessageProtos {
           if (((bitField0_ & 0x00000010) == 0x00000010)) {
             size += com.google.protobuf.CodedOutputStream
               .computeBoolSize(5, isContextClassLoaderSet_);
+          }
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
+            size += com.google.protobuf.CodedOutputStream
+              .computeBoolSize(6, isWaitingOnMonitor_);
           }
           size += getUnknownFields().getSerializedSize();
           memoizedSerializedSize = size;
@@ -434,7 +460,7 @@ public final class AgentMessageProtos {
             return de.fu.profiler.AgentMessageProtos.internal_static_AgentMessage_Threads_Thread_fieldAccessorTable;
           }
           
-          // Construct using de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.Thread.newBuilder()
+          // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.Threads.Thread.newBuilder()
           private Builder() {
             maybeForceBuilderInitialization();
           }
@@ -463,6 +489,8 @@ public final class AgentMessageProtos {
             bitField0_ = (bitField0_ & ~0x00000008);
             isContextClassLoaderSet_ = false;
             bitField0_ = (bitField0_ & ~0x00000010);
+            isWaitingOnMonitor_ = false;
+            bitField0_ = (bitField0_ & ~0x00000020);
             return this;
           }
           
@@ -521,6 +549,10 @@ public final class AgentMessageProtos {
               to_bitField0_ |= 0x00000010;
             }
             result.isContextClassLoaderSet_ = isContextClassLoaderSet_;
+            if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+              to_bitField0_ |= 0x00000020;
+            }
+            result.isWaitingOnMonitor_ = isWaitingOnMonitor_;
             result.bitField0_ = to_bitField0_;
             onBuilt();
             return result;
@@ -552,6 +584,9 @@ public final class AgentMessageProtos {
             if (other.hasIsContextClassLoaderSet()) {
               setIsContextClassLoaderSet(other.getIsContextClassLoaderSet());
             }
+            if (other.hasIsWaitingOnMonitor()) {
+              setIsWaitingOnMonitor(other.getIsWaitingOnMonitor());
+            }
             this.mergeUnknownFields(other.getUnknownFields());
             return this;
           }
@@ -574,6 +609,10 @@ public final class AgentMessageProtos {
               return false;
             }
             if (!hasIsContextClassLoaderSet()) {
+              
+              return false;
+            }
+            if (!hasIsWaitingOnMonitor()) {
               
               return false;
             }
@@ -626,6 +665,11 @@ public final class AgentMessageProtos {
                 case 40: {
                   bitField0_ |= 0x00000010;
                   isContextClassLoaderSet_ = input.readBool();
+                  break;
+                }
+                case 48: {
+                  bitField0_ |= 0x00000020;
+                  isWaitingOnMonitor_ = input.readBool();
                   break;
                 }
               }
@@ -765,6 +809,27 @@ public final class AgentMessageProtos {
           public Builder clearIsContextClassLoaderSet() {
             bitField0_ = (bitField0_ & ~0x00000010);
             isContextClassLoaderSet_ = false;
+            onChanged();
+            return this;
+          }
+          
+          // required bool isWaitingOnMonitor = 6;
+          private boolean isWaitingOnMonitor_ ;
+          public boolean hasIsWaitingOnMonitor() {
+            return ((bitField0_ & 0x00000020) == 0x00000020);
+          }
+          public boolean getIsWaitingOnMonitor() {
+            return isWaitingOnMonitor_;
+          }
+          public Builder setIsWaitingOnMonitor(boolean value) {
+            bitField0_ |= 0x00000020;
+            isWaitingOnMonitor_ = value;
+            onChanged();
+            return this;
+          }
+          public Builder clearIsWaitingOnMonitor() {
+            bitField0_ = (bitField0_ & ~0x00000020);
+            isWaitingOnMonitor_ = false;
             onChanged();
             return this;
           }
@@ -986,7 +1051,7 @@ public final class AgentMessageProtos {
           return de.fu.profiler.AgentMessageProtos.internal_static_AgentMessage_Threads_fieldAccessorTable;
         }
         
-        // Construct using de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.Threads.newBuilder()
+        // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.Threads.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1585,7 +1650,7 @@ public final class AgentMessageProtos {
           return de.fu.profiler.AgentMessageProtos.internal_static_AgentMessage_ContendedMonitor_fieldAccessorTable;
         }
         
-        // Construct using de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.ContendedMonitor.newBuilder()
+        // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.ContendedMonitor.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1992,7 +2057,7 @@ public final class AgentMessageProtos {
         return de.fu.profiler.AgentMessageProtos.internal_static_AgentMessage_fieldAccessorTable;
       }
       
-      // Construct using de.fu.profiler.protobuf.AgentMessageProtos.AgentMessage.newBuilder()
+      // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2481,17 +2546,18 @@ public final class AgentMessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022AgentMessage.proto\"\354\002\n\014AgentMessage\022\021\n" +
+      "\n\022AgentMessage.proto\"\211\003\n\014AgentMessage\022\021\n" +
       "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022&\n\007thre" +
       "ads\030\003 \001(\0132\025.AgentMessage.Threads\0228\n\020cont" +
       "endedMonitor\030\004 \001(\0132\036.AgentMessage.Conten" +
-      "dedMonitor\032\260\001\n\007Threads\022\021\n\tlifeCycle\030\001 \002(" +
+      "dedMonitor\032\315\001\n\007Threads\022\021\n\tlifeCycle\030\001 \002(" +
       "\t\022,\n\006thread\030\002 \003(\0132\034.AgentMessage.Threads" +
-      ".Thread\032d\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 " +
-      "\002(\t\022\020\n\010priority\030\003 \002(\005\022\r\n\005state\030\004 \002(\t\022\037\n\027" +
-      "isContextClassLoaderSet\030\005 \002(\010\032$\n\020Contend" +
-      "edMonitor\022\020\n\010threadId\030\001 \002(\005B-\n\027de.fu.pro",
-      "filer.protobufB\022AgentMessageProtos"
+      ".Thread\032\200\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002" +
+      " \002(\t\022\020\n\010priority\030\003 \002(\005\022\r\n\005state\030\004 \002(\t\022\037\n" +
+      "\027isContextClassLoaderSet\030\005 \002(\010\022\032\n\022isWait" +
+      "ingOnMonitor\030\006 \002(\010\032$\n\020ContendedMonitor\022\020",
+      "\n\010threadId\030\001 \002(\005B$\n\016de.fu.profilerB\022Agen" +
+      "tMessageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2519,7 +2585,7 @@ public final class AgentMessageProtos {
           internal_static_AgentMessage_Threads_Thread_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_Threads_Thread_descriptor,
-              new java.lang.String[] { "Id", "Name", "Priority", "State", "IsContextClassLoaderSet", },
+              new java.lang.String[] { "Id", "Name", "Priority", "State", "IsContextClassLoaderSet", "IsWaitingOnMonitor", },
               de.fu.profiler.AgentMessageProtos.AgentMessage.Threads.Thread.class,
               de.fu.profiler.AgentMessageProtos.AgentMessage.Threads.Thread.Builder.class);
           internal_static_AgentMessage_ContendedMonitor_descriptor =

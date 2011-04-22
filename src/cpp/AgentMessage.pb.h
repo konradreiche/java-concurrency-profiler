@@ -134,6 +134,13 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   inline bool iscontextclassloaderset() const;
   inline void set_iscontextclassloaderset(bool value);
   
+  // required bool isWaitingOnMonitor = 6;
+  inline bool has_iswaitingonmonitor() const;
+  inline void clear_iswaitingonmonitor();
+  static const int kIsWaitingOnMonitorFieldNumber = 6;
+  inline bool iswaitingonmonitor() const;
+  inline void set_iswaitingonmonitor(bool value);
+  
   // @@protoc_insertion_point(class_scope:AgentMessage.Threads.Thread)
  private:
   inline void set_has_id();
@@ -146,6 +153,8 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   inline void clear_has_state();
   inline void set_has_iscontextclassloaderset();
   inline void clear_has_iscontextclassloaderset();
+  inline void set_has_iswaitingonmonitor();
+  inline void clear_has_iswaitingonmonitor();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -154,9 +163,10 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   ::google::protobuf::int32 priority_;
   ::std::string* state_;
   bool iscontextclassloaderset_;
+  bool iswaitingonmonitor_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -656,6 +666,28 @@ inline bool AgentMessage_Threads_Thread::iscontextclassloaderset() const {
 inline void AgentMessage_Threads_Thread::set_iscontextclassloaderset(bool value) {
   set_has_iscontextclassloaderset();
   iscontextclassloaderset_ = value;
+}
+
+// required bool isWaitingOnMonitor = 6;
+inline bool AgentMessage_Threads_Thread::has_iswaitingonmonitor() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void AgentMessage_Threads_Thread::set_has_iswaitingonmonitor() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void AgentMessage_Threads_Thread::clear_has_iswaitingonmonitor() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void AgentMessage_Threads_Thread::clear_iswaitingonmonitor() {
+  iswaitingonmonitor_ = false;
+  clear_has_iswaitingonmonitor();
+}
+inline bool AgentMessage_Threads_Thread::iswaitingonmonitor() const {
+  return iswaitingonmonitor_;
+}
+inline void AgentMessage_Threads_Thread::set_iswaitingonmonitor(bool value) {
+  set_has_iswaitingonmonitor();
+  iswaitingonmonitor_ = value;
 }
 
 // -------------------------------------------------------------------

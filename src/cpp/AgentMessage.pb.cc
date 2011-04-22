@@ -72,12 +72,13 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(AgentMessage_Threads));
   AgentMessage_Threads_Thread_descriptor_ = AgentMessage_Threads_descriptor_->nested_type(0);
-  static const int AgentMessage_Threads_Thread_offsets_[5] = {
+  static const int AgentMessage_Threads_Thread_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, priority_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, iscontextclassloaderset_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, iswaitingonmonitor_),
   };
   AgentMessage_Threads_Thread_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -147,17 +148,18 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022AgentMessage.proto\"\354\002\n\014AgentMessage\022\021\n"
+    "\n\022AgentMessage.proto\"\211\003\n\014AgentMessage\022\021\n"
     "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022&\n\007thre"
     "ads\030\003 \001(\0132\025.AgentMessage.Threads\0228\n\020cont"
     "endedMonitor\030\004 \001(\0132\036.AgentMessage.Conten"
-    "dedMonitor\032\260\001\n\007Threads\022\021\n\tlifeCycle\030\001 \002("
+    "dedMonitor\032\315\001\n\007Threads\022\021\n\tlifeCycle\030\001 \002("
     "\t\022,\n\006thread\030\002 \003(\0132\034.AgentMessage.Threads"
-    ".Thread\032d\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 "
-    "\002(\t\022\020\n\010priority\030\003 \002(\005\022\r\n\005state\030\004 \002(\t\022\037\n\027"
-    "isContextClassLoaderSet\030\005 \002(\010\032$\n\020Contend"
-    "edMonitor\022\020\n\010threadId\030\001 \002(\005B-\n\027de.fu.pro"
-    "filer.protobufB\022AgentMessageProtos", 434);
+    ".Thread\032\200\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002"
+    " \002(\t\022\020\n\010priority\030\003 \002(\005\022\r\n\005state\030\004 \002(\t\022\037\n"
+    "\027isContextClassLoaderSet\030\005 \002(\010\022\032\n\022isWait"
+    "ingOnMonitor\030\006 \002(\010\032$\n\020ContendedMonitor\022\020"
+    "\n\010threadId\030\001 \002(\005B$\n\016de.fu.profilerB\022Agen"
+    "tMessageProtos", 454);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "AgentMessage.proto", &protobuf_RegisterTypes);
   AgentMessage::default_instance_ = new AgentMessage();
@@ -187,6 +189,7 @@ const int AgentMessage_Threads_Thread::kNameFieldNumber;
 const int AgentMessage_Threads_Thread::kPriorityFieldNumber;
 const int AgentMessage_Threads_Thread::kStateFieldNumber;
 const int AgentMessage_Threads_Thread::kIsContextClassLoaderSetFieldNumber;
+const int AgentMessage_Threads_Thread::kIsWaitingOnMonitorFieldNumber;
 #endif  // !_MSC_VER
 
 AgentMessage_Threads_Thread::AgentMessage_Threads_Thread()
@@ -210,6 +213,7 @@ void AgentMessage_Threads_Thread::SharedCtor() {
   priority_ = 0;
   state_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   iscontextclassloaderset_ = false;
+  iswaitingonmonitor_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -263,6 +267,7 @@ void AgentMessage_Threads_Thread::Clear() {
       }
     }
     iscontextclassloaderset_ = false;
+    iswaitingonmonitor_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -351,6 +356,22 @@ bool AgentMessage_Threads_Thread::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(48)) goto parse_isWaitingOnMonitor;
+        break;
+      }
+      
+      // required bool isWaitingOnMonitor = 6;
+      case 6: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_isWaitingOnMonitor:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &iswaitingonmonitor_)));
+          set_has_iswaitingonmonitor();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -406,6 +427,11 @@ void AgentMessage_Threads_Thread::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->iscontextclassloaderset(), output);
   }
   
+  // required bool isWaitingOnMonitor = 6;
+  if (has_iswaitingonmonitor()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->iswaitingonmonitor(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -447,6 +473,11 @@ void AgentMessage_Threads_Thread::SerializeWithCachedSizes(
   // required bool isContextClassLoaderSet = 5;
   if (has_iscontextclassloaderset()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->iscontextclassloaderset(), target);
+  }
+  
+  // required bool isWaitingOnMonitor = 6;
+  if (has_iswaitingonmonitor()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->iswaitingonmonitor(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -493,6 +524,11 @@ int AgentMessage_Threads_Thread::ByteSize() const {
       total_size += 1 + 1;
     }
     
+    // required bool isWaitingOnMonitor = 6;
+    if (has_iswaitingonmonitor()) {
+      total_size += 1 + 1;
+    }
+    
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -535,6 +571,9 @@ void AgentMessage_Threads_Thread::MergeFrom(const AgentMessage_Threads_Thread& f
     if (from.has_iscontextclassloaderset()) {
       set_iscontextclassloaderset(from.iscontextclassloaderset());
     }
+    if (from.has_iswaitingonmonitor()) {
+      set_iswaitingonmonitor(from.iswaitingonmonitor());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -552,7 +591,7 @@ void AgentMessage_Threads_Thread::CopyFrom(const AgentMessage_Threads_Thread& fr
 }
 
 bool AgentMessage_Threads_Thread::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
+  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
   
   return true;
 }
@@ -564,6 +603,7 @@ void AgentMessage_Threads_Thread::Swap(AgentMessage_Threads_Thread* other) {
     std::swap(priority_, other->priority_);
     std::swap(state_, other->state_);
     std::swap(iscontextclassloaderset_, other->iscontextclassloaderset_);
+    std::swap(iswaitingonmonitor_, other->iswaitingonmonitor_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

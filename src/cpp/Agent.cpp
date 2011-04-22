@@ -87,7 +87,7 @@ static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
  * @return the extended agent message.
  */
 static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
-		bool lifeCycle) {
+		bool lifeCycle, bool isWaitingOnMonitor) {
 
 	jvmtiThreadInfo jvmtiThreadInfo;
 	jint thr_st_ptr;
@@ -143,6 +143,7 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 	newThread->set_state(threadState);
 	newThread->set_iscontextclassloaderset(jvmtiThreadInfo.context_class_loader
 			== NULL);
+	newThread->set_iswaitingonmonitor(isWaitingOnMonitor);
 
 	return agentMessage;
 }
@@ -192,6 +193,38 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 	Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 }
 
+/**
+ * Sent when a thread is about to wait on an object. That is, a thread is
+ * entering Object.wait(). This event is sent only during the live phase.
+ */
+void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env, jthread thread,
+		jobject object, jlong timeout) {
+
+	enter_critical_section(jvmti);
+	{
+		AgentMessage agentMessage;
+		agentMessage = mergeThreadData(agentMessage, thread, true, true);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+	}
+	exit_critical_section(jvmti);
+}
+
+/**
+ * Sent when a thread finishes waiting on an object. That is, a thread is
+ * leaving Object.wait(). This event is sent only during the live phase.
+ */
+void JNICALL MonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
+		jthread thread, jobject object, jboolean timed_out) {
+
+	enter_critical_section(jvmti);
+	{
+		AgentMessage agentMessage;
+		agentMessage = mergeThreadData(agentMessage, thread, true, false);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+	}
+	exit_critical_section(jvmti);
+}
+
 /** A new thread is started */
 static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 		jthread thread) {
@@ -199,7 +232,7 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, true);
+		agentMessage = mergeThreadData(agentMessage, thread, true, false);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -212,7 +245,7 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, false);
+		agentMessage = mergeThreadData(agentMessage, thread, false, false);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -248,7 +281,7 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				agentMessage = mergeThreadData(agentMessage, threads[i], true);
+				agentMessage = mergeThreadData(agentMessage, threads[i], false, false);
 			}
 			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
@@ -341,7 +374,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				agentMessage = mergeThreadData(agentMessage, threads[i], true);
+				agentMessage = mergeThreadData(agentMessage, threads[i], true, false);
 			}
 			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
