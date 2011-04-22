@@ -8,8 +8,6 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import org.jfree.data.general.DatasetChangeEvent;
-import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DefaultPieDataset;
 
 import de.fu.profiler.model.JVM;
@@ -125,11 +123,38 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 
+		int newCounter = 0;
+		int terminatedCounter = 0;
+		int runnableCounter = 0;
+		int blockedCounter = 0;
+		int waitingCounter = 0;
+		int timedWaitingCounter = 0;
+		
 		for (ThreadInfo thread : jvm.getThreads()) {
-			int currentValue = threadPieChartDataset
-					.getValue(thread.getState()).intValue();
-			currentValue++;
-			threadPieChartDataset.setValue(thread.getState(), currentValue);
+			String state = thread.getState();
+			
+			if (state.equals("New")) {
+				newCounter++;
+			} else if (state.equals("Terminated")) {
+				terminatedCounter++;
+			} else if (state.equals("Runnable")) {
+				runnableCounter++;
+			} else if (state.equals("Blocked")) {
+				blockedCounter++;
+			} else if (state.equals("Waiting")) {
+				waitingCounter++;
+			} else if (state.equals("Timed Waiting")) {
+				timedWaitingCounter++;
+			} else {
+				assert(false);
+			}
+			
+			threadPieChartDataset.setValue("New", newCounter);
+			threadPieChartDataset.setValue("Terminated", terminatedCounter);
+			threadPieChartDataset.setValue("Runnable", runnableCounter);
+			threadPieChartDataset.setValue("Blocked", blockedCounter);
+			threadPieChartDataset.setValue("Waiting", waitingCounter);
+			threadPieChartDataset.setValue("Timed Waiting", timedWaitingCounter);
 		}
 
 		fireTableDataChanged();
