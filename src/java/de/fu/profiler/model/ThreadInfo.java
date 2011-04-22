@@ -35,6 +35,11 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	final boolean isContextClassLoaderSet;
 
 	/**
+	 * Whether the thread is waiting on a monitor.
+	 */
+	final boolean isWaitingOnMonitor;
+
+	/**
 	 * The number how much the thread has entered a contended monitor.
 	 */
 	int contendedMonitorWaitCount;
@@ -54,13 +59,14 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	 *            whether the context class loader is set.
 	 */
 	public ThreadInfo(int id, String name, int priority, String state,
-			boolean ccl) {
+			boolean ccl, boolean isWaitingOnMonitor) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.priority = priority;
 		this.state = state;
 		this.isContextClassLoaderSet = ccl;
+		this.isWaitingOnMonitor = isWaitingOnMonitor;
 	}
 
 	public int getId() {

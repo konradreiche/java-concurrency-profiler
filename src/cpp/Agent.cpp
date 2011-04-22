@@ -140,7 +140,8 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 	newThread->set_id(thr_id_ptr);
 	newThread->set_name(jvmtiThreadInfo.name);
 	newThread->set_priority(jvmtiThreadInfo.priority);
-	newThread->set_state(threadState);
+	newThread->set_state(lifeCycle ? threadState : "Terminated");
+	std::cout << threadState << std::endl;
 	newThread->set_iscontextclassloaderset(jvmtiThreadInfo.context_class_loader
 			== NULL);
 	newThread->set_iswaitingonmonitor(isWaitingOnMonitor);

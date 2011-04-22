@@ -75,18 +75,15 @@ public class ConnectionHandler implements Runnable {
 			}
 
 			if (agentMessage.getThreads().isInitialized()) {
-				boolean isStart = agentMessage.getThreads().getLifeCycle()
-						.equals("start") ? true : false;
-
+				
 				for (de.fu.profiler.AgentMessageProtos.AgentMessage.Threads.Thread thread : agentMessage
 						.getThreads().getThreadList()) {
-
-					if (isStart) {
 
 						ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
 								thread.getName(), thread.getPriority(),
 								thread.getState(),
-								thread.getIsContextClassLoaderSet());
+								thread.getIsContextClassLoaderSet(),
+								thread.getIsWaitingOnMonitor());
 
 						if (jvm.getThreads().contains(threadInfo)) {
 							jvm.getThreads().remove(threadInfo);
@@ -95,7 +92,6 @@ public class ConnectionHandler implements Runnable {
 						}
 
 						jvm.addThread(threadInfo);
-					}
 				}
 			}
 

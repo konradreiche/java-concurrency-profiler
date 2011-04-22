@@ -1,8 +1,8 @@
 package de.fu.profiler.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Models a Java Virtual Machine.
@@ -39,7 +39,7 @@ public class JVM extends Observable {
 		super();
 		this.id = id;
 		this.name = name;
-		this.threads = new ArrayList<ThreadInfo>();
+		this.threads = new CopyOnWriteArrayList<ThreadInfo>();
 	}
 
 	public int getId() {

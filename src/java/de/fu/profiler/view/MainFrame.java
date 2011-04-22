@@ -104,6 +104,9 @@ public class MainFrame extends JFrame {
 		this.list = new JList(listModel);
 
 		JPanel overview = new JPanel(new GridLayout(2, 1));
+		JPanel notifyWait = new JPanel(new GridLayout(1, 1));
+		JPanel locks = new JPanel(new GridLayout(1, 1));
+		
 		JScrollPane scrollPane = new JScrollPane(table);
 		JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -111,6 +114,8 @@ public class MainFrame extends JFrame {
 		overview.add(pieChart);
 
 		tabbedPane.add("Overview", overview);
+		tabbedPane.add("Notify/Wait", notifyWait);
+		tabbedPane.add("Locks",locks);		
 
 		for (JVM jvm : profiler.getIDsToJVMs().values()) {
 			listModel.addElement("JVM " + "(pid: " + jvm.getId() + ")");
