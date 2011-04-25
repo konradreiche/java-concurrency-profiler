@@ -33,7 +33,6 @@ void protobuf_ShutdownFile_AgentMessage_2eproto();
 class AgentMessage;
 class AgentMessage_Threads;
 class AgentMessage_Threads_Thread;
-class AgentMessage_ContendedMonitor;
 
 // ===================================================================
 
@@ -134,12 +133,19 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   inline bool iscontextclassloaderset() const;
   inline void set_iscontextclassloaderset(bool value);
   
-  // required bool isWaitingOnMonitor = 6;
-  inline bool has_iswaitingonmonitor() const;
-  inline void clear_iswaitingonmonitor();
-  static const int kIsWaitingOnMonitorFieldNumber = 6;
-  inline bool iswaitingonmonitor() const;
-  inline void set_iswaitingonmonitor(bool value);
+  // optional bool enteredMonitorWait = 6;
+  inline bool has_enteredmonitorwait() const;
+  inline void clear_enteredmonitorwait();
+  static const int kEnteredMonitorWaitFieldNumber = 6;
+  inline bool enteredmonitorwait() const;
+  inline void set_enteredmonitorwait(bool value);
+  
+  // optional bool leftMonitorWait = 7;
+  inline bool has_leftmonitorwait() const;
+  inline void clear_leftmonitorwait();
+  static const int kLeftMonitorWaitFieldNumber = 7;
+  inline bool leftmonitorwait() const;
+  inline void set_leftmonitorwait(bool value);
   
   // @@protoc_insertion_point(class_scope:AgentMessage.Threads.Thread)
  private:
@@ -153,8 +159,10 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   inline void clear_has_state();
   inline void set_has_iscontextclassloaderset();
   inline void clear_has_iscontextclassloaderset();
-  inline void set_has_iswaitingonmonitor();
-  inline void clear_has_iswaitingonmonitor();
+  inline void set_has_enteredmonitorwait();
+  inline void clear_has_enteredmonitorwait();
+  inline void set_has_leftmonitorwait();
+  inline void clear_has_leftmonitorwait();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -163,10 +171,11 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   ::google::protobuf::int32 priority_;
   ::std::string* state_;
   bool iscontextclassloaderset_;
-  bool iswaitingonmonitor_;
+  bool enteredmonitorwait_;
+  bool leftmonitorwait_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -278,88 +287,6 @@ class AgentMessage_Threads : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class AgentMessage_ContendedMonitor : public ::google::protobuf::Message {
- public:
-  AgentMessage_ContendedMonitor();
-  virtual ~AgentMessage_ContendedMonitor();
-  
-  AgentMessage_ContendedMonitor(const AgentMessage_ContendedMonitor& from);
-  
-  inline AgentMessage_ContendedMonitor& operator=(const AgentMessage_ContendedMonitor& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const AgentMessage_ContendedMonitor& default_instance();
-  
-  void Swap(AgentMessage_ContendedMonitor* other);
-  
-  // implements Message ----------------------------------------------
-  
-  AgentMessage_ContendedMonitor* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AgentMessage_ContendedMonitor& from);
-  void MergeFrom(const AgentMessage_ContendedMonitor& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 threadId = 1;
-  inline bool has_threadid() const;
-  inline void clear_threadid();
-  static const int kThreadIdFieldNumber = 1;
-  inline ::google::protobuf::int32 threadid() const;
-  inline void set_threadid(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:AgentMessage.ContendedMonitor)
- private:
-  inline void set_has_threadid();
-  inline void clear_has_threadid();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 threadid_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_AgentMessage_2eproto();
-  friend void protobuf_AssignDesc_AgentMessage_2eproto();
-  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static AgentMessage_ContendedMonitor* default_instance_;
-};
-// -------------------------------------------------------------------
-
 class AgentMessage : public ::google::protobuf::Message {
  public:
   AgentMessage();
@@ -413,7 +340,6 @@ class AgentMessage : public ::google::protobuf::Message {
   // nested types ----------------------------------------------------
   
   typedef AgentMessage_Threads Threads;
-  typedef AgentMessage_ContendedMonitor ContendedMonitor;
   
   // accessors -------------------------------------------------------
   
@@ -443,14 +369,6 @@ class AgentMessage : public ::google::protobuf::Message {
   inline ::AgentMessage_Threads* mutable_threads();
   inline ::AgentMessage_Threads* release_threads();
   
-  // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
-  inline bool has_contendedmonitor() const;
-  inline void clear_contendedmonitor();
-  static const int kContendedMonitorFieldNumber = 4;
-  inline const ::AgentMessage_ContendedMonitor& contendedmonitor() const;
-  inline ::AgentMessage_ContendedMonitor* mutable_contendedmonitor();
-  inline ::AgentMessage_ContendedMonitor* release_contendedmonitor();
-  
   // @@protoc_insertion_point(class_scope:AgentMessage)
  private:
   inline void set_has_timestamp();
@@ -459,18 +377,15 @@ class AgentMessage : public ::google::protobuf::Message {
   inline void clear_has_jvm_id();
   inline void set_has_threads();
   inline void clear_has_threads();
-  inline void set_has_contendedmonitor();
-  inline void clear_has_contendedmonitor();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::std::string* timestamp_;
   ::AgentMessage_Threads* threads_;
-  ::AgentMessage_ContendedMonitor* contendedmonitor_;
   ::google::protobuf::int32 jvm_id_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -668,26 +583,48 @@ inline void AgentMessage_Threads_Thread::set_iscontextclassloaderset(bool value)
   iscontextclassloaderset_ = value;
 }
 
-// required bool isWaitingOnMonitor = 6;
-inline bool AgentMessage_Threads_Thread::has_iswaitingonmonitor() const {
+// optional bool enteredMonitorWait = 6;
+inline bool AgentMessage_Threads_Thread::has_enteredmonitorwait() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }
-inline void AgentMessage_Threads_Thread::set_has_iswaitingonmonitor() {
+inline void AgentMessage_Threads_Thread::set_has_enteredmonitorwait() {
   _has_bits_[0] |= 0x00000020u;
 }
-inline void AgentMessage_Threads_Thread::clear_has_iswaitingonmonitor() {
+inline void AgentMessage_Threads_Thread::clear_has_enteredmonitorwait() {
   _has_bits_[0] &= ~0x00000020u;
 }
-inline void AgentMessage_Threads_Thread::clear_iswaitingonmonitor() {
-  iswaitingonmonitor_ = false;
-  clear_has_iswaitingonmonitor();
+inline void AgentMessage_Threads_Thread::clear_enteredmonitorwait() {
+  enteredmonitorwait_ = false;
+  clear_has_enteredmonitorwait();
 }
-inline bool AgentMessage_Threads_Thread::iswaitingonmonitor() const {
-  return iswaitingonmonitor_;
+inline bool AgentMessage_Threads_Thread::enteredmonitorwait() const {
+  return enteredmonitorwait_;
 }
-inline void AgentMessage_Threads_Thread::set_iswaitingonmonitor(bool value) {
-  set_has_iswaitingonmonitor();
-  iswaitingonmonitor_ = value;
+inline void AgentMessage_Threads_Thread::set_enteredmonitorwait(bool value) {
+  set_has_enteredmonitorwait();
+  enteredmonitorwait_ = value;
+}
+
+// optional bool leftMonitorWait = 7;
+inline bool AgentMessage_Threads_Thread::has_leftmonitorwait() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void AgentMessage_Threads_Thread::set_has_leftmonitorwait() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void AgentMessage_Threads_Thread::clear_has_leftmonitorwait() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void AgentMessage_Threads_Thread::clear_leftmonitorwait() {
+  leftmonitorwait_ = false;
+  clear_has_leftmonitorwait();
+}
+inline bool AgentMessage_Threads_Thread::leftmonitorwait() const {
+  return leftmonitorwait_;
+}
+inline void AgentMessage_Threads_Thread::set_leftmonitorwait(bool value) {
+  set_has_leftmonitorwait();
+  leftmonitorwait_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -775,32 +712,6 @@ AgentMessage_Threads::thread() const {
 inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Threads_Thread >*
 AgentMessage_Threads::mutable_thread() {
   return &thread_;
-}
-
-// -------------------------------------------------------------------
-
-// AgentMessage_ContendedMonitor
-
-// required int32 threadId = 1;
-inline bool AgentMessage_ContendedMonitor::has_threadid() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void AgentMessage_ContendedMonitor::set_has_threadid() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void AgentMessage_ContendedMonitor::clear_has_threadid() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void AgentMessage_ContendedMonitor::clear_threadid() {
-  threadid_ = 0;
-  clear_has_threadid();
-}
-inline ::google::protobuf::int32 AgentMessage_ContendedMonitor::threadid() const {
-  return threadid_;
-}
-inline void AgentMessage_ContendedMonitor::set_threadid(::google::protobuf::int32 value) {
-  set_has_threadid();
-  threadid_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -913,35 +824,6 @@ inline ::AgentMessage_Threads* AgentMessage::release_threads() {
   clear_has_threads();
   ::AgentMessage_Threads* temp = threads_;
   threads_ = NULL;
-  return temp;
-}
-
-// optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
-inline bool AgentMessage::has_contendedmonitor() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void AgentMessage::set_has_contendedmonitor() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void AgentMessage::clear_has_contendedmonitor() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void AgentMessage::clear_contendedmonitor() {
-  if (contendedmonitor_ != NULL) contendedmonitor_->::AgentMessage_ContendedMonitor::Clear();
-  clear_has_contendedmonitor();
-}
-inline const ::AgentMessage_ContendedMonitor& AgentMessage::contendedmonitor() const {
-  return contendedmonitor_ != NULL ? *contendedmonitor_ : *default_instance_->contendedmonitor_;
-}
-inline ::AgentMessage_ContendedMonitor* AgentMessage::mutable_contendedmonitor() {
-  set_has_contendedmonitor();
-  if (contendedmonitor_ == NULL) contendedmonitor_ = new ::AgentMessage_ContendedMonitor;
-  return contendedmonitor_;
-}
-inline ::AgentMessage_ContendedMonitor* AgentMessage::release_contendedmonitor() {
-  clear_has_contendedmonitor();
-  ::AgentMessage_ContendedMonitor* temp = contendedmonitor_;
-  contendedmonitor_ = NULL;
   return temp;
 }
 

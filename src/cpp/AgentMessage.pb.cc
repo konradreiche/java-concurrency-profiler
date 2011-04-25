@@ -24,9 +24,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* AgentMessage_Threads_Thread_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   AgentMessage_Threads_Thread_reflection_ = NULL;
-const ::google::protobuf::Descriptor* AgentMessage_ContendedMonitor_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  AgentMessage_ContendedMonitor_reflection_ = NULL;
 
 }  // namespace
 
@@ -38,11 +35,10 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       "AgentMessage.proto");
   GOOGLE_CHECK(file != NULL);
   AgentMessage_descriptor_ = file->message_type(0);
-  static const int AgentMessage_offsets_[4] = {
+  static const int AgentMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage, timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage, jvm_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage, threads_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage, contendedmonitor_),
   };
   AgentMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -72,13 +68,14 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(AgentMessage_Threads));
   AgentMessage_Threads_Thread_descriptor_ = AgentMessage_Threads_descriptor_->nested_type(0);
-  static const int AgentMessage_Threads_Thread_offsets_[6] = {
+  static const int AgentMessage_Threads_Thread_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, priority_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, iscontextclassloaderset_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, iswaitingonmonitor_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, enteredmonitorwait_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Threads_Thread, leftmonitorwait_),
   };
   AgentMessage_Threads_Thread_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -91,21 +88,6 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(AgentMessage_Threads_Thread));
-  AgentMessage_ContendedMonitor_descriptor_ = AgentMessage_descriptor_->nested_type(1);
-  static const int AgentMessage_ContendedMonitor_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_ContendedMonitor, threadid_),
-  };
-  AgentMessage_ContendedMonitor_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      AgentMessage_ContendedMonitor_descriptor_,
-      AgentMessage_ContendedMonitor::default_instance_,
-      AgentMessage_ContendedMonitor_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_ContendedMonitor, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_ContendedMonitor, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(AgentMessage_ContendedMonitor));
 }
 
 namespace {
@@ -124,8 +106,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
     AgentMessage_Threads_descriptor_, &AgentMessage_Threads::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     AgentMessage_Threads_Thread_descriptor_, &AgentMessage_Threads_Thread::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    AgentMessage_ContendedMonitor_descriptor_, &AgentMessage_ContendedMonitor::default_instance());
 }
 
 }  // namespace
@@ -137,8 +117,6 @@ void protobuf_ShutdownFile_AgentMessage_2eproto() {
   delete AgentMessage_Threads_reflection_;
   delete AgentMessage_Threads_Thread::default_instance_;
   delete AgentMessage_Threads_Thread_reflection_;
-  delete AgentMessage_ContendedMonitor::default_instance_;
-  delete AgentMessage_ContendedMonitor_reflection_;
 }
 
 void protobuf_AddDesc_AgentMessage_2eproto() {
@@ -148,28 +126,24 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022AgentMessage.proto\"\211\003\n\014AgentMessage\022\021\n"
+    "\n\022AgentMessage.proto\"\302\002\n\014AgentMessage\022\021\n"
     "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022&\n\007thre"
-    "ads\030\003 \001(\0132\025.AgentMessage.Threads\0228\n\020cont"
-    "endedMonitor\030\004 \001(\0132\036.AgentMessage.Conten"
-    "dedMonitor\032\315\001\n\007Threads\022\021\n\tlifeCycle\030\001 \002("
-    "\t\022,\n\006thread\030\002 \003(\0132\034.AgentMessage.Threads"
-    ".Thread\032\200\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002"
-    " \002(\t\022\020\n\010priority\030\003 \002(\005\022\r\n\005state\030\004 \002(\t\022\037\n"
-    "\027isContextClassLoaderSet\030\005 \002(\010\022\032\n\022isWait"
-    "ingOnMonitor\030\006 \002(\010\032$\n\020ContendedMonitor\022\020"
-    "\n\010threadId\030\001 \002(\005B$\n\016de.fu.profilerB\022Agen"
-    "tMessageProtos", 454);
+    "ads\030\003 \001(\0132\025.AgentMessage.Threads\032\346\001\n\007Thr"
+    "eads\022\021\n\tlifeCycle\030\001 \002(\t\022,\n\006thread\030\002 \003(\0132"
+    "\034.AgentMessage.Threads.Thread\032\231\001\n\006Thread"
+    "\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010priority\030\003"
+    " \002(\005\022\r\n\005state\030\004 \002(\t\022\037\n\027isContextClassLoa"
+    "derSet\030\005 \002(\010\022\032\n\022enteredMonitorWait\030\006 \001(\010"
+    "\022\027\n\017leftMonitorWait\030\007 \001(\010B$\n\016de.fu.profi"
+    "lerB\022AgentMessageProtos", 383);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "AgentMessage.proto", &protobuf_RegisterTypes);
   AgentMessage::default_instance_ = new AgentMessage();
   AgentMessage_Threads::default_instance_ = new AgentMessage_Threads();
   AgentMessage_Threads_Thread::default_instance_ = new AgentMessage_Threads_Thread();
-  AgentMessage_ContendedMonitor::default_instance_ = new AgentMessage_ContendedMonitor();
   AgentMessage::default_instance_->InitAsDefaultInstance();
   AgentMessage_Threads::default_instance_->InitAsDefaultInstance();
   AgentMessage_Threads_Thread::default_instance_->InitAsDefaultInstance();
-  AgentMessage_ContendedMonitor::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_AgentMessage_2eproto);
 }
 
@@ -189,7 +163,8 @@ const int AgentMessage_Threads_Thread::kNameFieldNumber;
 const int AgentMessage_Threads_Thread::kPriorityFieldNumber;
 const int AgentMessage_Threads_Thread::kStateFieldNumber;
 const int AgentMessage_Threads_Thread::kIsContextClassLoaderSetFieldNumber;
-const int AgentMessage_Threads_Thread::kIsWaitingOnMonitorFieldNumber;
+const int AgentMessage_Threads_Thread::kEnteredMonitorWaitFieldNumber;
+const int AgentMessage_Threads_Thread::kLeftMonitorWaitFieldNumber;
 #endif  // !_MSC_VER
 
 AgentMessage_Threads_Thread::AgentMessage_Threads_Thread()
@@ -213,7 +188,8 @@ void AgentMessage_Threads_Thread::SharedCtor() {
   priority_ = 0;
   state_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   iscontextclassloaderset_ = false;
-  iswaitingonmonitor_ = false;
+  enteredmonitorwait_ = false;
+  leftmonitorwait_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -267,7 +243,8 @@ void AgentMessage_Threads_Thread::Clear() {
       }
     }
     iscontextclassloaderset_ = false;
-    iswaitingonmonitor_ = false;
+    enteredmonitorwait_ = false;
+    leftmonitorwait_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -356,19 +333,35 @@ bool AgentMessage_Threads_Thread::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(48)) goto parse_isWaitingOnMonitor;
+        if (input->ExpectTag(48)) goto parse_enteredMonitorWait;
         break;
       }
       
-      // required bool isWaitingOnMonitor = 6;
+      // optional bool enteredMonitorWait = 6;
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_isWaitingOnMonitor:
+         parse_enteredMonitorWait:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &iswaitingonmonitor_)));
-          set_has_iswaitingonmonitor();
+                 input, &enteredmonitorwait_)));
+          set_has_enteredmonitorwait();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(56)) goto parse_leftMonitorWait;
+        break;
+      }
+      
+      // optional bool leftMonitorWait = 7;
+      case 7: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_leftMonitorWait:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &leftmonitorwait_)));
+          set_has_leftmonitorwait();
         } else {
           goto handle_uninterpreted;
         }
@@ -427,9 +420,14 @@ void AgentMessage_Threads_Thread::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->iscontextclassloaderset(), output);
   }
   
-  // required bool isWaitingOnMonitor = 6;
-  if (has_iswaitingonmonitor()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->iswaitingonmonitor(), output);
+  // optional bool enteredMonitorWait = 6;
+  if (has_enteredmonitorwait()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->enteredmonitorwait(), output);
+  }
+  
+  // optional bool leftMonitorWait = 7;
+  if (has_leftmonitorwait()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(7, this->leftmonitorwait(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -475,9 +473,14 @@ void AgentMessage_Threads_Thread::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->iscontextclassloaderset(), target);
   }
   
-  // required bool isWaitingOnMonitor = 6;
-  if (has_iswaitingonmonitor()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->iswaitingonmonitor(), target);
+  // optional bool enteredMonitorWait = 6;
+  if (has_enteredmonitorwait()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->enteredmonitorwait(), target);
+  }
+  
+  // optional bool leftMonitorWait = 7;
+  if (has_leftmonitorwait()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(7, this->leftmonitorwait(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -524,8 +527,13 @@ int AgentMessage_Threads_Thread::ByteSize() const {
       total_size += 1 + 1;
     }
     
-    // required bool isWaitingOnMonitor = 6;
-    if (has_iswaitingonmonitor()) {
+    // optional bool enteredMonitorWait = 6;
+    if (has_enteredmonitorwait()) {
+      total_size += 1 + 1;
+    }
+    
+    // optional bool leftMonitorWait = 7;
+    if (has_leftmonitorwait()) {
       total_size += 1 + 1;
     }
     
@@ -571,8 +579,11 @@ void AgentMessage_Threads_Thread::MergeFrom(const AgentMessage_Threads_Thread& f
     if (from.has_iscontextclassloaderset()) {
       set_iscontextclassloaderset(from.iscontextclassloaderset());
     }
-    if (from.has_iswaitingonmonitor()) {
-      set_iswaitingonmonitor(from.iswaitingonmonitor());
+    if (from.has_enteredmonitorwait()) {
+      set_enteredmonitorwait(from.enteredmonitorwait());
+    }
+    if (from.has_leftmonitorwait()) {
+      set_leftmonitorwait(from.leftmonitorwait());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -591,7 +602,7 @@ void AgentMessage_Threads_Thread::CopyFrom(const AgentMessage_Threads_Thread& fr
 }
 
 bool AgentMessage_Threads_Thread::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
   
   return true;
 }
@@ -603,7 +614,8 @@ void AgentMessage_Threads_Thread::Swap(AgentMessage_Threads_Thread* other) {
     std::swap(priority_, other->priority_);
     std::swap(state_, other->state_);
     std::swap(iscontextclassloaderset_, other->iscontextclassloaderset_);
-    std::swap(iswaitingonmonitor_, other->iswaitingonmonitor_);
+    std::swap(enteredmonitorwait_, other->enteredmonitorwait_);
+    std::swap(leftmonitorwait_, other->leftmonitorwait_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -890,218 +902,9 @@ void AgentMessage_Threads::Swap(AgentMessage_Threads* other) {
 // -------------------------------------------------------------------
 
 #ifndef _MSC_VER
-const int AgentMessage_ContendedMonitor::kThreadIdFieldNumber;
-#endif  // !_MSC_VER
-
-AgentMessage_ContendedMonitor::AgentMessage_ContendedMonitor()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void AgentMessage_ContendedMonitor::InitAsDefaultInstance() {
-}
-
-AgentMessage_ContendedMonitor::AgentMessage_ContendedMonitor(const AgentMessage_ContendedMonitor& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void AgentMessage_ContendedMonitor::SharedCtor() {
-  _cached_size_ = 0;
-  threadid_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-AgentMessage_ContendedMonitor::~AgentMessage_ContendedMonitor() {
-  SharedDtor();
-}
-
-void AgentMessage_ContendedMonitor::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void AgentMessage_ContendedMonitor::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* AgentMessage_ContendedMonitor::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return AgentMessage_ContendedMonitor_descriptor_;
-}
-
-const AgentMessage_ContendedMonitor& AgentMessage_ContendedMonitor::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_AgentMessage_2eproto();  return *default_instance_;
-}
-
-AgentMessage_ContendedMonitor* AgentMessage_ContendedMonitor::default_instance_ = NULL;
-
-AgentMessage_ContendedMonitor* AgentMessage_ContendedMonitor::New() const {
-  return new AgentMessage_ContendedMonitor;
-}
-
-void AgentMessage_ContendedMonitor::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    threadid_ = 0;
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool AgentMessage_ContendedMonitor::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 threadId = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &threadid_)));
-          set_has_threadid();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void AgentMessage_ContendedMonitor::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 threadId = 1;
-  if (has_threadid()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->threadid(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* AgentMessage_ContendedMonitor::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required int32 threadId = 1;
-  if (has_threadid()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->threadid(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int AgentMessage_ContendedMonitor::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 threadId = 1;
-    if (has_threadid()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->threadid());
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void AgentMessage_ContendedMonitor::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const AgentMessage_ContendedMonitor* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const AgentMessage_ContendedMonitor*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void AgentMessage_ContendedMonitor::MergeFrom(const AgentMessage_ContendedMonitor& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_threadid()) {
-      set_threadid(from.threadid());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void AgentMessage_ContendedMonitor::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void AgentMessage_ContendedMonitor::CopyFrom(const AgentMessage_ContendedMonitor& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool AgentMessage_ContendedMonitor::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
-  
-  return true;
-}
-
-void AgentMessage_ContendedMonitor::Swap(AgentMessage_ContendedMonitor* other) {
-  if (other != this) {
-    std::swap(threadid_, other->threadid_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata AgentMessage_ContendedMonitor::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = AgentMessage_ContendedMonitor_descriptor_;
-  metadata.reflection = AgentMessage_ContendedMonitor_reflection_;
-  return metadata;
-}
-
-
-// -------------------------------------------------------------------
-
-#ifndef _MSC_VER
 const int AgentMessage::kTimestampFieldNumber;
 const int AgentMessage::kJvmIdFieldNumber;
 const int AgentMessage::kThreadsFieldNumber;
-const int AgentMessage::kContendedMonitorFieldNumber;
 #endif  // !_MSC_VER
 
 AgentMessage::AgentMessage()
@@ -1111,7 +914,6 @@ AgentMessage::AgentMessage()
 
 void AgentMessage::InitAsDefaultInstance() {
   threads_ = const_cast< ::AgentMessage_Threads*>(&::AgentMessage_Threads::default_instance());
-  contendedmonitor_ = const_cast< ::AgentMessage_ContendedMonitor*>(&::AgentMessage_ContendedMonitor::default_instance());
 }
 
 AgentMessage::AgentMessage(const AgentMessage& from)
@@ -1125,7 +927,6 @@ void AgentMessage::SharedCtor() {
   timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   jvm_id_ = 0;
   threads_ = NULL;
-  contendedmonitor_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1139,7 +940,6 @@ void AgentMessage::SharedDtor() {
   }
   if (this != default_instance_) {
     delete threads_;
-    delete contendedmonitor_;
   }
 }
 
@@ -1173,9 +973,6 @@ void AgentMessage::Clear() {
     jvm_id_ = 0;
     if (has_threads()) {
       if (threads_ != NULL) threads_->::AgentMessage_Threads::Clear();
-    }
-    if (has_contendedmonitor()) {
-      if (contendedmonitor_ != NULL) contendedmonitor_->::AgentMessage_ContendedMonitor::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1230,20 +1027,6 @@ bool AgentMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(34)) goto parse_contendedMonitor;
-        break;
-      }
-      
-      // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_contendedMonitor:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_contendedmonitor()));
-        } else {
-          goto handle_uninterpreted;
-        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1286,12 +1069,6 @@ void AgentMessage::SerializeWithCachedSizes(
       3, this->threads(), output);
   }
   
-  // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
-  if (has_contendedmonitor()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->contendedmonitor(), output);
-  }
-  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1320,13 +1097,6 @@ void AgentMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         3, this->threads(), target);
-  }
-  
-  // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
-  if (has_contendedmonitor()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        4, this->contendedmonitor(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1359,13 +1129,6 @@ int AgentMessage::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->threads());
-    }
-    
-    // optional .AgentMessage.ContendedMonitor contendedMonitor = 4;
-    if (has_contendedmonitor()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->contendedmonitor());
     }
     
   }
@@ -1404,9 +1167,6 @@ void AgentMessage::MergeFrom(const AgentMessage& from) {
     if (from.has_threads()) {
       mutable_threads()->::AgentMessage_Threads::MergeFrom(from.threads());
     }
-    if (from.has_contendedmonitor()) {
-      mutable_contendedmonitor()->::AgentMessage_ContendedMonitor::MergeFrom(from.contendedmonitor());
-    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1429,9 +1189,6 @@ bool AgentMessage::IsInitialized() const {
   if (has_threads()) {
     if (!this->threads().IsInitialized()) return false;
   }
-  if (has_contendedmonitor()) {
-    if (!this->contendedmonitor().IsInitialized()) return false;
-  }
   return true;
 }
 
@@ -1440,7 +1197,6 @@ void AgentMessage::Swap(AgentMessage* other) {
     std::swap(timestamp_, other->timestamp_);
     std::swap(jvm_id_, other->jvm_id_);
     std::swap(threads_, other->threads_);
-    std::swap(contendedmonitor_, other->contendedmonitor_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

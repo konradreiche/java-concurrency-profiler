@@ -18,7 +18,7 @@ public class Profiler {
 	 * All available JVMs.
 	 */
 	final Map<Integer, JVM> IDsToJVMs;
-
+	
 	/**
 	 * At the start of the profiler all available JVMs are read and listed.
 	 */
@@ -26,7 +26,7 @@ public class Profiler {
 		super();
 		this.IDsToJVMs = new ConcurrentHashMap<Integer, JVM>();
 
-		for (VirtualMachineDescriptor vmd : VirtualMachine.list()) {
+		for (VirtualMachineDescriptor vmd : VirtualMachine.list()) {			
 			IDsToJVMs.put(Integer.parseInt(vmd.id()),
 					new JVM(Integer.parseInt(vmd.id()), vmd.displayName()));
 		}

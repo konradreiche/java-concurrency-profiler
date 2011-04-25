@@ -17,17 +17,13 @@ message AgentMessage {
 			required int32 priority = 3;
 			required string state = 4;
 			required bool isContextClassLoaderSet = 5;
-			required bool isWaitingOnMonitor = 6;
+
+			optional bool enteredMonitorWait = 6;
+			optional bool leftMonitorWait = 7;
 		}
 
 		repeated Thread thread = 2;
 	}
 
-	message ContendedMonitor {
-
-		required int32 threadId = 1;
-	}
-
 	optional Threads threads = 3;
-	optional ContendedMonitor contendedMonitor = 4;
 }

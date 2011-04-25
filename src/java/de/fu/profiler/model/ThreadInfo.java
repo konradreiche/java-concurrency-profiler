@@ -1,5 +1,9 @@
 package de.fu.profiler.model;
 
+import java.util.Observable;
+
+import de.fu.profiler.controller.NotiyWaitController;
+
 /**
  * Models a java thread and describes selected and analysed information of a
  * thread.
@@ -7,7 +11,7 @@ package de.fu.profiler.model;
  * @author Konrad Johannes Reiche
  * 
  */
-public class ThreadInfo implements Comparable<ThreadInfo> {
+public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
 
 	/**
 	 * A generated id by the profiler.
@@ -35,15 +39,15 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	final boolean isContextClassLoaderSet;
 
 	/**
-	 * Whether the thread is waiting on a monitor.
-	 */
-	final boolean isWaitingOnMonitor;
-
-	/**
 	 * The number how much the thread has entered a contended monitor.
 	 */
 	int contendedMonitorWaitCount;
 
+	/**
+	 * Status of the last monitor event.
+	 */
+	String monitorStatus;
+	
 	/**
 	 * Standard constructor.
 	 * 
@@ -57,16 +61,17 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	 *            the threads state.
 	 * @param ccl
 	 *            whether the context class loader is set.
+	 * @param notiyWaitController 
 	 */
 	public ThreadInfo(int id, String name, int priority, String state,
-			boolean ccl, boolean isWaitingOnMonitor) {
+			boolean ccl, NotiyWaitController notiyWaitController) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.priority = priority;
 		this.state = state;
 		this.isContextClassLoaderSet = ccl;
-		this.isWaitingOnMonitor = isWaitingOnMonitor;
+		this.addObserver(notiyWaitController);
 	}
 
 	public int getId() {
@@ -115,4 +120,17 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	public boolean equals(Object o) {
 		return new Integer(id).equals(new Integer(((ThreadInfo) o).id));
 	}
+	
+	public void changeMonitorStatus(String status) {
+		monitorStatus = status;
+		setChanged();
+		notifyObservers();
+	}
+
+	public String getMonitorStatus() {
+		return monitorStatus;
+	}
+	
+	
+	
 }

@@ -70,6 +70,7 @@ public class ConnectionHandler implements Runnable {
 					mainFrame.getProfiler().getIDsToJVMs().put(jvm_id, jvm);
 					((ThreadTableModel) mainFrame.getTableModel())
 							.setCurrentJVM(jvm);
+					mainFrame.getNotifyWaitController().setCurrentJvm(jvm);
 					jvm.addObserver((Observer) mainFrame.getTableModel());
 				}
 			}
@@ -82,27 +83,32 @@ public class ConnectionHandler implements Runnable {
 						ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
 								thread.getName(), thread.getPriority(),
 								thread.getState(),
-								thread.getIsContextClassLoaderSet(),
-								thread.getIsWaitingOnMonitor());
+								thread.getIsContextClassLoaderSet(),mainFrame.getNotifyWaitController());
 
 						if (jvm.getThreads().contains(threadInfo)) {
 							jvm.getThreads().remove(threadInfo);
-							System.out.println("Updating Thread "
-									+ threadInfo.getName());
 						}
 
 						jvm.addThread(threadInfo);
+
+						
+						if (thread.hasEnteredMonitorWait()) {
+							if (thread.getEnteredMonitorWait()) {
+								System.out.println(threadInfo.countObservers());
+								threadInfo.changeMonitorStatus("Thread " + thread.getId() + " wait()\n");
+							}
+						}
+						
+						if (thread.hasLeftMonitorWait()) {
+							if (thread.getLeftMonitorWait()) {
+								System.out.println(threadInfo.countObservers());
+								threadInfo.changeMonitorStatus("Thread " + thread.getId() + " wait() exit\n");
+							}
+						} 
+						
 				}
 			}
 
-			if (agentMessage.getContendedMonitor().isInitialized()) {
-				for (ThreadInfo t : jvm.getThreads()) {
-					if (t.getId() == agentMessage.getContendedMonitor()
-							.getThreadId()) {
-						t.incContendedMonitorWait();
-					}
-				}
-			}
 
 		} catch (IOException e) {
 			System.err.println("IOException: " + e.getMessage());

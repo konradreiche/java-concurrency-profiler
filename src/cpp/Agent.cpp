@@ -87,7 +87,7 @@ static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
  * @return the extended agent message.
  */
 static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
-		bool lifeCycle, bool isWaitingOnMonitor) {
+		bool lifeCycle, bool hasEnteredMonitorWait, bool hasLeftMonitorWait) {
 
 	jvmtiThreadInfo jvmtiThreadInfo;
 	jint thr_st_ptr;
@@ -141,10 +141,10 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 	newThread->set_name(jvmtiThreadInfo.name);
 	newThread->set_priority(jvmtiThreadInfo.priority);
 	newThread->set_state(lifeCycle ? threadState : "Terminated");
-	std::cout << threadState << std::endl;
 	newThread->set_iscontextclassloaderset(jvmtiThreadInfo.context_class_loader
 			== NULL);
-	newThread->set_iswaitingonmonitor(isWaitingOnMonitor);
+	newThread->set_enteredmonitorwait(hasEnteredMonitorWait);
+	newThread->set_leftmonitorwait(hasLeftMonitorWait);
 
 	return agentMessage;
 }
@@ -190,21 +190,19 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 	jvmti->GetTag(thread, &thr_id_ptr);
 
 	AgentMessage agentMessage;
-	agentMessage.mutable_contendedmonitor()->set_threadid(thr_id_ptr);
-	Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 }
 
 /**
  * Sent when a thread is about to wait on an object. That is, a thread is
  * entering Object.wait(). This event is sent only during the live phase.
  */
-void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env, jthread thread,
-		jobject object, jlong timeout) {
+void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
+		jthread thread, jobject object, jlong timeout) {
 
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, true, true);
+		agentMessage = mergeThreadData(agentMessage, thread, true, true, false);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -214,13 +212,13 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env, jthread t
  * Sent when a thread finishes waiting on an object. That is, a thread is
  * leaving Object.wait(). This event is sent only during the live phase.
  */
-void JNICALL MonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
+void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		jthread thread, jobject object, jboolean timed_out) {
 
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, true, false);
+		agentMessage = mergeThreadData(agentMessage, thread, true, false, true);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -233,7 +231,8 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, true, false);
+		agentMessage
+				= mergeThreadData(agentMessage, thread, true, false, false);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -246,7 +245,8 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, false, false);
+		agentMessage = mergeThreadData(agentMessage, thread, false, false,
+				false);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -282,7 +282,8 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				agentMessage = mergeThreadData(agentMessage, threads[i], false, false);
+				agentMessage = mergeThreadData(agentMessage, threads[i], false,
+						false, false);
 			}
 			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
@@ -361,6 +362,12 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
 				JVMTI_EVENT_MONITOR_CONTENDED_ENTER, (jthread) NULL);
 
+		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
+				JVMTI_EVENT_MONITOR_WAIT, (jthread) NULL);
+
+		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
+				JVMTI_EVENT_MONITOR_WAITED, (jthread) NULL);
+
 		check_jvmti_error(jvmti_env, error, "Cannot set event notification");
 
 		/*
@@ -375,7 +382,8 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				agentMessage = mergeThreadData(agentMessage, threads[i], true, false);
+				agentMessage = mergeThreadData(agentMessage, threads[i], true,
+						false, false);
 			}
 			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
@@ -558,6 +566,8 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	callbacks.ThreadStart = &callbackThreadStart;/* JVMTI_EVENT_THREAD_START */
 	callbacks.ThreadEnd = &callbackThreadEnd;/* JVMTI_EVENT_THREAD_END */
 	callbacks.MonitorContendedEnter = &callbackMonitorContendedEnter;/* JVMTI_EVENT_MONITOR_CONTENDED_ENTER*/
+	callbacks.MonitorWait = &callbackMonitorWait;/* JVMTI_EVENT_MONITOR_WAIT*/
+	callbacks.MonitorWaited = &callbackMonitorWaited;/* JVMTI_EVENT_MONITOR_WAIT*/
 
 	error = jvmti->SetEventCallbacks(&callbacks, (jint) sizeof(callbacks));
 	check_jvmti_error(jvmti, error, "Cannot set jvmti callbacks");
