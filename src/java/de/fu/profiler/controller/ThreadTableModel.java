@@ -133,17 +133,17 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 		for (ThreadInfo thread : jvm.getThreads()) {
 			String state = thread.getState();
 			
-			if (state.equals("New")) {
+			if (state.equals("NEW")) {
 				newCounter++;
-			} else if (state.equals("Terminated")) {
+			} else if (state.equals("TERMINATED")) {
 				terminatedCounter++;
-			} else if (state.equals("Runnable")) {
+			} else if (state.equals("RUNNABLE")) {
 				runnableCounter++;
-			} else if (state.equals("Blocked")) {
+			} else if (state.equals("BLOCKED")) {
 				blockedCounter++;
-			} else if (state.equals("Waiting")) {
+			} else if (state.equals("WAITING")) {
 				waitingCounter++;
-			} else if (state.equals("Timed Waiting")) {
+			} else if (state.equals("TIMED_WAITING")) {
 				timedWaitingCounter++;
 			} else {
 				assert(false);

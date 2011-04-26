@@ -76,18 +76,8 @@ static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
 	}
 }
 
-/**
- * Inserts the data accessible by jthread into an AgentMessage.
- *
- * @todo memset ensures the stack variable are garbage free - what does that mean?
- *
- * @param agentMessage the agent message containing valuable information which are send by the socket.
- * @param thread the thread containing valueable information.
- * @param lifeCycle whether the thread is a new one (true) or a finished one (false).
- * @return the extended agent message.
- */
-static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
-		bool lifeCycle, bool hasEnteredMonitorWait, bool hasLeftMonitorWait) {
+static void initializeThreadMessage(AgentMessage::Thread *threadMessage,
+		jthread thread) {
 
 	jvmtiThreadInfo jvmtiThreadInfo;
 	jint thr_st_ptr;
@@ -101,28 +91,28 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 	error = jvmti->GetThreadState(thread, &thr_st_ptr);
 	check_jvmti_error(jvmti, error, "Cannot get thread state.");
 
-	std::string threadState;
+	AgentMessage::Thread::State state;
 	switch (thr_st_ptr & JVMTI_JAVA_LANG_THREAD_STATE_MASK) {
 	case JVMTI_JAVA_LANG_THREAD_STATE_NEW:
-		threadState = "New";
+		state = AgentMessage::Thread::NEW;
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_TERMINATED:
-		threadState = "Terminated";
+		state = AgentMessage::Thread::TERMINATED;
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_RUNNABLE:
-		threadState = "Runnable";
+		state = AgentMessage::Thread::RUNNABLE;
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_BLOCKED:
-		threadState = "Blocked";
+		state = AgentMessage::Thread::BLOCKED;
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_WAITING:
-		threadState = "Waiting";
+		state = AgentMessage::Thread::WAITING;
 		break;
 	case JVMTI_JAVA_LANG_THREAD_STATE_TIMED_WAITING:
-		threadState = "Timed Waiting";
+		state = AgentMessage::Thread::TIMED_WAITING;
 		break;
 	default:
-		threadState = "null";
+		state = AgentMessage::Thread::NEW;
 		break;
 	}
 
@@ -133,18 +123,48 @@ static AgentMessage mergeThreadData(AgentMessage agentMessage, jthread thread,
 		jvmti->GetTag(thread, &thr_id_ptr);
 	}
 
-	AgentMessage::Threads *threads = agentMessage.mutable_threads();
-	threads->set_lifecycle(lifeCycle ? "start" : "end");
+	threadMessage->set_id(thr_id_ptr);
+	threadMessage->set_name(jvmtiThreadInfo.name);
+	threadMessage->set_priority(jvmtiThreadInfo.priority);
+	threadMessage->set_state(state);
+	threadMessage->set_iscontextclassloaderset(
+			jvmtiThreadInfo.context_class_loader == NULL);
 
-	AgentMessage::Threads::Thread *newThread = threads->add_thread();
-	newThread->set_id(thr_id_ptr);
-	newThread->set_name(jvmtiThreadInfo.name);
-	newThread->set_priority(jvmtiThreadInfo.priority);
-	newThread->set_state(lifeCycle ? threadState : "Terminated");
-	newThread->set_iscontextclassloaderset(jvmtiThreadInfo.context_class_loader
-			== NULL);
-	newThread->set_enteredmonitorwait(hasEnteredMonitorWait);
-	newThread->set_leftmonitorwait(hasLeftMonitorWait);
+}
+
+/**
+ * Inserts the data accessible by jthread into an AgentMessage.
+ *
+ * @todo memset ensures the stack variable are garbage free - what does that mean?
+ *
+ * @param agentMessage the agent message containing valuable information which are send by the socket.
+ * @param thread the thread containing valueable information.
+ * @param lifeCycle whether the thread is a new one (true) or a finished one (false).
+ * @return the extended agent message.
+ */
+static AgentMessage createThreadEventMessage(AgentMessage agentMessage,
+		jthread thread, AgentMessage::ThreadEvent::EventType eventType) {
+
+	AgentMessage::ThreadEvent *threadEvent = agentMessage.mutable_threadevent();
+	threadEvent->set_eventtype(eventType);
+
+	AgentMessage::Thread *threadMessage = threadEvent->add_thread();
+	initializeThreadMessage(threadMessage, thread);
+
+	if (eventType == AgentMessage::ThreadEvent::ENDED) {
+		threadMessage->set_state(AgentMessage::Thread::TERMINATED);
+	}
+
+	return agentMessage;
+}
+
+static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
+		jthread thread, AgentMessage::MonitorEvent::EventType eventType) {
+
+	AgentMessage::MonitorEvent *monitorEvent = agentMessage.mutable_monitorevent();
+	AgentMessage::Thread *threadMessage = monitorEvent->mutable_thread();
+	initializeThreadMessage(threadMessage,thread);
+	monitorEvent->set_eventtype(eventType);
 
 	return agentMessage;
 }
@@ -186,10 +206,6 @@ void describe(jvmtiError err) {
 static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 		JNIEnv *jni_env, jthread thread, jobject object) {
 
-	jlong thr_id_ptr;
-	jvmti->GetTag(thread, &thr_id_ptr);
-
-	AgentMessage agentMessage;
 }
 
 /**
@@ -202,7 +218,7 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, true, true, false);
+		agentMessage = createMonitorEventMessage(agentMessage,thread,AgentMessage::MonitorEvent::WAIT);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -218,7 +234,7 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, true, false, true);
+		agentMessage = createMonitorEventMessage(agentMessage,thread,AgentMessage::MonitorEvent::WAITED);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -231,8 +247,8 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage
-				= mergeThreadData(agentMessage, thread, true, false, false);
+		agentMessage = createThreadEventMessage(agentMessage, thread,
+				AgentMessage::ThreadEvent::STARTED);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -245,8 +261,8 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = mergeThreadData(agentMessage, thread, false, false,
-				false);
+		agentMessage = createThreadEventMessage(agentMessage, thread,
+				AgentMessage::ThreadEvent::ENDED);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -282,8 +298,8 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				agentMessage = mergeThreadData(agentMessage, threads[i], false,
-						false, false);
+				agentMessage = createThreadEventMessage(agentMessage,
+						threads[i], AgentMessage::ThreadEvent::ENDED);
 			}
 			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
@@ -382,8 +398,8 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				agentMessage = mergeThreadData(agentMessage, threads[i], true,
-						false, false);
+				agentMessage = createThreadEventMessage(agentMessage, thread,
+						AgentMessage::ThreadEvent::STARTED);
 			}
 			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}

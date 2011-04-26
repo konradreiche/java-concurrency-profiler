@@ -2,7 +2,9 @@ package de.fu.profiler.model;
 
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Models a Java Virtual Machine.
@@ -25,7 +27,7 @@ public class JVM extends Observable {
 	/**
 	 * A list of threads of the JVM.
 	 */
-	final List<ThreadInfo> threads;
+	final Set<ThreadInfo> threads;
 
 	/**
 	 * Standard constructor.
@@ -39,7 +41,7 @@ public class JVM extends Observable {
 		super();
 		this.id = id;
 		this.name = name;
-		this.threads = new CopyOnWriteArrayList<ThreadInfo>();
+		this.threads = new CopyOnWriteArraySet<ThreadInfo>();
 	}
 
 	public int getId() {
@@ -50,7 +52,7 @@ public class JVM extends Observable {
 		return name;
 	}
 
-	public List<ThreadInfo> getThreads() {
+	public Set<ThreadInfo> getThreads() {
 		return threads;
 	}
 
@@ -74,6 +76,21 @@ public class JVM extends Observable {
 	public void clearThreads() {
 		threads.clear();
 		notifyObservers();
+	}
+	
+	/**
+	 * Returns the thread based on its id.
+	 * 
+	 * @param id Thread id.
+	 */
+	public ThreadInfo getThread(int id) {
+		for (ThreadInfo thread : threads) {
+			if (thread.getId() == id) {
+				return thread;
+			}
+		}
+		
+		return null;
 	}
 
 }

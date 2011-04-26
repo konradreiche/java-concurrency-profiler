@@ -31,19 +31,83 @@ void protobuf_AssignDesc_AgentMessage_2eproto();
 void protobuf_ShutdownFile_AgentMessage_2eproto();
 
 class AgentMessage;
-class AgentMessage_Threads;
-class AgentMessage_Threads_Thread;
+class AgentMessage_ThreadEvent;
+class AgentMessage_MonitorEvent;
+class AgentMessage_Thread;
 
+enum AgentMessage_ThreadEvent_EventType {
+  AgentMessage_ThreadEvent_EventType_STARTED = 0,
+  AgentMessage_ThreadEvent_EventType_ENDED = 1,
+  AgentMessage_ThreadEvent_EventType_NONE = 2
+};
+bool AgentMessage_ThreadEvent_EventType_IsValid(int value);
+const AgentMessage_ThreadEvent_EventType AgentMessage_ThreadEvent_EventType_EventType_MIN = AgentMessage_ThreadEvent_EventType_STARTED;
+const AgentMessage_ThreadEvent_EventType AgentMessage_ThreadEvent_EventType_EventType_MAX = AgentMessage_ThreadEvent_EventType_NONE;
+const int AgentMessage_ThreadEvent_EventType_EventType_ARRAYSIZE = AgentMessage_ThreadEvent_EventType_EventType_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* AgentMessage_ThreadEvent_EventType_descriptor();
+inline const ::std::string& AgentMessage_ThreadEvent_EventType_Name(AgentMessage_ThreadEvent_EventType value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    AgentMessage_ThreadEvent_EventType_descriptor(), value);
+}
+inline bool AgentMessage_ThreadEvent_EventType_Parse(
+    const ::std::string& name, AgentMessage_ThreadEvent_EventType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<AgentMessage_ThreadEvent_EventType>(
+    AgentMessage_ThreadEvent_EventType_descriptor(), name, value);
+}
+enum AgentMessage_MonitorEvent_EventType {
+  AgentMessage_MonitorEvent_EventType_WAIT = 0,
+  AgentMessage_MonitorEvent_EventType_WAITED = 1,
+  AgentMessage_MonitorEvent_EventType_NONE = 2
+};
+bool AgentMessage_MonitorEvent_EventType_IsValid(int value);
+const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent_EventType_EventType_MIN = AgentMessage_MonitorEvent_EventType_WAIT;
+const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent_EventType_EventType_MAX = AgentMessage_MonitorEvent_EventType_NONE;
+const int AgentMessage_MonitorEvent_EventType_EventType_ARRAYSIZE = AgentMessage_MonitorEvent_EventType_EventType_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* AgentMessage_MonitorEvent_EventType_descriptor();
+inline const ::std::string& AgentMessage_MonitorEvent_EventType_Name(AgentMessage_MonitorEvent_EventType value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    AgentMessage_MonitorEvent_EventType_descriptor(), value);
+}
+inline bool AgentMessage_MonitorEvent_EventType_Parse(
+    const ::std::string& name, AgentMessage_MonitorEvent_EventType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<AgentMessage_MonitorEvent_EventType>(
+    AgentMessage_MonitorEvent_EventType_descriptor(), name, value);
+}
+enum AgentMessage_Thread_State {
+  AgentMessage_Thread_State_NEW = 0,
+  AgentMessage_Thread_State_RUNNABLE = 1,
+  AgentMessage_Thread_State_BLOCKED = 2,
+  AgentMessage_Thread_State_WAITING = 3,
+  AgentMessage_Thread_State_TIMED_WAITING = 4,
+  AgentMessage_Thread_State_TERMINATED = 5
+};
+bool AgentMessage_Thread_State_IsValid(int value);
+const AgentMessage_Thread_State AgentMessage_Thread_State_State_MIN = AgentMessage_Thread_State_NEW;
+const AgentMessage_Thread_State AgentMessage_Thread_State_State_MAX = AgentMessage_Thread_State_TERMINATED;
+const int AgentMessage_Thread_State_State_ARRAYSIZE = AgentMessage_Thread_State_State_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* AgentMessage_Thread_State_descriptor();
+inline const ::std::string& AgentMessage_Thread_State_Name(AgentMessage_Thread_State value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    AgentMessage_Thread_State_descriptor(), value);
+}
+inline bool AgentMessage_Thread_State_Parse(
+    const ::std::string& name, AgentMessage_Thread_State* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<AgentMessage_Thread_State>(
+    AgentMessage_Thread_State_descriptor(), name, value);
+}
 // ===================================================================
 
-class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
+class AgentMessage_ThreadEvent : public ::google::protobuf::Message {
  public:
-  AgentMessage_Threads_Thread();
-  virtual ~AgentMessage_Threads_Thread();
+  AgentMessage_ThreadEvent();
+  virtual ~AgentMessage_ThreadEvent();
   
-  AgentMessage_Threads_Thread(const AgentMessage_Threads_Thread& from);
+  AgentMessage_ThreadEvent(const AgentMessage_ThreadEvent& from);
   
-  inline AgentMessage_Threads_Thread& operator=(const AgentMessage_Threads_Thread& from) {
+  inline AgentMessage_ThreadEvent& operator=(const AgentMessage_ThreadEvent& from) {
     CopyFrom(from);
     return *this;
   }
@@ -57,17 +121,17 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const AgentMessage_Threads_Thread& default_instance();
+  static const AgentMessage_ThreadEvent& default_instance();
   
-  void Swap(AgentMessage_Threads_Thread* other);
+  void Swap(AgentMessage_ThreadEvent* other);
   
   // implements Message ----------------------------------------------
   
-  AgentMessage_Threads_Thread* New() const;
+  AgentMessage_ThreadEvent* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AgentMessage_Threads_Thread& from);
-  void MergeFrom(const AgentMessage_Threads_Thread& from);
+  void CopyFrom(const AgentMessage_ThreadEvent& from);
+  void MergeFrom(const AgentMessage_ThreadEvent& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -87,6 +151,272 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   ::google::protobuf::Metadata GetMetadata() const;
   
   // nested types ----------------------------------------------------
+  
+  typedef AgentMessage_ThreadEvent_EventType EventType;
+  static const EventType STARTED = AgentMessage_ThreadEvent_EventType_STARTED;
+  static const EventType ENDED = AgentMessage_ThreadEvent_EventType_ENDED;
+  static const EventType NONE = AgentMessage_ThreadEvent_EventType_NONE;
+  static inline bool EventType_IsValid(int value) {
+    return AgentMessage_ThreadEvent_EventType_IsValid(value);
+  }
+  static const EventType EventType_MIN =
+    AgentMessage_ThreadEvent_EventType_EventType_MIN;
+  static const EventType EventType_MAX =
+    AgentMessage_ThreadEvent_EventType_EventType_MAX;
+  static const int EventType_ARRAYSIZE =
+    AgentMessage_ThreadEvent_EventType_EventType_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  EventType_descriptor() {
+    return AgentMessage_ThreadEvent_EventType_descriptor();
+  }
+  static inline const ::std::string& EventType_Name(EventType value) {
+    return AgentMessage_ThreadEvent_EventType_Name(value);
+  }
+  static inline bool EventType_Parse(const ::std::string& name,
+      EventType* value) {
+    return AgentMessage_ThreadEvent_EventType_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .AgentMessage.Thread thread = 1;
+  inline int thread_size() const;
+  inline void clear_thread();
+  static const int kThreadFieldNumber = 1;
+  inline const ::AgentMessage_Thread& thread(int index) const;
+  inline ::AgentMessage_Thread* mutable_thread(int index);
+  inline ::AgentMessage_Thread* add_thread();
+  inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >&
+      thread() const;
+  inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >*
+      mutable_thread();
+  
+  // required .AgentMessage.ThreadEvent.EventType eventType = 2 [default = NONE];
+  inline bool has_eventtype() const;
+  inline void clear_eventtype();
+  static const int kEventTypeFieldNumber = 2;
+  inline ::AgentMessage_ThreadEvent_EventType eventtype() const;
+  inline void set_eventtype(::AgentMessage_ThreadEvent_EventType value);
+  
+  // @@protoc_insertion_point(class_scope:AgentMessage.ThreadEvent)
+ private:
+  inline void set_has_eventtype();
+  inline void clear_has_eventtype();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread > thread_;
+  int eventtype_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_AgentMessage_2eproto();
+  friend void protobuf_AssignDesc_AgentMessage_2eproto();
+  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AgentMessage_ThreadEvent* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
+ public:
+  AgentMessage_MonitorEvent();
+  virtual ~AgentMessage_MonitorEvent();
+  
+  AgentMessage_MonitorEvent(const AgentMessage_MonitorEvent& from);
+  
+  inline AgentMessage_MonitorEvent& operator=(const AgentMessage_MonitorEvent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentMessage_MonitorEvent& default_instance();
+  
+  void Swap(AgentMessage_MonitorEvent* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AgentMessage_MonitorEvent* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentMessage_MonitorEvent& from);
+  void MergeFrom(const AgentMessage_MonitorEvent& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef AgentMessage_MonitorEvent_EventType EventType;
+  static const EventType WAIT = AgentMessage_MonitorEvent_EventType_WAIT;
+  static const EventType WAITED = AgentMessage_MonitorEvent_EventType_WAITED;
+  static const EventType NONE = AgentMessage_MonitorEvent_EventType_NONE;
+  static inline bool EventType_IsValid(int value) {
+    return AgentMessage_MonitorEvent_EventType_IsValid(value);
+  }
+  static const EventType EventType_MIN =
+    AgentMessage_MonitorEvent_EventType_EventType_MIN;
+  static const EventType EventType_MAX =
+    AgentMessage_MonitorEvent_EventType_EventType_MAX;
+  static const int EventType_ARRAYSIZE =
+    AgentMessage_MonitorEvent_EventType_EventType_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  EventType_descriptor() {
+    return AgentMessage_MonitorEvent_EventType_descriptor();
+  }
+  static inline const ::std::string& EventType_Name(EventType value) {
+    return AgentMessage_MonitorEvent_EventType_Name(value);
+  }
+  static inline bool EventType_Parse(const ::std::string& name,
+      EventType* value) {
+    return AgentMessage_MonitorEvent_EventType_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // required .AgentMessage.Thread thread = 1;
+  inline bool has_thread() const;
+  inline void clear_thread();
+  static const int kThreadFieldNumber = 1;
+  inline const ::AgentMessage_Thread& thread() const;
+  inline ::AgentMessage_Thread* mutable_thread();
+  inline ::AgentMessage_Thread* release_thread();
+  
+  // required .AgentMessage.MonitorEvent.EventType eventType = 2 [default = NONE];
+  inline bool has_eventtype() const;
+  inline void clear_eventtype();
+  static const int kEventTypeFieldNumber = 2;
+  inline ::AgentMessage_MonitorEvent_EventType eventtype() const;
+  inline void set_eventtype(::AgentMessage_MonitorEvent_EventType value);
+  
+  // @@protoc_insertion_point(class_scope:AgentMessage.MonitorEvent)
+ private:
+  inline void set_has_thread();
+  inline void clear_has_thread();
+  inline void set_has_eventtype();
+  inline void clear_has_eventtype();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::AgentMessage_Thread* thread_;
+  int eventtype_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_AgentMessage_2eproto();
+  friend void protobuf_AssignDesc_AgentMessage_2eproto();
+  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AgentMessage_MonitorEvent* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AgentMessage_Thread : public ::google::protobuf::Message {
+ public:
+  AgentMessage_Thread();
+  virtual ~AgentMessage_Thread();
+  
+  AgentMessage_Thread(const AgentMessage_Thread& from);
+  
+  inline AgentMessage_Thread& operator=(const AgentMessage_Thread& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentMessage_Thread& default_instance();
+  
+  void Swap(AgentMessage_Thread* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AgentMessage_Thread* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentMessage_Thread& from);
+  void MergeFrom(const AgentMessage_Thread& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef AgentMessage_Thread_State State;
+  static const State NEW = AgentMessage_Thread_State_NEW;
+  static const State RUNNABLE = AgentMessage_Thread_State_RUNNABLE;
+  static const State BLOCKED = AgentMessage_Thread_State_BLOCKED;
+  static const State WAITING = AgentMessage_Thread_State_WAITING;
+  static const State TIMED_WAITING = AgentMessage_Thread_State_TIMED_WAITING;
+  static const State TERMINATED = AgentMessage_Thread_State_TERMINATED;
+  static inline bool State_IsValid(int value) {
+    return AgentMessage_Thread_State_IsValid(value);
+  }
+  static const State State_MIN =
+    AgentMessage_Thread_State_State_MIN;
+  static const State State_MAX =
+    AgentMessage_Thread_State_State_MAX;
+  static const int State_ARRAYSIZE =
+    AgentMessage_Thread_State_State_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  State_descriptor() {
+    return AgentMessage_Thread_State_descriptor();
+  }
+  static inline const ::std::string& State_Name(State value) {
+    return AgentMessage_Thread_State_Name(value);
+  }
+  static inline bool State_Parse(const ::std::string& name,
+      State* value) {
+    return AgentMessage_Thread_State_Parse(name, value);
+  }
   
   // accessors -------------------------------------------------------
   
@@ -115,16 +445,12 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 priority() const;
   inline void set_priority(::google::protobuf::int32 value);
   
-  // required string state = 4;
+  // required .AgentMessage.Thread.State state = 4 [default = NEW];
   inline bool has_state() const;
   inline void clear_state();
   static const int kStateFieldNumber = 4;
-  inline const ::std::string& state() const;
-  inline void set_state(const ::std::string& value);
-  inline void set_state(const char* value);
-  inline void set_state(const char* value, size_t size);
-  inline ::std::string* mutable_state();
-  inline ::std::string* release_state();
+  inline ::AgentMessage_Thread_State state() const;
+  inline void set_state(::AgentMessage_Thread_State value);
   
   // required bool isContextClassLoaderSet = 5;
   inline bool has_iscontextclassloaderset() const;
@@ -133,21 +459,7 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   inline bool iscontextclassloaderset() const;
   inline void set_iscontextclassloaderset(bool value);
   
-  // optional bool enteredMonitorWait = 6;
-  inline bool has_enteredmonitorwait() const;
-  inline void clear_enteredmonitorwait();
-  static const int kEnteredMonitorWaitFieldNumber = 6;
-  inline bool enteredmonitorwait() const;
-  inline void set_enteredmonitorwait(bool value);
-  
-  // optional bool leftMonitorWait = 7;
-  inline bool has_leftmonitorwait() const;
-  inline void clear_leftmonitorwait();
-  static const int kLeftMonitorWaitFieldNumber = 7;
-  inline bool leftmonitorwait() const;
-  inline void set_leftmonitorwait(bool value);
-  
-  // @@protoc_insertion_point(class_scope:AgentMessage.Threads.Thread)
+  // @@protoc_insertion_point(class_scope:AgentMessage.Thread)
  private:
   inline void set_has_id();
   inline void clear_has_id();
@@ -159,131 +471,24 @@ class AgentMessage_Threads_Thread : public ::google::protobuf::Message {
   inline void clear_has_state();
   inline void set_has_iscontextclassloaderset();
   inline void clear_has_iscontextclassloaderset();
-  inline void set_has_enteredmonitorwait();
-  inline void clear_has_enteredmonitorwait();
-  inline void set_has_leftmonitorwait();
-  inline void clear_has_leftmonitorwait();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::std::string* name_;
   ::google::protobuf::int32 id_;
   ::google::protobuf::int32 priority_;
-  ::std::string* state_;
+  int state_;
   bool iscontextclassloaderset_;
-  bool enteredmonitorwait_;
-  bool leftmonitorwait_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
   friend void protobuf_ShutdownFile_AgentMessage_2eproto();
   
   void InitAsDefaultInstance();
-  static AgentMessage_Threads_Thread* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class AgentMessage_Threads : public ::google::protobuf::Message {
- public:
-  AgentMessage_Threads();
-  virtual ~AgentMessage_Threads();
-  
-  AgentMessage_Threads(const AgentMessage_Threads& from);
-  
-  inline AgentMessage_Threads& operator=(const AgentMessage_Threads& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const AgentMessage_Threads& default_instance();
-  
-  void Swap(AgentMessage_Threads* other);
-  
-  // implements Message ----------------------------------------------
-  
-  AgentMessage_Threads* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AgentMessage_Threads& from);
-  void MergeFrom(const AgentMessage_Threads& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  typedef AgentMessage_Threads_Thread Thread;
-  
-  // accessors -------------------------------------------------------
-  
-  // required string lifeCycle = 1;
-  inline bool has_lifecycle() const;
-  inline void clear_lifecycle();
-  static const int kLifeCycleFieldNumber = 1;
-  inline const ::std::string& lifecycle() const;
-  inline void set_lifecycle(const ::std::string& value);
-  inline void set_lifecycle(const char* value);
-  inline void set_lifecycle(const char* value, size_t size);
-  inline ::std::string* mutable_lifecycle();
-  inline ::std::string* release_lifecycle();
-  
-  // repeated .AgentMessage.Threads.Thread thread = 2;
-  inline int thread_size() const;
-  inline void clear_thread();
-  static const int kThreadFieldNumber = 2;
-  inline const ::AgentMessage_Threads_Thread& thread(int index) const;
-  inline ::AgentMessage_Threads_Thread* mutable_thread(int index);
-  inline ::AgentMessage_Threads_Thread* add_thread();
-  inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Threads_Thread >&
-      thread() const;
-  inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Threads_Thread >*
-      mutable_thread();
-  
-  // @@protoc_insertion_point(class_scope:AgentMessage.Threads)
- private:
-  inline void set_has_lifecycle();
-  inline void clear_has_lifecycle();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* lifecycle_;
-  ::google::protobuf::RepeatedPtrField< ::AgentMessage_Threads_Thread > thread_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_AgentMessage_2eproto();
-  friend void protobuf_AssignDesc_AgentMessage_2eproto();
-  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static AgentMessage_Threads* default_instance_;
+  static AgentMessage_Thread* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -339,7 +544,9 @@ class AgentMessage : public ::google::protobuf::Message {
   
   // nested types ----------------------------------------------------
   
-  typedef AgentMessage_Threads Threads;
+  typedef AgentMessage_ThreadEvent ThreadEvent;
+  typedef AgentMessage_MonitorEvent MonitorEvent;
+  typedef AgentMessage_Thread Thread;
   
   // accessors -------------------------------------------------------
   
@@ -361,13 +568,21 @@ class AgentMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 jvm_id() const;
   inline void set_jvm_id(::google::protobuf::int32 value);
   
-  // optional .AgentMessage.Threads threads = 3;
-  inline bool has_threads() const;
-  inline void clear_threads();
-  static const int kThreadsFieldNumber = 3;
-  inline const ::AgentMessage_Threads& threads() const;
-  inline ::AgentMessage_Threads* mutable_threads();
-  inline ::AgentMessage_Threads* release_threads();
+  // optional .AgentMessage.ThreadEvent threadEvent = 3;
+  inline bool has_threadevent() const;
+  inline void clear_threadevent();
+  static const int kThreadEventFieldNumber = 3;
+  inline const ::AgentMessage_ThreadEvent& threadevent() const;
+  inline ::AgentMessage_ThreadEvent* mutable_threadevent();
+  inline ::AgentMessage_ThreadEvent* release_threadevent();
+  
+  // optional .AgentMessage.MonitorEvent monitorEvent = 4;
+  inline bool has_monitorevent() const;
+  inline void clear_monitorevent();
+  static const int kMonitorEventFieldNumber = 4;
+  inline const ::AgentMessage_MonitorEvent& monitorevent() const;
+  inline ::AgentMessage_MonitorEvent* mutable_monitorevent();
+  inline ::AgentMessage_MonitorEvent* release_monitorevent();
   
   // @@protoc_insertion_point(class_scope:AgentMessage)
  private:
@@ -375,17 +590,20 @@ class AgentMessage : public ::google::protobuf::Message {
   inline void clear_has_timestamp();
   inline void set_has_jvm_id();
   inline void clear_has_jvm_id();
-  inline void set_has_threads();
-  inline void clear_has_threads();
+  inline void set_has_threadevent();
+  inline void clear_has_threadevent();
+  inline void set_has_monitorevent();
+  inline void clear_has_monitorevent();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::std::string* timestamp_;
-  ::AgentMessage_Threads* threads_;
+  ::AgentMessage_ThreadEvent* threadevent_;
+  ::AgentMessage_MonitorEvent* monitorevent_;
   ::google::protobuf::int32 jvm_id_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -399,78 +617,186 @@ class AgentMessage : public ::google::protobuf::Message {
 
 // ===================================================================
 
-// AgentMessage_Threads_Thread
+// AgentMessage_ThreadEvent
 
-// required int32 id = 1;
-inline bool AgentMessage_Threads_Thread::has_id() const {
+// repeated .AgentMessage.Thread thread = 1;
+inline int AgentMessage_ThreadEvent::thread_size() const {
+  return thread_.size();
+}
+inline void AgentMessage_ThreadEvent::clear_thread() {
+  thread_.Clear();
+}
+inline const ::AgentMessage_Thread& AgentMessage_ThreadEvent::thread(int index) const {
+  return thread_.Get(index);
+}
+inline ::AgentMessage_Thread* AgentMessage_ThreadEvent::mutable_thread(int index) {
+  return thread_.Mutable(index);
+}
+inline ::AgentMessage_Thread* AgentMessage_ThreadEvent::add_thread() {
+  return thread_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >&
+AgentMessage_ThreadEvent::thread() const {
+  return thread_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >*
+AgentMessage_ThreadEvent::mutable_thread() {
+  return &thread_;
+}
+
+// required .AgentMessage.ThreadEvent.EventType eventType = 2 [default = NONE];
+inline bool AgentMessage_ThreadEvent::has_eventtype() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AgentMessage_ThreadEvent::set_has_eventtype() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AgentMessage_ThreadEvent::clear_has_eventtype() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage_ThreadEvent::clear_eventtype() {
+  eventtype_ = 2;
+  clear_has_eventtype();
+}
+inline ::AgentMessage_ThreadEvent_EventType AgentMessage_ThreadEvent::eventtype() const {
+  return static_cast< ::AgentMessage_ThreadEvent_EventType >(eventtype_);
+}
+inline void AgentMessage_ThreadEvent::set_eventtype(::AgentMessage_ThreadEvent_EventType value) {
+  GOOGLE_DCHECK(::AgentMessage_ThreadEvent_EventType_IsValid(value));
+  set_has_eventtype();
+  eventtype_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// AgentMessage_MonitorEvent
+
+// required .AgentMessage.Thread thread = 1;
+inline bool AgentMessage_MonitorEvent::has_thread() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void AgentMessage_Threads_Thread::set_has_id() {
+inline void AgentMessage_MonitorEvent::set_has_thread() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void AgentMessage_Threads_Thread::clear_has_id() {
+inline void AgentMessage_MonitorEvent::clear_has_thread() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void AgentMessage_Threads_Thread::clear_id() {
+inline void AgentMessage_MonitorEvent::clear_thread() {
+  if (thread_ != NULL) thread_->::AgentMessage_Thread::Clear();
+  clear_has_thread();
+}
+inline const ::AgentMessage_Thread& AgentMessage_MonitorEvent::thread() const {
+  return thread_ != NULL ? *thread_ : *default_instance_->thread_;
+}
+inline ::AgentMessage_Thread* AgentMessage_MonitorEvent::mutable_thread() {
+  set_has_thread();
+  if (thread_ == NULL) thread_ = new ::AgentMessage_Thread;
+  return thread_;
+}
+inline ::AgentMessage_Thread* AgentMessage_MonitorEvent::release_thread() {
+  clear_has_thread();
+  ::AgentMessage_Thread* temp = thread_;
+  thread_ = NULL;
+  return temp;
+}
+
+// required .AgentMessage.MonitorEvent.EventType eventType = 2 [default = NONE];
+inline bool AgentMessage_MonitorEvent::has_eventtype() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AgentMessage_MonitorEvent::set_has_eventtype() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AgentMessage_MonitorEvent::clear_has_eventtype() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage_MonitorEvent::clear_eventtype() {
+  eventtype_ = 2;
+  clear_has_eventtype();
+}
+inline ::AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::eventtype() const {
+  return static_cast< ::AgentMessage_MonitorEvent_EventType >(eventtype_);
+}
+inline void AgentMessage_MonitorEvent::set_eventtype(::AgentMessage_MonitorEvent_EventType value) {
+  GOOGLE_DCHECK(::AgentMessage_MonitorEvent_EventType_IsValid(value));
+  set_has_eventtype();
+  eventtype_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// AgentMessage_Thread
+
+// required int32 id = 1;
+inline bool AgentMessage_Thread::has_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AgentMessage_Thread::set_has_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AgentMessage_Thread::clear_has_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AgentMessage_Thread::clear_id() {
   id_ = 0;
   clear_has_id();
 }
-inline ::google::protobuf::int32 AgentMessage_Threads_Thread::id() const {
+inline ::google::protobuf::int32 AgentMessage_Thread::id() const {
   return id_;
 }
-inline void AgentMessage_Threads_Thread::set_id(::google::protobuf::int32 value) {
+inline void AgentMessage_Thread::set_id(::google::protobuf::int32 value) {
   set_has_id();
   id_ = value;
 }
 
 // required string name = 2;
-inline bool AgentMessage_Threads_Thread::has_name() const {
+inline bool AgentMessage_Thread::has_name() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void AgentMessage_Threads_Thread::set_has_name() {
+inline void AgentMessage_Thread::set_has_name() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void AgentMessage_Threads_Thread::clear_has_name() {
+inline void AgentMessage_Thread::clear_has_name() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void AgentMessage_Threads_Thread::clear_name() {
+inline void AgentMessage_Thread::clear_name() {
   if (name_ != &::google::protobuf::internal::kEmptyString) {
     name_->clear();
   }
   clear_has_name();
 }
-inline const ::std::string& AgentMessage_Threads_Thread::name() const {
+inline const ::std::string& AgentMessage_Thread::name() const {
   return *name_;
 }
-inline void AgentMessage_Threads_Thread::set_name(const ::std::string& value) {
+inline void AgentMessage_Thread::set_name(const ::std::string& value) {
   set_has_name();
   if (name_ == &::google::protobuf::internal::kEmptyString) {
     name_ = new ::std::string;
   }
   name_->assign(value);
 }
-inline void AgentMessage_Threads_Thread::set_name(const char* value) {
+inline void AgentMessage_Thread::set_name(const char* value) {
   set_has_name();
   if (name_ == &::google::protobuf::internal::kEmptyString) {
     name_ = new ::std::string;
   }
   name_->assign(value);
 }
-inline void AgentMessage_Threads_Thread::set_name(const char* value, size_t size) {
+inline void AgentMessage_Thread::set_name(const char* value, size_t size) {
   set_has_name();
   if (name_ == &::google::protobuf::internal::kEmptyString) {
     name_ = new ::std::string;
   }
   name_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* AgentMessage_Threads_Thread::mutable_name() {
+inline ::std::string* AgentMessage_Thread::mutable_name() {
   set_has_name();
   if (name_ == &::google::protobuf::internal::kEmptyString) {
     name_ = new ::std::string;
   }
   return name_;
 }
-inline ::std::string* AgentMessage_Threads_Thread::release_name() {
+inline ::std::string* AgentMessage_Thread::release_name() {
   clear_has_name();
   if (name_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
@@ -482,236 +808,70 @@ inline ::std::string* AgentMessage_Threads_Thread::release_name() {
 }
 
 // required int32 priority = 3;
-inline bool AgentMessage_Threads_Thread::has_priority() const {
+inline bool AgentMessage_Thread::has_priority() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void AgentMessage_Threads_Thread::set_has_priority() {
+inline void AgentMessage_Thread::set_has_priority() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void AgentMessage_Threads_Thread::clear_has_priority() {
+inline void AgentMessage_Thread::clear_has_priority() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void AgentMessage_Threads_Thread::clear_priority() {
+inline void AgentMessage_Thread::clear_priority() {
   priority_ = 0;
   clear_has_priority();
 }
-inline ::google::protobuf::int32 AgentMessage_Threads_Thread::priority() const {
+inline ::google::protobuf::int32 AgentMessage_Thread::priority() const {
   return priority_;
 }
-inline void AgentMessage_Threads_Thread::set_priority(::google::protobuf::int32 value) {
+inline void AgentMessage_Thread::set_priority(::google::protobuf::int32 value) {
   set_has_priority();
   priority_ = value;
 }
 
-// required string state = 4;
-inline bool AgentMessage_Threads_Thread::has_state() const {
+// required .AgentMessage.Thread.State state = 4 [default = NEW];
+inline bool AgentMessage_Thread::has_state() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void AgentMessage_Threads_Thread::set_has_state() {
+inline void AgentMessage_Thread::set_has_state() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void AgentMessage_Threads_Thread::clear_has_state() {
+inline void AgentMessage_Thread::clear_has_state() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void AgentMessage_Threads_Thread::clear_state() {
-  if (state_ != &::google::protobuf::internal::kEmptyString) {
-    state_->clear();
-  }
+inline void AgentMessage_Thread::clear_state() {
+  state_ = 0;
   clear_has_state();
 }
-inline const ::std::string& AgentMessage_Threads_Thread::state() const {
-  return *state_;
+inline ::AgentMessage_Thread_State AgentMessage_Thread::state() const {
+  return static_cast< ::AgentMessage_Thread_State >(state_);
 }
-inline void AgentMessage_Threads_Thread::set_state(const ::std::string& value) {
+inline void AgentMessage_Thread::set_state(::AgentMessage_Thread_State value) {
+  GOOGLE_DCHECK(::AgentMessage_Thread_State_IsValid(value));
   set_has_state();
-  if (state_ == &::google::protobuf::internal::kEmptyString) {
-    state_ = new ::std::string;
-  }
-  state_->assign(value);
-}
-inline void AgentMessage_Threads_Thread::set_state(const char* value) {
-  set_has_state();
-  if (state_ == &::google::protobuf::internal::kEmptyString) {
-    state_ = new ::std::string;
-  }
-  state_->assign(value);
-}
-inline void AgentMessage_Threads_Thread::set_state(const char* value, size_t size) {
-  set_has_state();
-  if (state_ == &::google::protobuf::internal::kEmptyString) {
-    state_ = new ::std::string;
-  }
-  state_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* AgentMessage_Threads_Thread::mutable_state() {
-  set_has_state();
-  if (state_ == &::google::protobuf::internal::kEmptyString) {
-    state_ = new ::std::string;
-  }
-  return state_;
-}
-inline ::std::string* AgentMessage_Threads_Thread::release_state() {
-  clear_has_state();
-  if (state_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = state_;
-    state_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
+  state_ = value;
 }
 
 // required bool isContextClassLoaderSet = 5;
-inline bool AgentMessage_Threads_Thread::has_iscontextclassloaderset() const {
+inline bool AgentMessage_Thread::has_iscontextclassloaderset() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void AgentMessage_Threads_Thread::set_has_iscontextclassloaderset() {
+inline void AgentMessage_Thread::set_has_iscontextclassloaderset() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void AgentMessage_Threads_Thread::clear_has_iscontextclassloaderset() {
+inline void AgentMessage_Thread::clear_has_iscontextclassloaderset() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void AgentMessage_Threads_Thread::clear_iscontextclassloaderset() {
+inline void AgentMessage_Thread::clear_iscontextclassloaderset() {
   iscontextclassloaderset_ = false;
   clear_has_iscontextclassloaderset();
 }
-inline bool AgentMessage_Threads_Thread::iscontextclassloaderset() const {
+inline bool AgentMessage_Thread::iscontextclassloaderset() const {
   return iscontextclassloaderset_;
 }
-inline void AgentMessage_Threads_Thread::set_iscontextclassloaderset(bool value) {
+inline void AgentMessage_Thread::set_iscontextclassloaderset(bool value) {
   set_has_iscontextclassloaderset();
   iscontextclassloaderset_ = value;
-}
-
-// optional bool enteredMonitorWait = 6;
-inline bool AgentMessage_Threads_Thread::has_enteredmonitorwait() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void AgentMessage_Threads_Thread::set_has_enteredmonitorwait() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void AgentMessage_Threads_Thread::clear_has_enteredmonitorwait() {
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline void AgentMessage_Threads_Thread::clear_enteredmonitorwait() {
-  enteredmonitorwait_ = false;
-  clear_has_enteredmonitorwait();
-}
-inline bool AgentMessage_Threads_Thread::enteredmonitorwait() const {
-  return enteredmonitorwait_;
-}
-inline void AgentMessage_Threads_Thread::set_enteredmonitorwait(bool value) {
-  set_has_enteredmonitorwait();
-  enteredmonitorwait_ = value;
-}
-
-// optional bool leftMonitorWait = 7;
-inline bool AgentMessage_Threads_Thread::has_leftmonitorwait() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
-}
-inline void AgentMessage_Threads_Thread::set_has_leftmonitorwait() {
-  _has_bits_[0] |= 0x00000040u;
-}
-inline void AgentMessage_Threads_Thread::clear_has_leftmonitorwait() {
-  _has_bits_[0] &= ~0x00000040u;
-}
-inline void AgentMessage_Threads_Thread::clear_leftmonitorwait() {
-  leftmonitorwait_ = false;
-  clear_has_leftmonitorwait();
-}
-inline bool AgentMessage_Threads_Thread::leftmonitorwait() const {
-  return leftmonitorwait_;
-}
-inline void AgentMessage_Threads_Thread::set_leftmonitorwait(bool value) {
-  set_has_leftmonitorwait();
-  leftmonitorwait_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// AgentMessage_Threads
-
-// required string lifeCycle = 1;
-inline bool AgentMessage_Threads::has_lifecycle() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void AgentMessage_Threads::set_has_lifecycle() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void AgentMessage_Threads::clear_has_lifecycle() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void AgentMessage_Threads::clear_lifecycle() {
-  if (lifecycle_ != &::google::protobuf::internal::kEmptyString) {
-    lifecycle_->clear();
-  }
-  clear_has_lifecycle();
-}
-inline const ::std::string& AgentMessage_Threads::lifecycle() const {
-  return *lifecycle_;
-}
-inline void AgentMessage_Threads::set_lifecycle(const ::std::string& value) {
-  set_has_lifecycle();
-  if (lifecycle_ == &::google::protobuf::internal::kEmptyString) {
-    lifecycle_ = new ::std::string;
-  }
-  lifecycle_->assign(value);
-}
-inline void AgentMessage_Threads::set_lifecycle(const char* value) {
-  set_has_lifecycle();
-  if (lifecycle_ == &::google::protobuf::internal::kEmptyString) {
-    lifecycle_ = new ::std::string;
-  }
-  lifecycle_->assign(value);
-}
-inline void AgentMessage_Threads::set_lifecycle(const char* value, size_t size) {
-  set_has_lifecycle();
-  if (lifecycle_ == &::google::protobuf::internal::kEmptyString) {
-    lifecycle_ = new ::std::string;
-  }
-  lifecycle_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* AgentMessage_Threads::mutable_lifecycle() {
-  set_has_lifecycle();
-  if (lifecycle_ == &::google::protobuf::internal::kEmptyString) {
-    lifecycle_ = new ::std::string;
-  }
-  return lifecycle_;
-}
-inline ::std::string* AgentMessage_Threads::release_lifecycle() {
-  clear_has_lifecycle();
-  if (lifecycle_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = lifecycle_;
-    lifecycle_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// repeated .AgentMessage.Threads.Thread thread = 2;
-inline int AgentMessage_Threads::thread_size() const {
-  return thread_.size();
-}
-inline void AgentMessage_Threads::clear_thread() {
-  thread_.Clear();
-}
-inline const ::AgentMessage_Threads_Thread& AgentMessage_Threads::thread(int index) const {
-  return thread_.Get(index);
-}
-inline ::AgentMessage_Threads_Thread* AgentMessage_Threads::mutable_thread(int index) {
-  return thread_.Mutable(index);
-}
-inline ::AgentMessage_Threads_Thread* AgentMessage_Threads::add_thread() {
-  return thread_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Threads_Thread >&
-AgentMessage_Threads::thread() const {
-  return thread_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Threads_Thread >*
-AgentMessage_Threads::mutable_thread() {
-  return &thread_;
 }
 
 // -------------------------------------------------------------------
@@ -798,32 +958,61 @@ inline void AgentMessage::set_jvm_id(::google::protobuf::int32 value) {
   jvm_id_ = value;
 }
 
-// optional .AgentMessage.Threads threads = 3;
-inline bool AgentMessage::has_threads() const {
+// optional .AgentMessage.ThreadEvent threadEvent = 3;
+inline bool AgentMessage::has_threadevent() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void AgentMessage::set_has_threads() {
+inline void AgentMessage::set_has_threadevent() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void AgentMessage::clear_has_threads() {
+inline void AgentMessage::clear_has_threadevent() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void AgentMessage::clear_threads() {
-  if (threads_ != NULL) threads_->::AgentMessage_Threads::Clear();
-  clear_has_threads();
+inline void AgentMessage::clear_threadevent() {
+  if (threadevent_ != NULL) threadevent_->::AgentMessage_ThreadEvent::Clear();
+  clear_has_threadevent();
 }
-inline const ::AgentMessage_Threads& AgentMessage::threads() const {
-  return threads_ != NULL ? *threads_ : *default_instance_->threads_;
+inline const ::AgentMessage_ThreadEvent& AgentMessage::threadevent() const {
+  return threadevent_ != NULL ? *threadevent_ : *default_instance_->threadevent_;
 }
-inline ::AgentMessage_Threads* AgentMessage::mutable_threads() {
-  set_has_threads();
-  if (threads_ == NULL) threads_ = new ::AgentMessage_Threads;
-  return threads_;
+inline ::AgentMessage_ThreadEvent* AgentMessage::mutable_threadevent() {
+  set_has_threadevent();
+  if (threadevent_ == NULL) threadevent_ = new ::AgentMessage_ThreadEvent;
+  return threadevent_;
 }
-inline ::AgentMessage_Threads* AgentMessage::release_threads() {
-  clear_has_threads();
-  ::AgentMessage_Threads* temp = threads_;
-  threads_ = NULL;
+inline ::AgentMessage_ThreadEvent* AgentMessage::release_threadevent() {
+  clear_has_threadevent();
+  ::AgentMessage_ThreadEvent* temp = threadevent_;
+  threadevent_ = NULL;
+  return temp;
+}
+
+// optional .AgentMessage.MonitorEvent monitorEvent = 4;
+inline bool AgentMessage::has_monitorevent() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void AgentMessage::set_has_monitorevent() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void AgentMessage::clear_has_monitorevent() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void AgentMessage::clear_monitorevent() {
+  if (monitorevent_ != NULL) monitorevent_->::AgentMessage_MonitorEvent::Clear();
+  clear_has_monitorevent();
+}
+inline const ::AgentMessage_MonitorEvent& AgentMessage::monitorevent() const {
+  return monitorevent_ != NULL ? *monitorevent_ : *default_instance_->monitorevent_;
+}
+inline ::AgentMessage_MonitorEvent* AgentMessage::mutable_monitorevent() {
+  set_has_monitorevent();
+  if (monitorevent_ == NULL) monitorevent_ = new ::AgentMessage_MonitorEvent;
+  return monitorevent_;
+}
+inline ::AgentMessage_MonitorEvent* AgentMessage::release_monitorevent() {
+  clear_has_monitorevent();
+  ::AgentMessage_MonitorEvent* temp = monitorevent_;
+  monitorevent_ = NULL;
   return temp;
 }
 
@@ -834,6 +1023,18 @@ inline ::AgentMessage_Threads* AgentMessage::release_threads() {
 namespace google {
 namespace protobuf {
 
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::AgentMessage_ThreadEvent_EventType>() {
+  return ::AgentMessage_ThreadEvent_EventType_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::AgentMessage_MonitorEvent_EventType>() {
+  return ::AgentMessage_MonitorEvent_EventType_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::AgentMessage_Thread_State>() {
+  return ::AgentMessage_Thread_State_descriptor();
+}
 
 }  // namespace google
 }  // namespace protobuf

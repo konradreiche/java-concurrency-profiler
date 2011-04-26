@@ -31,7 +31,7 @@ public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
 	/**
 	 * The threads state.
 	 */
-	final String state;
+	String state;
 
 	/**
 	 * Whether the context class loader is set.
@@ -130,7 +130,10 @@ public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
 	public String getMonitorStatus() {
 		return monitorStatus;
 	}
-	
+
+	public void setState(String state) {
+		this.state = state;
+	}
 	
 	
 }

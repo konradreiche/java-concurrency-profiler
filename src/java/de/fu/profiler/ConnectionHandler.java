@@ -75,40 +75,48 @@ public class ConnectionHandler implements Runnable {
 				}
 			}
 
-			if (agentMessage.getThreads().isInitialized()) {
-				
-				for (de.fu.profiler.AgentMessageProtos.AgentMessage.Threads.Thread thread : agentMessage
-						.getThreads().getThreadList()) {
+			if (agentMessage.hasThreadEvent()) {
+				for (de.fu.profiler.AgentMessageProtos.AgentMessage.Thread thread : agentMessage
+						.getThreadEvent().getThreadList()) {
 
-						ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
-								thread.getName(), thread.getPriority(),
-								thread.getState(),
-								thread.getIsContextClassLoaderSet(),mainFrame.getNotifyWaitController());
+					ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
+							thread.getName(), thread.getPriority(), thread
+									.getState().toString(),
+							thread.getIsContextClassLoaderSet(),
+							mainFrame.getNotifyWaitController());
 
-						if (jvm.getThreads().contains(threadInfo)) {
-							jvm.getThreads().remove(threadInfo);
-						}
+					if (jvm.getThreads().contains(threadInfo)) {
+						jvm.getThreads().remove(threadInfo);
+					}
 
-						jvm.addThread(threadInfo);
-
-						
-						if (thread.hasEnteredMonitorWait()) {
-							if (thread.getEnteredMonitorWait()) {
-								System.out.println(threadInfo.countObservers());
-								threadInfo.changeMonitorStatus("Thread " + thread.getId() + " wait()\n");
-							}
-						}
-						
-						if (thread.hasLeftMonitorWait()) {
-							if (thread.getLeftMonitorWait()) {
-								System.out.println(threadInfo.countObservers());
-								threadInfo.changeMonitorStatus("Thread " + thread.getId() + " wait() exit\n");
-							}
-						} 
-						
+					jvm.addThread(threadInfo);
 				}
 			}
 
+			if (agentMessage.hasMonitorEvent()) {
+				ThreadInfo thread = jvm.getThread(agentMessage
+						.getMonitorEvent().getThread().getId());
+
+				thread.setState(agentMessage.getMonitorEvent().getThread()
+						.getState().toString());
+				
+				if (jvm.getThreads().contains(thread)) {
+					jvm.getThreads().remove(thread);
+				}
+
+				jvm.addThread(thread);
+
+				switch (agentMessage.getMonitorEvent().getEventType()) {
+				case WAIT:
+					thread.changeMonitorStatus("Thread " + thread.getId()
+							+ " wait()\n");
+					break;
+				case WAITED:
+					thread.changeMonitorStatus("Thread " + thread.getId()
+							+ " wait() exit\n");
+					break;
+				}
+			}
 
 		} catch (IOException e) {
 			System.err.println("IOException: " + e.getMessage());

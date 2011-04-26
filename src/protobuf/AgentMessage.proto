@@ -6,24 +6,52 @@ message AgentMessage {
 	required string timestamp = 1;
 	required int32 jvm_id = 2;
 
-	message Threads {
+	message ThreadEvent {
 
-		required string lifeCycle = 1;
+		repeated Thread thread = 1;
 
-		message Thread {
-
-			required int32 id = 1;
-	   		required string name = 2;
-			required int32 priority = 3;
-			required string state = 4;
-			required bool isContextClassLoaderSet = 5;
-
-			optional bool enteredMonitorWait = 6;
-			optional bool leftMonitorWait = 7;
+		enum EventType {
+			STARTED = 0;
+			ENDED = 1;
+			NONE = 2;
 		}
 
-		repeated Thread thread = 2;
+
+		required EventType eventType = 2 [default = NONE];
 	}
 
-	optional Threads threads = 3;
+	message MonitorEvent {
+	
+		required Thread thread = 1;
+
+		enum EventType {
+			WAIT = 0;
+			WAITED = 1;
+			NONE = 2;
+		}
+
+		required EventType eventType = 2 [default = NONE];
+	}
+
+	message Thread {
+
+		required int32 id = 1;
+		required string name = 2;
+		required int32 priority = 3;
+
+		enum State {
+			NEW = 0;
+			RUNNABLE = 1;
+			BLOCKED = 2;
+			WAITING = 3;
+			TIMED_WAITING = 4;
+			TERMINATED = 5;
+		}
+
+		required State state = 4 [default = NEW];
+		required bool isContextClassLoaderSet = 5;
+	}
+
+	optional ThreadEvent threadEvent = 3;
+	optional MonitorEvent monitorEvent = 4;
 }
