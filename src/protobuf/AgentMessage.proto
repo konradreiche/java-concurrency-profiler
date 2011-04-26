@@ -27,7 +27,8 @@ message AgentMessage {
 		enum EventType {
 			WAIT = 0;
 			WAITED = 1;
-			NONE = 2;
+			NOTIFY_ALL = 2;
+			NONE = 3;
 		}
 
 		required EventType eventType = 2 [default = NONE];

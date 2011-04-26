@@ -108,13 +108,17 @@ public class ConnectionHandler implements Runnable {
 
 				switch (agentMessage.getMonitorEvent().getEventType()) {
 				case WAIT:
-					thread.changeMonitorStatus("Thread " + thread.getId()
+					thread.changeMonitorStatus("Thread " + thread.getName()
 							+ " wait()\n");
 					break;
 				case WAITED:
-					thread.changeMonitorStatus("Thread " + thread.getId()
+					thread.changeMonitorStatus("Thread " + thread.getName()
 							+ " wait() exit\n");
 					break;
+				case NOTIFY_ALL:
+					thread.changeMonitorStatus("Thread " + thread.getName()
+							+ " notifyAll()\n");
+					break;					
 				}
 			}
 

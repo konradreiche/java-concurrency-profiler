@@ -811,12 +811,14 @@ public final class AgentMessageProtos {
           implements com.google.protobuf.ProtocolMessageEnum {
         WAIT(0, 0),
         WAITED(1, 1),
-        NONE(2, 2),
+        NOTIFY_ALL(2, 2),
+        NONE(3, 3),
         ;
         
         public static final int WAIT_VALUE = 0;
         public static final int WAITED_VALUE = 1;
-        public static final int NONE_VALUE = 2;
+        public static final int NOTIFY_ALL_VALUE = 2;
+        public static final int NONE_VALUE = 3;
         
         
         public final int getNumber() { return value; }
@@ -825,7 +827,8 @@ public final class AgentMessageProtos {
           switch (value) {
             case 0: return WAIT;
             case 1: return WAITED;
-            case 2: return NONE;
+            case 2: return NOTIFY_ALL;
+            case 3: return NONE;
             default: return null;
           }
         }
@@ -856,7 +859,7 @@ public final class AgentMessageProtos {
         }
         
         private static final EventType[] VALUES = {
-          WAIT, WAITED, NONE, 
+          WAIT, WAITED, NOTIFY_ALL, NONE, 
         };
         
         public static EventType valueOf(
@@ -2818,7 +2821,7 @@ public final class AgentMessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022AgentMessage.proto\"\276\005\n\014AgentMessage\022\021\n" +
+      "\n\022AgentMessage.proto\"\316\005\n\014AgentMessage\022\021\n" +
       "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre" +
       "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent" +
       "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo" +
@@ -2826,18 +2829,18 @@ public final class AgentMessageProtos {
       "(\0132\024.AgentMessage.Thread\022<\n\teventType\030\002 " +
       "\002(\0162#.AgentMessage.ThreadEvent.EventType" +
       ":\004NONE\"-\n\tEventType\022\013\n\007STARTED\020\000\022\t\n\005ENDE" +
-      "D\020\001\022\010\n\004NONE\020\002\032\240\001\n\014MonitorEvent\022$\n\006thread" +
+      "D\020\001\022\010\n\004NONE\020\002\032\260\001\n\014MonitorEvent\022$\n\006thread" +
       "\030\001 \002(\0132\024.AgentMessage.Thread\022=\n\teventTyp",
       "e\030\002 \002(\0162$.AgentMessage.MonitorEvent.Even" +
-      "tType:\004NONE\"+\n\tEventType\022\010\n\004WAIT\020\000\022\n\n\006WA" +
-      "ITED\020\001\022\010\n\004NONE\020\002\032\342\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022" +
-      "\014\n\004name\030\002 \002(\t\022\020\n\010priority\030\003 \002(\005\022.\n\005state" +
-      "\030\004 \002(\0162\032.AgentMessage.Thread.State:\003NEW\022" +
-      "\037\n\027isContextClassLoaderSet\030\005 \002(\010\"[\n\005Stat" +
-      "e\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n" +
-      "\007WAITING\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINA" +
-      "TED\020\005B$\n\016de.fu.profilerB\022AgentMessagePro" +
-      "tos"
+      "tType:\004NONE\";\n\tEventType\022\010\n\004WAIT\020\000\022\n\n\006WA" +
+      "ITED\020\001\022\016\n\nNOTIFY_ALL\020\002\022\010\n\004NONE\020\003\032\342\001\n\006Thr" +
+      "ead\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010priorit" +
+      "y\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMessage.Th" +
+      "read.State:\003NEW\022\037\n\027isContextClassLoaderS" +
+      "et\030\005 \002(\010\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001" +
+      "\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIMED_WAIT" +
+      "ING\020\004\022\016\n\nTERMINATED\020\005B$\n\016de.fu.profilerB" +
+      "\022AgentMessageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

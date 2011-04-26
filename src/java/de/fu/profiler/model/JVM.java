@@ -1,9 +1,7 @@
 package de.fu.profiler.model;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**

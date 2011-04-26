@@ -154,7 +154,7 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022AgentMessage.proto\"\276\005\n\014AgentMessage\022\021\n"
+    "\n\022AgentMessage.proto\"\316\005\n\014AgentMessage\022\021\n"
     "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre"
     "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent"
     "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo"
@@ -162,18 +162,18 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
     "(\0132\024.AgentMessage.Thread\022<\n\teventType\030\002 "
     "\002(\0162#.AgentMessage.ThreadEvent.EventType"
     ":\004NONE\"-\n\tEventType\022\013\n\007STARTED\020\000\022\t\n\005ENDE"
-    "D\020\001\022\010\n\004NONE\020\002\032\240\001\n\014MonitorEvent\022$\n\006thread"
+    "D\020\001\022\010\n\004NONE\020\002\032\260\001\n\014MonitorEvent\022$\n\006thread"
     "\030\001 \002(\0132\024.AgentMessage.Thread\022=\n\teventTyp"
     "e\030\002 \002(\0162$.AgentMessage.MonitorEvent.Even"
-    "tType:\004NONE\"+\n\tEventType\022\010\n\004WAIT\020\000\022\n\n\006WA"
-    "ITED\020\001\022\010\n\004NONE\020\002\032\342\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022"
-    "\014\n\004name\030\002 \002(\t\022\020\n\010priority\030\003 \002(\005\022.\n\005state"
-    "\030\004 \002(\0162\032.AgentMessage.Thread.State:\003NEW\022"
-    "\037\n\027isContextClassLoaderSet\030\005 \002(\010\"[\n\005Stat"
-    "e\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n"
-    "\007WAITING\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINA"
-    "TED\020\005B$\n\016de.fu.profilerB\022AgentMessagePro"
-    "tos", 763);
+    "tType:\004NONE\";\n\tEventType\022\010\n\004WAIT\020\000\022\n\n\006WA"
+    "ITED\020\001\022\016\n\nNOTIFY_ALL\020\002\022\010\n\004NONE\020\003\032\342\001\n\006Thr"
+    "ead\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010priorit"
+    "y\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMessage.Th"
+    "read.State:\003NEW\022\037\n\027isContextClassLoaderS"
+    "et\030\005 \002(\010\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001"
+    "\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIMED_WAIT"
+    "ING\020\004\022\016\n\nTERMINATED\020\005B$\n\016de.fu.profilerB"
+    "\022AgentMessageProtos", 779);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "AgentMessage.proto", &protobuf_RegisterTypes);
   AgentMessage::default_instance_ = new AgentMessage();
@@ -487,6 +487,7 @@ bool AgentMessage_MonitorEvent_EventType_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -496,6 +497,7 @@ bool AgentMessage_MonitorEvent_EventType_IsValid(int value) {
 #ifndef _MSC_VER
 const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::WAIT;
 const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::WAITED;
+const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::NOTIFY_ALL;
 const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::NONE;
 const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::EventType_MIN;
 const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::EventType_MAX;
@@ -524,7 +526,7 @@ AgentMessage_MonitorEvent::AgentMessage_MonitorEvent(const AgentMessage_MonitorE
 void AgentMessage_MonitorEvent::SharedCtor() {
   _cached_size_ = 0;
   thread_ = NULL;
-  eventtype_ = 2;
+  eventtype_ = 3;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -563,7 +565,7 @@ void AgentMessage_MonitorEvent::Clear() {
     if (has_thread()) {
       if (thread_ != NULL) thread_->::AgentMessage_Thread::Clear();
     }
-    eventtype_ = 2;
+    eventtype_ = 3;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();

@@ -161,9 +161,10 @@ static AgentMessage createThreadEventMessage(AgentMessage agentMessage,
 static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 		jthread thread, AgentMessage::MonitorEvent::EventType eventType) {
 
-	AgentMessage::MonitorEvent *monitorEvent = agentMessage.mutable_monitorevent();
+	AgentMessage::MonitorEvent *monitorEvent =
+			agentMessage.mutable_monitorevent();
 	AgentMessage::Thread *threadMessage = monitorEvent->mutable_thread();
-	initializeThreadMessage(threadMessage,thread);
+	initializeThreadMessage(threadMessage, thread);
 	monitorEvent->set_eventtype(eventType);
 
 	return agentMessage;
@@ -218,7 +219,8 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = createMonitorEventMessage(agentMessage,thread,AgentMessage::MonitorEvent::WAIT);
+		agentMessage = createMonitorEventMessage(agentMessage, thread,
+				AgentMessage::MonitorEvent::WAIT);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -234,7 +236,8 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 	enter_critical_section(jvmti);
 	{
 		AgentMessage agentMessage;
-		agentMessage = createMonitorEventMessage(agentMessage,thread,AgentMessage::MonitorEvent::WAITED);
+		agentMessage = createMonitorEventMessage(agentMessage, thread,
+				AgentMessage::MonitorEvent::WAITED);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
@@ -266,6 +269,23 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 	}
 	exit_critical_section(jvmti);
+}
+
+static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
+		jthread thread, jmethodID method, jboolean was_popped_by_exception,
+		jvalue return_value) {
+
+	char *name;
+	jvmti_env->GetMethodName(method, &name, NULL, NULL);
+	std::string methodName = name;
+
+	if (methodName == "notifyAll") {
+		AgentMessage agentMessage;
+		agentMessage = createMonitorEventMessage(agentMessage, thread,
+				AgentMessage::MonitorEvent::NOTIFY_ALL);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+	}
+
 }
 
 /** Exception callback */
@@ -384,6 +404,9 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
 				JVMTI_EVENT_MONITOR_WAITED, (jthread) NULL);
 
+		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
+				JVMTI_EVENT_METHOD_EXIT, (jthread) NULL);
+
 		check_jvmti_error(jvmti_env, error, "Cannot set event notification");
 
 		/*
@@ -398,8 +421,8 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
-				agentMessage = createThreadEventMessage(agentMessage, thread,
-						AgentMessage::ThreadEvent::STARTED);
+				agentMessage = createThreadEventMessage(agentMessage,
+						threads[i], AgentMessage::ThreadEvent::STARTED);
 			}
 			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
 		}
@@ -568,6 +591,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	capa.can_generate_vm_object_alloc_events = 1;
 	capa.can_tag_objects = 1;
 	capa.can_generate_monitor_events = 1;
+	capa.can_generate_method_exit_events = 1;
 
 	error = jvmti->AddCapabilities(&capa);
 	check_jvmti_error(jvmti, error,
@@ -584,6 +608,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	callbacks.MonitorContendedEnter = &callbackMonitorContendedEnter;/* JVMTI_EVENT_MONITOR_CONTENDED_ENTER*/
 	callbacks.MonitorWait = &callbackMonitorWait;/* JVMTI_EVENT_MONITOR_WAIT*/
 	callbacks.MonitorWaited = &callbackMonitorWaited;/* JVMTI_EVENT_MONITOR_WAIT*/
+	callbacks.MethodExit = &callbackMethodExit;/* JVMTI_EVENT_METHOD_EXIT */
 
 	error = jvmti->SetEventCallbacks(&callbacks, (jint) sizeof(callbacks));
 	check_jvmti_error(jvmti, error, "Cannot set jvmti callbacks");
