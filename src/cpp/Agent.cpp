@@ -31,7 +31,7 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static AgentSocket agentSocket("192.168.1.101", "50000");
+static AgentSocket agentSocket("127.0.0.1", "50000");
 static int JVM_ID;
 static int THREAD_ID = 1;
 
@@ -280,6 +280,18 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 	std::string methodName = name;
 
 	if (methodName == "notifyAll") {
+
+		jvmtiFrameInfo frames;
+		jint count;
+		jvmtiError error;
+		jthread thr;
+
+		if (error == JVMTI_ERROR_NONE && count >= 1) {
+			jvmti_env->GetMethodName(frames.method, &name, NULL, NULL);
+			std::cout << name << std::endl;
+		}
+
+
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
 				AgentMessage::MonitorEvent::NOTIFY_ALL);

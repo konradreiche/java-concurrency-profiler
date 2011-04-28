@@ -81,9 +81,9 @@ public class ConnectionHandler implements Runnable {
 
 					ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
 							thread.getName(), thread.getPriority(), thread
-									.getState().toString(),
-							thread.getIsContextClassLoaderSet(),
-							mainFrame.getNotifyWaitController());
+									.getState().toString(), thread
+									.getIsContextClassLoaderSet(), mainFrame
+									.getNotifyWaitController());
 
 					if (jvm.getThreads().contains(threadInfo)) {
 						jvm.getThreads().remove(threadInfo);
@@ -94,12 +94,24 @@ public class ConnectionHandler implements Runnable {
 			}
 
 			if (agentMessage.hasMonitorEvent()) {
+
+				de.fu.profiler.AgentMessageProtos.AgentMessage.Thread t = agentMessage
+						.getMonitorEvent().getThread();
+
 				ThreadInfo thread = jvm.getThread(agentMessage
 						.getMonitorEvent().getThread().getId());
 
+				if (thread == null) {
+					thread = new ThreadInfo(t.getId(), t.getName(), t
+							.getPriority(), t.getState().toString(), t
+							.getIsContextClassLoaderSet(), mainFrame
+							.getNotifyWaitController());
+					jvm.addThread(thread);
+				}
+
 				thread.setState(agentMessage.getMonitorEvent().getThread()
 						.getState().toString());
-				
+
 				if (jvm.getThreads().contains(thread)) {
 					jvm.getThreads().remove(thread);
 				}
@@ -108,17 +120,17 @@ public class ConnectionHandler implements Runnable {
 
 				switch (agentMessage.getMonitorEvent().getEventType()) {
 				case WAIT:
-					thread.changeMonitorStatus("Thread " + thread.getName()
+					thread.changeMonitorStatus(thread.getName() + " invoked"
 							+ " wait()\n");
 					break;
 				case WAITED:
-					thread.changeMonitorStatus("Thread " + thread.getName()
-							+ " wait() exit\n");
+					thread.changeMonitorStatus(thread.getName() + " left"
+							+ " wait()\n");
 					break;
 				case NOTIFY_ALL:
-					thread.changeMonitorStatus("Thread " + thread.getName()
+					thread.changeMonitorStatus(thread.getName() + " invoked"
 							+ " notifyAll()\n");
-					break;					
+					break;
 				}
 			}
 

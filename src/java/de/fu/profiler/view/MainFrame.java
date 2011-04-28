@@ -140,11 +140,6 @@ public class MainFrame extends JFrame {
 					try {
 						String pid = VirtualMachine.list().get(0).id();
 						VirtualMachine vm = VirtualMachine.attach(pid);
-						vm.loadAgentLibrary("agent");
-					} catch (AgentLoadException e1) {
-						e1.printStackTrace();
-					} catch (AgentInitializationException e1) {
-						e1.printStackTrace();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					} catch (AttachNotSupportedException e1) {
