@@ -1,4 +1,4 @@
-option java_package = "de.fu.profiler";
+option java_package = "de.fu.profiler.model";
 option java_outer_classname = "AgentMessageProtos";
 
 message AgentMessage {
@@ -32,6 +32,11 @@ message AgentMessage {
 		}
 
 		required EventType eventType = 2 [default = NONE];
+
+		optional int64 monitorId = 3;
+		optional int32 entryCount = 4;
+		optional int32 waiterCount = 5;
+		optional int32 notifyWaiterCount = 6;
 	}
 
 	message Thread {

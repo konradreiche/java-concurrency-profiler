@@ -1,6 +1,5 @@
 package de.fu.profiler.model;
 
-import java.util.Observable;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -10,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author Konrad Johannes Reiche
  * 
  */
-public class JVM extends Observable {
+public class JVM {
 
 	/**
 	 * Generated id by the profiling agent.
@@ -62,9 +61,11 @@ public class JVM extends Observable {
 	 *            a thread.
 	 */
 	public void addThread(ThreadInfo threadInfo) {
+		
+		if (threads.contains(threadInfo)) {
+			threads.remove(threadInfo);
+		}
 		threads.add(threadInfo);
-		setChanged();
-		notifyObservers();
 	}
 
 	/**
@@ -73,7 +74,6 @@ public class JVM extends Observable {
 	 */
 	public void clearThreads() {
 		threads.clear();
-		notifyObservers();
 	}
 	
 	/**

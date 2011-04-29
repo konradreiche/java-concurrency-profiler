@@ -1,10 +1,8 @@
-package de.fu.profiler;
+package de.fu.profiler.model;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import de.fu.profiler.view.MainFrame;
 
 /**
  * Provides the service to start new Threads handling the incoming connections.
@@ -15,23 +13,22 @@ import de.fu.profiler.view.MainFrame;
 public class Server extends ServerSocket implements Runnable {
 
 	/**
-	 * The main frame of the graphical interface.
+	 * The profiler itself.
 	 */
-	MainFrame mainFrame;
+	private ProfilerModel profilerModel;
 
 	/**
 	 * Standard constructor.
+	 * @param profilerModel 
 	 * 
 	 * @param port
 	 *            the port on which the server socket will listen.
-	 * @param mainFrame
-	 *            the main frame of the graphical interface.
 	 * @throws IOException
 	 *             if an I/O error occurs when opening the socket.
 	 */
-	public Server(int port, MainFrame mainFrame) throws IOException {
+	public Server(ProfilerModel profilerModel, int port) throws IOException {
 		super(port);
-		this.mainFrame = mainFrame;
+		this.profilerModel = profilerModel;
 	}
 
 	/**
@@ -45,8 +42,7 @@ public class Server extends ServerSocket implements Runnable {
 		try {
 			while (true) {
 				Socket socket = this.accept();
-				Thread service = new Thread(new ConnectionHandler(socket,
-						mainFrame));
+				Thread service = new Thread(new ConnectionHandler(profilerModel,socket));
 				service.start();
 			}
 

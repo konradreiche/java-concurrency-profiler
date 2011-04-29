@@ -31,9 +31,9 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static AgentSocket agentSocket("127.0.0.1", "50000");
-static int JVM_ID;
-static int THREAD_ID = 1;
+static AgentSocket agentSocket("192.168.1.101", "50000");
+static int jvmPid;
+static int objectId = 1;
 
 /** Global agent data structure */
 typedef struct {
@@ -118,8 +118,8 @@ static void initializeThreadMessage(AgentMessage::Thread *threadMessage,
 
 	jvmti->GetTag(thread, &thr_id_ptr);
 	if (thr_id_ptr == 0) {
-		jvmti->SetTag(thread, THREAD_ID);
-		++THREAD_ID;
+		jvmti->SetTag(thread, objectId);
+		++objectId;
 		jvmti->GetTag(thread, &thr_id_ptr);
 	}
 
@@ -159,13 +159,21 @@ static AgentMessage createThreadEventMessage(AgentMessage agentMessage,
 }
 
 static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
-		jthread thread, AgentMessage::MonitorEvent::EventType eventType) {
+		jthread thread, AgentMessage::MonitorEvent::EventType eventType,
+		jlong objectId, jvmtiMonitorUsage monitorUseage) {
 
 	AgentMessage::MonitorEvent *monitorEvent =
 			agentMessage.mutable_monitorevent();
 	AgentMessage::Thread *threadMessage = monitorEvent->mutable_thread();
 	initializeThreadMessage(threadMessage, thread);
 	monitorEvent->set_eventtype(eventType);
+
+	if (eventType != AgentMessage::MonitorEvent::NOTIFY_ALL) {
+		monitorEvent->set_monitorid(objectId);
+		monitorEvent->set_entrycount(monitorUseage.entry_count);
+		monitorEvent->set_waitercount(monitorUseage.waiter_count);
+		monitorEvent->set_notifywaitercount(monitorUseage.notify_waiter_count);
+	}
 
 	return agentMessage;
 }
@@ -218,10 +226,21 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 	enter_critical_section(jvmti);
 	{
+		jvmtiMonitorUsage monitorUseage;
+		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
+		jlong currentObjectId;
+
+		jvmti->GetTag(object, &currentObjectId);
+		if (currentObjectId == 0) {
+			jvmti->SetTag(object, objectId);
+			++objectId;
+			jvmti->GetTag(object, &currentObjectId);
+		}
+
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				AgentMessage::MonitorEvent::WAIT);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+				AgentMessage::MonitorEvent::WAIT, currentObjectId, monitorUseage);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -235,10 +254,21 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 	enter_critical_section(jvmti);
 	{
+		jvmtiMonitorUsage monitorUseage;
+		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
+		jlong currentObjectId;
+
+		jvmti->GetTag(object, &currentObjectId);
+		if (currentObjectId == 0) {
+			jvmti->SetTag(object, objectId);
+			++objectId;
+			jvmti->GetTag(object, &currentObjectId);
+		}
+
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				AgentMessage::MonitorEvent::WAITED);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+				AgentMessage::MonitorEvent::WAITED, currentObjectId, monitorUseage);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -252,7 +282,7 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 		AgentMessage agentMessage;
 		agentMessage = createThreadEventMessage(agentMessage, thread,
 				AgentMessage::ThreadEvent::STARTED);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -266,7 +296,7 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 		AgentMessage agentMessage;
 		agentMessage = createThreadEventMessage(agentMessage, thread,
 				AgentMessage::ThreadEvent::ENDED);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -288,16 +318,14 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 
 		if (error == JVMTI_ERROR_NONE && count >= 1) {
 			jvmti_env->GetMethodName(frames.method, &name, NULL, NULL);
-			std::cout << name << std::endl;
 		}
 
-
+		jvmtiMonitorUsage monitorUseage;
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				AgentMessage::MonitorEvent::NOTIFY_ALL);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+				AgentMessage::MonitorEvent::NOTIFY_ALL, 0, monitorUseage);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
-
 }
 
 /** Exception callback */
@@ -333,7 +361,7 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 				agentMessage = createThreadEventMessage(agentMessage,
 						threads[i], AgentMessage::ThreadEvent::ENDED);
 			}
-			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 		}
 		exit_critical_section(jvmti);
 	}
@@ -436,7 +464,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				agentMessage = createThreadEventMessage(agentMessage,
 						threads[i], AgentMessage::ThreadEvent::STARTED);
 			}
-			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, JVM_ID);
+			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 		}
 	}
 	exit_critical_section(jvmti);
@@ -567,7 +595,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	jint res;
 	jvmtiEventCallbacks callbacks;
 
-	JVM_ID = boost::lexical_cast<int>(options);
+	jvmPid = getpid();
 
 	/* Setup initial global agent data area
 	 * Use of static/extern data should be handled carefully here.
@@ -604,6 +632,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	capa.can_tag_objects = 1;
 	capa.can_generate_monitor_events = 1;
 	capa.can_generate_method_exit_events = 1;
+	capa.can_get_monitor_info = 1;
 
 	error = jvmti->AddCapabilities(&capa);
 	check_jvmti_error(jvmti, error,
@@ -647,7 +676,6 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 
 	/* Return JNI_OK to signify success */
 	return JNI_OK;
-
 }
 
 /* Agent_OnUnload: This is called immediately before the shared library is

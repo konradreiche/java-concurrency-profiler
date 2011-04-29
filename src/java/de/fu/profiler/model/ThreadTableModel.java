@@ -1,17 +1,14 @@
-package de.fu.profiler.controller;
+package de.fu.profiler.model;
 
 import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
 
-import de.fu.profiler.model.JVM;
-import de.fu.profiler.model.ThreadInfo;
 
 /**
  * Provides a {@link TableModel} for displaying the profiled threads in a
@@ -20,7 +17,7 @@ import de.fu.profiler.model.ThreadInfo;
  * @author Konrad Johannes Reiche
  * 
  */
-public class ThreadTableModel extends AbstractTableModel implements Observer {
+public class ThreadTableModel extends AbstractTableModel {
 
 	/**
 	 * generated serial version ID
@@ -45,9 +42,9 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 	 * 
 	 * @param threadPieChartDataset
 	 */
-	public ThreadTableModel(DefaultPieDataset threadPieChartDataset) {
+	public ThreadTableModel(PieDataset threadPieDataset) {
 		super();
-		this.threadPieChartDataset = threadPieChartDataset;
+		this.threadPieChartDataset = (DefaultPieDataset) threadPieDataset;
 	}
 
 	/**
@@ -113,50 +110,5 @@ public class ThreadTableModel extends AbstractTableModel implements Observer {
 
 	public void setCurrentJVM(JVM jvm) {
 		this.jvm = jvm;
-	}
-
-	/**
-	 * Updates the table and the pie chart diagram.
-	 * 
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable o, Object arg) {
-
-		int newCounter = 0;
-		int terminatedCounter = 0;
-		int runnableCounter = 0;
-		int blockedCounter = 0;
-		int waitingCounter = 0;
-		int timedWaitingCounter = 0;
-		
-		for (ThreadInfo thread : jvm.getThreads()) {
-			String state = thread.getState();
-			
-			if (state.equals("NEW")) {
-				newCounter++;
-			} else if (state.equals("TERMINATED")) {
-				terminatedCounter++;
-			} else if (state.equals("RUNNABLE")) {
-				runnableCounter++;
-			} else if (state.equals("BLOCKED")) {
-				blockedCounter++;
-			} else if (state.equals("WAITING")) {
-				waitingCounter++;
-			} else if (state.equals("TIMED_WAITING")) {
-				timedWaitingCounter++;
-			} else {
-				assert(false);
-			}
-			
-			threadPieChartDataset.setValue("New", newCounter);
-			threadPieChartDataset.setValue("Terminated", terminatedCounter);
-			threadPieChartDataset.setValue("Runnable", runnableCounter);
-			threadPieChartDataset.setValue("Blocked", blockedCounter);
-			threadPieChartDataset.setValue("Waiting", waitingCounter);
-			threadPieChartDataset.setValue("Timed Waiting", timedWaitingCounter);
-		}
-
-		fireTableDataChanged();
 	}
 }

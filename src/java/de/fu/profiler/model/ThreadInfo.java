@@ -1,8 +1,5 @@
 package de.fu.profiler.model;
 
-import java.util.Observable;
-
-import de.fu.profiler.controller.NotiyWaitController;
 
 /**
  * Models a java thread and describes selected and analysed information of a
@@ -11,7 +8,7 @@ import de.fu.profiler.controller.NotiyWaitController;
  * @author Konrad Johannes Reiche
  * 
  */
-public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
+public class ThreadInfo implements Comparable<ThreadInfo> {
 
 	/**
 	 * A generated id by the profiler.
@@ -39,9 +36,9 @@ public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
 	final boolean isContextClassLoaderSet;
 
 	/**
-	 * The number how much the thread has entered a contended monitor.
+	 * The number how much the thread has called wait.
 	 */
-	int contendedMonitorWaitCount;
+	int waitCount;
 
 	/**
 	 * Status of the last monitor event.
@@ -64,14 +61,13 @@ public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
 	 * @param notiyWaitController 
 	 */
 	public ThreadInfo(int id, String name, int priority, String state,
-			boolean ccl, NotiyWaitController notiyWaitController) {
+			boolean ccl) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.priority = priority;
 		this.state = state;
 		this.isContextClassLoaderSet = ccl;
-		this.addObserver(notiyWaitController);
 	}
 
 	public int getId() {
@@ -97,8 +93,8 @@ public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
 	/**
 	 * Increments the statistics about the contended monitor waiting.
 	 */
-	public void incContendedMonitorWait() {
-		++contendedMonitorWaitCount;
+	public void increaseWaitCounter() {
+		++waitCount;
 	}
 
 	/**
@@ -123,8 +119,6 @@ public class ThreadInfo extends Observable implements Comparable<ThreadInfo> {
 	
 	public void changeMonitorStatus(String status) {
 		monitorStatus = status;
-		setChanged();
-		notifyObservers();
 	}
 
 	public String getMonitorStatus() {

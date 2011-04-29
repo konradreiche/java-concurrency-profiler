@@ -76,9 +76,13 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       sizeof(AgentMessage_ThreadEvent));
   AgentMessage_ThreadEvent_EventType_descriptor_ = AgentMessage_ThreadEvent_descriptor_->enum_type(0);
   AgentMessage_MonitorEvent_descriptor_ = AgentMessage_descriptor_->nested_type(1);
-  static const int AgentMessage_MonitorEvent_offsets_[2] = {
+  static const int AgentMessage_MonitorEvent_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_MonitorEvent, thread_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_MonitorEvent, eventtype_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_MonitorEvent, monitorid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_MonitorEvent, entrycount_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_MonitorEvent, waitercount_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_MonitorEvent, notifywaitercount_),
   };
   AgentMessage_MonitorEvent_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -154,7 +158,7 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022AgentMessage.proto\"\316\005\n\014AgentMessage\022\021\n"
+    "\n\022AgentMessage.proto\"\245\006\n\014AgentMessage\022\021\n"
     "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre"
     "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent"
     "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo"
@@ -162,18 +166,20 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
     "(\0132\024.AgentMessage.Thread\022<\n\teventType\030\002 "
     "\002(\0162#.AgentMessage.ThreadEvent.EventType"
     ":\004NONE\"-\n\tEventType\022\013\n\007STARTED\020\000\022\t\n\005ENDE"
-    "D\020\001\022\010\n\004NONE\020\002\032\260\001\n\014MonitorEvent\022$\n\006thread"
+    "D\020\001\022\010\n\004NONE\020\002\032\207\002\n\014MonitorEvent\022$\n\006thread"
     "\030\001 \002(\0132\024.AgentMessage.Thread\022=\n\teventTyp"
     "e\030\002 \002(\0162$.AgentMessage.MonitorEvent.Even"
-    "tType:\004NONE\";\n\tEventType\022\010\n\004WAIT\020\000\022\n\n\006WA"
-    "ITED\020\001\022\016\n\nNOTIFY_ALL\020\002\022\010\n\004NONE\020\003\032\342\001\n\006Thr"
-    "ead\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010priorit"
-    "y\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMessage.Th"
-    "read.State:\003NEW\022\037\n\027isContextClassLoaderS"
-    "et\030\005 \002(\010\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001"
-    "\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIMED_WAIT"
-    "ING\020\004\022\016\n\nTERMINATED\020\005B$\n\016de.fu.profilerB"
-    "\022AgentMessageProtos", 779);
+    "tType:\004NONE\022\021\n\tmonitorId\030\003 \001(\003\022\022\n\nentryC"
+    "ount\030\004 \001(\005\022\023\n\013waiterCount\030\005 \001(\005\022\031\n\021notif"
+    "yWaiterCount\030\006 \001(\005\";\n\tEventType\022\010\n\004WAIT\020"
+    "\000\022\n\n\006WAITED\020\001\022\016\n\nNOTIFY_ALL\020\002\022\010\n\004NONE\020\003\032"
+    "\342\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010"
+    "priority\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMes"
+    "sage.Thread.State:\003NEW\022\037\n\027isContextClass"
+    "LoaderSet\030\005 \002(\010\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUN"
+    "NABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIM"
+    "ED_WAITING\020\004\022\016\n\nTERMINATED\020\005B$\n\016de.fu.pr"
+    "ofilerB\022AgentMessageProtos", 866);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "AgentMessage.proto", &protobuf_RegisterTypes);
   AgentMessage::default_instance_ = new AgentMessage();
@@ -506,6 +512,10 @@ const int AgentMessage_MonitorEvent::EventType_ARRAYSIZE;
 #ifndef _MSC_VER
 const int AgentMessage_MonitorEvent::kThreadFieldNumber;
 const int AgentMessage_MonitorEvent::kEventTypeFieldNumber;
+const int AgentMessage_MonitorEvent::kMonitorIdFieldNumber;
+const int AgentMessage_MonitorEvent::kEntryCountFieldNumber;
+const int AgentMessage_MonitorEvent::kWaiterCountFieldNumber;
+const int AgentMessage_MonitorEvent::kNotifyWaiterCountFieldNumber;
 #endif  // !_MSC_VER
 
 AgentMessage_MonitorEvent::AgentMessage_MonitorEvent()
@@ -527,6 +537,10 @@ void AgentMessage_MonitorEvent::SharedCtor() {
   _cached_size_ = 0;
   thread_ = NULL;
   eventtype_ = 3;
+  monitorid_ = GOOGLE_LONGLONG(0);
+  entrycount_ = 0;
+  waitercount_ = 0;
+  notifywaitercount_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -566,6 +580,10 @@ void AgentMessage_MonitorEvent::Clear() {
       if (thread_ != NULL) thread_->::AgentMessage_Thread::Clear();
     }
     eventtype_ = 3;
+    monitorid_ = GOOGLE_LONGLONG(0);
+    entrycount_ = 0;
+    waitercount_ = 0;
+    notifywaitercount_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -607,6 +625,70 @@ bool AgentMessage_MonitorEvent::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(24)) goto parse_monitorId;
+        break;
+      }
+      
+      // optional int64 monitorId = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_monitorId:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &monitorid_)));
+          set_has_monitorid();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_entryCount;
+        break;
+      }
+      
+      // optional int32 entryCount = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_entryCount:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &entrycount_)));
+          set_has_entrycount();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(40)) goto parse_waiterCount;
+        break;
+      }
+      
+      // optional int32 waiterCount = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_waiterCount:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &waitercount_)));
+          set_has_waitercount();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(48)) goto parse_notifyWaiterCount;
+        break;
+      }
+      
+      // optional int32 notifyWaiterCount = 6;
+      case 6: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_notifyWaiterCount:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &notifywaitercount_)));
+          set_has_notifywaitercount();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -641,6 +723,26 @@ void AgentMessage_MonitorEvent::SerializeWithCachedSizes(
       2, this->eventtype(), output);
   }
   
+  // optional int64 monitorId = 3;
+  if (has_monitorid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->monitorid(), output);
+  }
+  
+  // optional int32 entryCount = 4;
+  if (has_entrycount()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->entrycount(), output);
+  }
+  
+  // optional int32 waiterCount = 5;
+  if (has_waitercount()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->waitercount(), output);
+  }
+  
+  // optional int32 notifyWaiterCount = 6;
+  if (has_notifywaitercount()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->notifywaitercount(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -660,6 +762,26 @@ void AgentMessage_MonitorEvent::SerializeWithCachedSizes(
   if (has_eventtype()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       2, this->eventtype(), target);
+  }
+  
+  // optional int64 monitorId = 3;
+  if (has_monitorid()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->monitorid(), target);
+  }
+  
+  // optional int32 entryCount = 4;
+  if (has_entrycount()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->entrycount(), target);
+  }
+  
+  // optional int32 waiterCount = 5;
+  if (has_waitercount()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->waitercount(), target);
+  }
+  
+  // optional int32 notifyWaiterCount = 6;
+  if (has_notifywaitercount()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->notifywaitercount(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -684,6 +806,34 @@ int AgentMessage_MonitorEvent::ByteSize() const {
     if (has_eventtype()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->eventtype());
+    }
+    
+    // optional int64 monitorId = 3;
+    if (has_monitorid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
+          this->monitorid());
+    }
+    
+    // optional int32 entryCount = 4;
+    if (has_entrycount()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->entrycount());
+    }
+    
+    // optional int32 waiterCount = 5;
+    if (has_waitercount()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->waitercount());
+    }
+    
+    // optional int32 notifyWaiterCount = 6;
+    if (has_notifywaitercount()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->notifywaitercount());
     }
     
   }
@@ -719,6 +869,18 @@ void AgentMessage_MonitorEvent::MergeFrom(const AgentMessage_MonitorEvent& from)
     if (from.has_eventtype()) {
       set_eventtype(from.eventtype());
     }
+    if (from.has_monitorid()) {
+      set_monitorid(from.monitorid());
+    }
+    if (from.has_entrycount()) {
+      set_entrycount(from.entrycount());
+    }
+    if (from.has_waitercount()) {
+      set_waitercount(from.waitercount());
+    }
+    if (from.has_notifywaitercount()) {
+      set_notifywaitercount(from.notifywaitercount());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -748,6 +910,10 @@ void AgentMessage_MonitorEvent::Swap(AgentMessage_MonitorEvent* other) {
   if (other != this) {
     std::swap(thread_, other->thread_);
     std::swap(eventtype_, other->eventtype_);
+    std::swap(monitorid_, other->monitorid_);
+    std::swap(entrycount_, other->entrycount_);
+    std::swap(waitercount_, other->waitercount_);
+    std::swap(notifywaitercount_, other->notifywaitercount_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
