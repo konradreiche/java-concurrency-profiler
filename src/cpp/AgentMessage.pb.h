@@ -501,6 +501,13 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
   inline bool iscontextclassloaderset() const;
   inline void set_iscontextclassloaderset(bool value);
   
+  // optional int64 cpuTime = 6;
+  inline bool has_cputime() const;
+  inline void clear_cputime();
+  static const int kCpuTimeFieldNumber = 6;
+  inline ::google::protobuf::int64 cputime() const;
+  inline void set_cputime(::google::protobuf::int64 value);
+  
   // @@protoc_insertion_point(class_scope:AgentMessage.Thread)
  private:
   inline void set_has_id();
@@ -513,6 +520,8 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
   inline void clear_has_state();
   inline void set_has_iscontextclassloaderset();
   inline void clear_has_iscontextclassloaderset();
+  inline void set_has_cputime();
+  inline void clear_has_cputime();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -521,9 +530,10 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
   ::google::protobuf::int32 priority_;
   int state_;
   bool iscontextclassloaderset_;
+  ::google::protobuf::int64 cputime_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -592,16 +602,12 @@ class AgentMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string timestamp = 1;
+  // required int64 timestamp = 1;
   inline bool has_timestamp() const;
   inline void clear_timestamp();
   static const int kTimestampFieldNumber = 1;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  inline ::std::string* release_timestamp();
+  inline ::google::protobuf::int64 timestamp() const;
+  inline void set_timestamp(::google::protobuf::int64 value);
   
   // required int32 jvm_id = 2;
   inline bool has_jvm_id() const;
@@ -639,7 +645,7 @@ class AgentMessage : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::std::string* timestamp_;
+  ::google::protobuf::int64 timestamp_;
   ::AgentMessage_ThreadEvent* threadevent_;
   ::AgentMessage_MonitorEvent* monitorevent_;
   ::google::protobuf::int32 jvm_id_;
@@ -1004,11 +1010,33 @@ inline void AgentMessage_Thread::set_iscontextclassloaderset(bool value) {
   iscontextclassloaderset_ = value;
 }
 
+// optional int64 cpuTime = 6;
+inline bool AgentMessage_Thread::has_cputime() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void AgentMessage_Thread::set_has_cputime() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void AgentMessage_Thread::clear_has_cputime() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void AgentMessage_Thread::clear_cputime() {
+  cputime_ = GOOGLE_LONGLONG(0);
+  clear_has_cputime();
+}
+inline ::google::protobuf::int64 AgentMessage_Thread::cputime() const {
+  return cputime_;
+}
+inline void AgentMessage_Thread::set_cputime(::google::protobuf::int64 value) {
+  set_has_cputime();
+  cputime_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // AgentMessage
 
-// required string timestamp = 1;
+// required int64 timestamp = 1;
 inline bool AgentMessage::has_timestamp() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1019,51 +1047,15 @@ inline void AgentMessage::clear_has_timestamp() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void AgentMessage::clear_timestamp() {
-  if (timestamp_ != &::google::protobuf::internal::kEmptyString) {
-    timestamp_->clear();
-  }
+  timestamp_ = GOOGLE_LONGLONG(0);
   clear_has_timestamp();
 }
-inline const ::std::string& AgentMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void AgentMessage::set_timestamp(const ::std::string& value) {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void AgentMessage::set_timestamp(const char* value) {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void AgentMessage::set_timestamp(const char* value, size_t size) {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* AgentMessage::mutable_timestamp() {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    timestamp_ = new ::std::string;
-  }
+inline ::google::protobuf::int64 AgentMessage::timestamp() const {
   return timestamp_;
 }
-inline ::std::string* AgentMessage::release_timestamp() {
-  clear_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = timestamp_;
-    timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
+inline void AgentMessage::set_timestamp(::google::protobuf::int64 value) {
+  set_has_timestamp();
+  timestamp_ = value;
 }
 
 // required int32 jvm_id = 2;

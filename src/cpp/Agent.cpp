@@ -2,24 +2,23 @@
  * The agent profiler collects data based on specified callback events which occur inside the JVM.
  */
 
-#include <iostream>
-#include <string>
-
-#include <jvmti.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <iostream>
+#include <string>
 #include <vector>
 
-#include "AgentSocket.h"
-#include "AgentMessage.pb.h"
-#include "Agent.h"
-#include "AgentHelper.h"
+#include <jvmti.h>
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <boost/lexical_cast.hpp>
+#include "AgentSocket.h"
+#include "AgentMessage.pb.h"
+#include "Agent.h"
+#include "AgentHelper.h"
+
 
 using namespace google::protobuf::io;
 
@@ -151,8 +150,13 @@ static AgentMessage createThreadEventMessage(AgentMessage agentMessage,
 	AgentMessage::Thread *threadMessage = threadEvent->add_thread();
 	initializeThreadMessage(threadMessage, thread);
 
+
 	if (eventType == AgentMessage::ThreadEvent::ENDED) {
+		jlong cpuTime;
+		jvmti->GetThreadCpuTime(thread,&cpuTime);
+
 		threadMessage->set_state(AgentMessage::Thread::TERMINATED);
+		threadMessage->set_cputime(cpuTime);
 	}
 
 	return agentMessage;
@@ -626,6 +630,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	(void) memset(&capa, 0, sizeof(jvmtiCapabilities));
 	capa.can_signal_thread = 1;
 	capa.can_get_owned_monitor_info = 1;
+	capa.can_get_thread_cpu_time = 1;
 	capa.can_generate_method_entry_events = 1;
 	capa.can_generate_exception_events = 1;
 	capa.can_generate_vm_object_alloc_events = 1;

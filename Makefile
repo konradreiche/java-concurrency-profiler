@@ -92,6 +92,11 @@ libagent : $(OBJECTS)
 	${PROTOBUF} -I=src/protobuf --java_out=./src/java src/protobuf/AgentMessage.proto
 	${PROTOBUF} -I=src/protobuf --cpp_out=./src/cpp src/protobuf/AgentMessage.proto
 	${CC} -shared -o bin/cpp/libagent.so $(OBJECTS) $(LIBS)
+
+protobuf:
+	${PROTOBUF} -I=src/protobuf --java_out=./src/java src/protobuf/AgentMessage.proto
+	${PROTOBUF} -I=src/protobuf --cpp_out=./src/cpp src/protobuf/AgentMessage.proto
+
 	
 
 all: libagent

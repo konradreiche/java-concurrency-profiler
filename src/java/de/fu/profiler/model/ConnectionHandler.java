@@ -77,7 +77,11 @@ public class ConnectionHandler implements Runnable {
 									.getState().toString(),
 							thread.getIsContextClassLoaderSet());
 
-					profilerModel.addThreadInfo(jvm_id, threadInfo);
+					if (thread.hasCpuTime()) {
+						threadInfo.setCpuTime(thread.getCpuTime());
+					}
+					
+					profilerModel.addThreadInfo(jvm_id, threadInfo);					
 				}
 			}
 

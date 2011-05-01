@@ -9,7 +9,6 @@ import javax.swing.table.TableModel;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 
-
 /**
  * Provides a {@link TableModel} for displaying the profiled threads in a
  * {@link JTable}.
@@ -28,7 +27,7 @@ public class ThreadTableModel extends AbstractTableModel {
 	 * Column names.
 	 */
 	String[] columnNames = { "ID", "Name", "Priority", "State",
-			"Context Class Loader" };
+			"Context Class Loader", "CPU Time" };
 
 	/**
 	 * The current actively profiled JVM.
@@ -103,8 +102,11 @@ public class ThreadTableModel extends AbstractTableModel {
 			return threadInfo.getState();
 		case 4:
 			return threadInfo.isContextClassLoaderSet();
+		case 5:
+			return (threadInfo.cpuTime == -1) ? "N/A" : threadInfo.cpuTime;
 		default:
-			return null;
+			throw new RuntimeException("ThreadInfo has no"
+					+ " attribute mapped to this value");
 		}
 	}
 

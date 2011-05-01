@@ -1,6 +1,5 @@
 package de.fu.profiler.model;
 
-
 /**
  * Models a java thread and describes selected and analysed information of a
  * thread.
@@ -44,7 +43,13 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	 * Status of the last monitor event.
 	 */
 	String monitorStatus;
-	
+
+	/**
+	 * After thread termination this value represents the time the CPU has spent
+	 * for this thread.
+	 */
+	long cpuTime;
+
 	/**
 	 * Standard constructor.
 	 * 
@@ -58,7 +63,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	 *            the threads state.
 	 * @param ccl
 	 *            whether the context class loader is set.
-	 * @param notiyWaitController 
+	 * @param notiyWaitController
 	 */
 	public ThreadInfo(int id, String name, int priority, String state,
 			boolean ccl) {
@@ -68,6 +73,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 		this.priority = priority;
 		this.state = state;
 		this.isContextClassLoaderSet = ccl;
+		this.cpuTime = -1;
 	}
 
 	public int getId() {
@@ -116,7 +122,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	public boolean equals(Object o) {
 		return new Integer(id).equals(new Integer(((ThreadInfo) o).id));
 	}
-	
+
 	public void changeMonitorStatus(String status) {
 		monitorStatus = status;
 	}
@@ -128,6 +134,8 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	public void setState(String state) {
 		this.state = state;
 	}
-	
-	
+
+	public void setCpuTime(long cpuTime) {
+		this.cpuTime = cpuTime;
+	}
 }

@@ -12,9 +12,10 @@ using namespace google::protobuf::io;
 void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 		AgentSocket agentSocket, int JVM_ID) {
 
-	time_t ltime;
-	ltime = time(NULL);
-	agentMessage.set_timestamp(asctime(localtime(&ltime)));
+	timespec ts;
+	clock_gettime(CLOCK_REALTIME,&ts);
+
+	agentMessage.set_timestamp(ts.tv_nsec);
 	agentMessage.set_jvm_id(JVM_ID);
 
 	boost::asio::streambuf b;

@@ -3,7 +3,7 @@ option java_outer_classname = "AgentMessageProtos";
 
 message AgentMessage {
 
-	required string timestamp = 1;
+	required int64 timestamp = 1;
 	required int32 jvm_id = 2;
 
 	message ThreadEvent {
@@ -56,6 +56,7 @@ message AgentMessage {
 
 		required State state = 4 [default = NEW];
 		required bool isContextClassLoaderSet = 5;
+		optional int64 cpuTime = 6;
 	}
 
 	optional ThreadEvent threadEvent = 3;

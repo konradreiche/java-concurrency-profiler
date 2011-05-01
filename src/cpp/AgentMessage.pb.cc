@@ -97,12 +97,13 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       sizeof(AgentMessage_MonitorEvent));
   AgentMessage_MonitorEvent_EventType_descriptor_ = AgentMessage_MonitorEvent_descriptor_->enum_type(0);
   AgentMessage_Thread_descriptor_ = AgentMessage_descriptor_->nested_type(2);
-  static const int AgentMessage_Thread_offsets_[5] = {
+  static const int AgentMessage_Thread_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, priority_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, iscontextclassloaderset_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, cputime_),
   };
   AgentMessage_Thread_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -158,8 +159,8 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022AgentMessage.proto\"\245\006\n\014AgentMessage\022\021\n"
-    "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre"
+    "\n\022AgentMessage.proto\"\266\006\n\014AgentMessage\022\021\n"
+    "\ttimestamp\030\001 \002(\003\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre"
     "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent"
     "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo"
     "nitorEvent\032\240\001\n\013ThreadEvent\022$\n\006thread\030\001 \003"
@@ -173,13 +174,14 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
     "ount\030\004 \001(\005\022\023\n\013waiterCount\030\005 \001(\005\022\031\n\021notif"
     "yWaiterCount\030\006 \001(\005\";\n\tEventType\022\010\n\004WAIT\020"
     "\000\022\n\n\006WAITED\020\001\022\016\n\nNOTIFY_ALL\020\002\022\010\n\004NONE\020\003\032"
-    "\342\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010"
+    "\363\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010"
     "priority\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMes"
     "sage.Thread.State:\003NEW\022\037\n\027isContextClass"
-    "LoaderSet\030\005 \002(\010\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUN"
-    "NABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIM"
-    "ED_WAITING\020\004\022\016\n\nTERMINATED\020\005B$\n\016de.fu.pr"
-    "ofilerB\022AgentMessageProtos", 866);
+    "LoaderSet\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005Stat"
+    "e\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n"
+    "\007WAITING\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINA"
+    "TED\020\005B*\n\024de.fu.profiler.modelB\022AgentMess"
+    "ageProtos", 889);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "AgentMessage.proto", &protobuf_RegisterTypes);
   AgentMessage::default_instance_ = new AgentMessage();
@@ -966,6 +968,7 @@ const int AgentMessage_Thread::kNameFieldNumber;
 const int AgentMessage_Thread::kPriorityFieldNumber;
 const int AgentMessage_Thread::kStateFieldNumber;
 const int AgentMessage_Thread::kIsContextClassLoaderSetFieldNumber;
+const int AgentMessage_Thread::kCpuTimeFieldNumber;
 #endif  // !_MSC_VER
 
 AgentMessage_Thread::AgentMessage_Thread()
@@ -989,6 +992,7 @@ void AgentMessage_Thread::SharedCtor() {
   priority_ = 0;
   state_ = 0;
   iscontextclassloaderset_ = false;
+  cputime_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1035,6 +1039,7 @@ void AgentMessage_Thread::Clear() {
     priority_ = 0;
     state_ = 0;
     iscontextclassloaderset_ = false;
+    cputime_ = GOOGLE_LONGLONG(0);
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1127,6 +1132,22 @@ bool AgentMessage_Thread::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(48)) goto parse_cpuTime;
+        break;
+      }
+      
+      // optional int64 cpuTime = 6;
+      case 6: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_cpuTime:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &cputime_)));
+          set_has_cputime();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1179,6 +1200,11 @@ void AgentMessage_Thread::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->iscontextclassloaderset(), output);
   }
   
+  // optional int64 cpuTime = 6;
+  if (has_cputime()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(6, this->cputime(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1216,6 +1242,11 @@ void AgentMessage_Thread::SerializeWithCachedSizes(
   // required bool isContextClassLoaderSet = 5;
   if (has_iscontextclassloaderset()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->iscontextclassloaderset(), target);
+  }
+  
+  // optional int64 cpuTime = 6;
+  if (has_cputime()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(6, this->cputime(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1261,6 +1292,13 @@ int AgentMessage_Thread::ByteSize() const {
       total_size += 1 + 1;
     }
     
+    // optional int64 cpuTime = 6;
+    if (has_cputime()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
+          this->cputime());
+    }
+    
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -1303,6 +1341,9 @@ void AgentMessage_Thread::MergeFrom(const AgentMessage_Thread& from) {
     if (from.has_iscontextclassloaderset()) {
       set_iscontextclassloaderset(from.iscontextclassloaderset());
     }
+    if (from.has_cputime()) {
+      set_cputime(from.cputime());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1332,6 +1373,7 @@ void AgentMessage_Thread::Swap(AgentMessage_Thread* other) {
     std::swap(priority_, other->priority_);
     std::swap(state_, other->state_);
     std::swap(iscontextclassloaderset_, other->iscontextclassloaderset_);
+    std::swap(cputime_, other->cputime_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1374,7 +1416,7 @@ AgentMessage::AgentMessage(const AgentMessage& from)
 
 void AgentMessage::SharedCtor() {
   _cached_size_ = 0;
-  timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  timestamp_ = GOOGLE_LONGLONG(0);
   jvm_id_ = 0;
   threadevent_ = NULL;
   monitorevent_ = NULL;
@@ -1386,9 +1428,6 @@ AgentMessage::~AgentMessage() {
 }
 
 void AgentMessage::SharedDtor() {
-  if (timestamp_ != &::google::protobuf::internal::kEmptyString) {
-    delete timestamp_;
-  }
   if (this != default_instance_) {
     delete threadevent_;
     delete monitorevent_;
@@ -1417,11 +1456,7 @@ AgentMessage* AgentMessage::New() const {
 
 void AgentMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_timestamp()) {
-      if (timestamp_ != &::google::protobuf::internal::kEmptyString) {
-        timestamp_->clear();
-      }
-    }
+    timestamp_ = GOOGLE_LONGLONG(0);
     jvm_id_ = 0;
     if (has_threadevent()) {
       if (threadevent_ != NULL) threadevent_->::AgentMessage_ThreadEvent::Clear();
@@ -1440,15 +1475,14 @@ bool AgentMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string timestamp = 1;
+      // required int64 timestamp = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_timestamp()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->timestamp().data(), this->timestamp().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &timestamp_)));
+          set_has_timestamp();
         } else {
           goto handle_uninterpreted;
         }
@@ -1518,13 +1552,9 @@ bool AgentMessage::MergePartialFromCodedStream(
 
 void AgentMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string timestamp = 1;
+  // required int64 timestamp = 1;
   if (has_timestamp()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->timestamp(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->timestamp(), output);
   }
   
   // required int32 jvm_id = 2;
@@ -1552,14 +1582,9 @@ void AgentMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* AgentMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string timestamp = 1;
+  // required int64 timestamp = 1;
   if (has_timestamp()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->timestamp(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->timestamp(), target);
   }
   
   // required int32 jvm_id = 2;
@@ -1592,10 +1617,10 @@ int AgentMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string timestamp = 1;
+    // required int64 timestamp = 1;
     if (has_timestamp()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
           this->timestamp());
     }
     

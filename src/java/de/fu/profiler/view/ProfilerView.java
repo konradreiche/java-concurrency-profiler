@@ -59,6 +59,11 @@ public class ProfilerView extends JFrame {
 	JPanel jvmSelection;
 
 	/**
+	 * The scroll pane containing the JVM list.
+	 */
+	JScrollPane jvmSelectionScrollPane;
+
+	/**
 	 * The scroll pane containing the thread table.
 	 */
 	JScrollPane threadTableScrollPane;
@@ -97,7 +102,7 @@ public class ProfilerView extends JFrame {
 
 	public ProfilerView(ProfilerModel model) {
 
-		this.model = model;		
+		this.model = model;
 		setUpLookAndFeel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new GridLayout(1, 1));
@@ -105,10 +110,11 @@ public class ProfilerView extends JFrame {
 		this.table = new JTable(model.getTableModel());
 		this.list = new JList(new DefaultListModel());
 		this.threadTableScrollPane = new JScrollPane(table);
-		
+
 		this.jvmSelection = new JPanel(new GridLayout(2, 1));
 		this.jvmSelection.add(new JLabel("Available JVMs"));
-		this.jvmSelection.add(list);
+		this.jvmSelectionScrollPane = new JScrollPane(list);
+		this.jvmSelection.add(jvmSelectionScrollPane);
 
 		this.overviewPanel = new JPanel(new GridLayout(2, 1));
 		this.overviewPanel.add(threadTableScrollPane);
@@ -117,7 +123,7 @@ public class ProfilerView extends JFrame {
 		this.notifyWaitPanel = new JPanel(new GridLayout(1, 1));
 		this.notifyWaitLog = new JTextArea();
 		this.notifyWaitPanel.add(notifyWaitLog);
-		
+
 		this.locksPanel = new JPanel(new GridLayout(1, 1));
 
 		this.tabbedPane = new JTabbedPane();
@@ -130,6 +136,7 @@ public class ProfilerView extends JFrame {
 		this.splitPane.add(tabbedPane);
 
 		this.add(splitPane);
+		this.jvmSelectionScrollPane.setMinimumSize(new Dimension(700, 35));
 		this.setSize(700, 700);
 	}
 

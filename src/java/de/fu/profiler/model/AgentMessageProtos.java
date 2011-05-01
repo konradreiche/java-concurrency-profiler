@@ -11,9 +11,9 @@ public final class AgentMessageProtos {
   public interface AgentMessageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required string timestamp = 1;
+    // required int64 timestamp = 1;
     boolean hasTimestamp();
-    String getTimestamp();
+    long getTimestamp();
     
     // required int32 jvm_id = 2;
     boolean hasJvmId();
@@ -358,7 +358,7 @@ public final class AgentMessageProtos {
           return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_ThreadEvent_fieldAccessorTable;
         }
         
-        // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.ThreadEvent.newBuilder()
+        // Construct using de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadEvent.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1148,7 +1148,7 @@ public final class AgentMessageProtos {
           return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_MonitorEvent_fieldAccessorTable;
         }
         
-        // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.MonitorEvent.newBuilder()
+        // Construct using de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1604,6 +1604,10 @@ public final class AgentMessageProtos {
       // required bool isContextClassLoaderSet = 5;
       boolean hasIsContextClassLoaderSet();
       boolean getIsContextClassLoaderSet();
+      
+      // optional int64 cpuTime = 6;
+      boolean hasCpuTime();
+      long getCpuTime();
     }
     public static final class Thread extends
         com.google.protobuf.GeneratedMessage
@@ -1787,12 +1791,23 @@ public final class AgentMessageProtos {
         return isContextClassLoaderSet_;
       }
       
+      // optional int64 cpuTime = 6;
+      public static final int CPUTIME_FIELD_NUMBER = 6;
+      private long cpuTime_;
+      public boolean hasCpuTime() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      public long getCpuTime() {
+        return cpuTime_;
+      }
+      
       private void initFields() {
         id_ = 0;
         name_ = "";
         priority_ = 0;
         state_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.State.NEW;
         isContextClassLoaderSet_ = false;
+        cpuTime_ = 0L;
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -1841,6 +1856,9 @@ public final class AgentMessageProtos {
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
           output.writeBool(5, isContextClassLoaderSet_);
         }
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          output.writeInt64(6, cpuTime_);
+        }
         getUnknownFields().writeTo(output);
       }
       
@@ -1869,6 +1887,10 @@ public final class AgentMessageProtos {
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
           size += com.google.protobuf.CodedOutputStream
             .computeBoolSize(5, isContextClassLoaderSet_);
+        }
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt64Size(6, cpuTime_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -1973,7 +1995,7 @@ public final class AgentMessageProtos {
           return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_Thread_fieldAccessorTable;
         }
         
-        // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.Thread.newBuilder()
+        // Construct using de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -2002,6 +2024,8 @@ public final class AgentMessageProtos {
           bitField0_ = (bitField0_ & ~0x00000008);
           isContextClassLoaderSet_ = false;
           bitField0_ = (bitField0_ & ~0x00000010);
+          cpuTime_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000020);
           return this;
         }
         
@@ -2060,6 +2084,10 @@ public final class AgentMessageProtos {
             to_bitField0_ |= 0x00000010;
           }
           result.isContextClassLoaderSet_ = isContextClassLoaderSet_;
+          if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+            to_bitField0_ |= 0x00000020;
+          }
+          result.cpuTime_ = cpuTime_;
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -2090,6 +2118,9 @@ public final class AgentMessageProtos {
           }
           if (other.hasIsContextClassLoaderSet()) {
             setIsContextClassLoaderSet(other.getIsContextClassLoaderSet());
+          }
+          if (other.hasCpuTime()) {
+            setCpuTime(other.getCpuTime());
           }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
@@ -2171,6 +2202,11 @@ public final class AgentMessageProtos {
               case 40: {
                 bitField0_ |= 0x00000010;
                 isContextClassLoaderSet_ = input.readBool();
+                break;
+              }
+              case 48: {
+                bitField0_ |= 0x00000020;
+                cpuTime_ = input.readInt64();
                 break;
               }
             }
@@ -2302,6 +2338,27 @@ public final class AgentMessageProtos {
           return this;
         }
         
+        // optional int64 cpuTime = 6;
+        private long cpuTime_ ;
+        public boolean hasCpuTime() {
+          return ((bitField0_ & 0x00000020) == 0x00000020);
+        }
+        public long getCpuTime() {
+          return cpuTime_;
+        }
+        public Builder setCpuTime(long value) {
+          bitField0_ |= 0x00000020;
+          cpuTime_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearCpuTime() {
+          bitField0_ = (bitField0_ & ~0x00000020);
+          cpuTime_ = 0L;
+          onChanged();
+          return this;
+        }
+        
         // @@protoc_insertion_point(builder_scope:AgentMessage.Thread)
       }
       
@@ -2314,36 +2371,14 @@ public final class AgentMessageProtos {
     }
     
     private int bitField0_;
-    // required string timestamp = 1;
+    // required int64 timestamp = 1;
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
-    private Object timestamp_;
+    private long timestamp_;
     public boolean hasTimestamp() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public String getTimestamp() {
-      Object ref = timestamp_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-          timestamp_ = s;
-        }
-        return s;
-      }
-    }
-    private com.google.protobuf.ByteString getTimestampBytes() {
-      Object ref = timestamp_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-        timestamp_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public long getTimestamp() {
+      return timestamp_;
     }
     
     // required int32 jvm_id = 2;
@@ -2383,7 +2418,7 @@ public final class AgentMessageProtos {
     }
     
     private void initFields() {
-      timestamp_ = "";
+      timestamp_ = 0L;
       jvmId_ = 0;
       threadEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadEvent.getDefaultInstance();
       monitorEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.getDefaultInstance();
@@ -2421,7 +2456,7 @@ public final class AgentMessageProtos {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getTimestampBytes());
+        output.writeInt64(1, timestamp_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, jvmId_);
@@ -2443,7 +2478,7 @@ public final class AgentMessageProtos {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, getTimestampBytes());
+          .computeInt64Size(1, timestamp_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
@@ -2560,7 +2595,7 @@ public final class AgentMessageProtos {
         return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_fieldAccessorTable;
       }
       
-      // Construct using de.fu.profiler.AgentMessageProtos.AgentMessage.newBuilder()
+      // Construct using de.fu.profiler.model.AgentMessageProtos.AgentMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2581,7 +2616,7 @@ public final class AgentMessageProtos {
       
       public Builder clear() {
         super.clear();
-        timestamp_ = "";
+        timestamp_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000001);
         jvmId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -2738,9 +2773,9 @@ public final class AgentMessageProtos {
               }
               break;
             }
-            case 10: {
+            case 8: {
               bitField0_ |= 0x00000001;
-              timestamp_ = input.readBytes();
+              timestamp_ = input.readInt64();
               break;
             }
             case 16: {
@@ -2772,40 +2807,25 @@ public final class AgentMessageProtos {
       
       private int bitField0_;
       
-      // required string timestamp = 1;
-      private Object timestamp_ = "";
+      // required int64 timestamp = 1;
+      private long timestamp_ ;
       public boolean hasTimestamp() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public String getTimestamp() {
-        Object ref = timestamp_;
-        if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
-          timestamp_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
+      public long getTimestamp() {
+        return timestamp_;
       }
-      public Builder setTimestamp(String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
+      public Builder setTimestamp(long value) {
+        bitField0_ |= 0x00000001;
         timestamp_ = value;
         onChanged();
         return this;
       }
       public Builder clearTimestamp() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        timestamp_ = getDefaultInstance().getTimestamp();
+        timestamp_ = 0L;
         onChanged();
         return this;
-      }
-      void setTimestamp(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000001;
-        timestamp_ = value;
-        onChanged();
       }
       
       // required int32 jvm_id = 2;
@@ -3049,8 +3069,8 @@ public final class AgentMessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022AgentMessage.proto\"\245\006\n\014AgentMessage\022\021\n" +
-      "\ttimestamp\030\001 \002(\t\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre" +
+      "\n\022AgentMessage.proto\"\266\006\n\014AgentMessage\022\021\n" +
+      "\ttimestamp\030\001 \002(\003\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre" +
       "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent" +
       "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo" +
       "nitorEvent\032\240\001\n\013ThreadEvent\022$\n\006thread\030\001 \003" +
@@ -3064,13 +3084,14 @@ public final class AgentMessageProtos {
       "ount\030\004 \001(\005\022\023\n\013waiterCount\030\005 \001(\005\022\031\n\021notif" +
       "yWaiterCount\030\006 \001(\005\";\n\tEventType\022\010\n\004WAIT\020" +
       "\000\022\n\n\006WAITED\020\001\022\016\n\nNOTIFY_ALL\020\002\022\010\n\004NONE\020\003\032" +
-      "\342\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010" +
+      "\363\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010" +
       "priority\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMes" +
       "sage.Thread.State:\003NEW\022\037\n\027isContextClass" +
-      "LoaderSet\030\005 \002(\010\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUN" +
-      "NABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIM",
-      "ED_WAITING\020\004\022\016\n\nTERMINATED\020\005B$\n\016de.fu.pr" +
-      "ofilerB\022AgentMessageProtos"
+      "LoaderSet\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005Stat" +
+      "e\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n",
+      "\007WAITING\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINA" +
+      "TED\020\005B*\n\024de.fu.profiler.modelB\022AgentMess" +
+      "ageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3106,7 +3127,7 @@ public final class AgentMessageProtos {
           internal_static_AgentMessage_Thread_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_Thread_descriptor,
-              new java.lang.String[] { "Id", "Name", "Priority", "State", "IsContextClassLoaderSet", },
+              new java.lang.String[] { "Id", "Name", "Priority", "State", "IsContextClassLoaderSet", "CpuTime", },
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.class,
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder.class);
           return null;
