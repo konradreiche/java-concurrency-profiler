@@ -2,6 +2,7 @@ package de.fu.profiler.view;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -208,5 +209,17 @@ public class ProfilerView extends JFrame {
 	public void addJVMSelectionListener(
 			JVMSelectionListener jvmSelectionListener) {
 		this.list.addListSelectionListener(jvmSelectionListener);
+	}
+	
+	public void addMonitorSelectionListener(ActionListener actionListener) {
+		this.monitorSelection.addActionListener(actionListener);
+	}
+
+	public void setMonitorLabels(int entryCount, int waiterCount,
+			int notifyWaiterCount) {
+
+		monitorEntryCount.setText("Entry Count: " + entryCount);
+		monitorWaiterCount.setText("Waiter Count: " + waiterCount);
+		monitorNotifyWaiterCount.setText("Notify Waiter Count: " + notifyWaiterCount);
 	}
 }
