@@ -1,6 +1,8 @@
 package de.fu.profiler.model;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -27,6 +29,16 @@ public class JVM {
 	final Set<ThreadInfo> threads;
 
 	/**
+	 * A list of events concerning invocations to notify and wait.
+	 */
+	final Map<Long,String> notifyWaitLog;
+
+	/**
+	 * A list of monitors mapped by their ids.
+	 */
+	final Map<Long,Monitor> monitors;
+	
+	/**
 	 * Standard constructor.
 	 * 
 	 * @param id
@@ -39,6 +51,8 @@ public class JVM {
 		this.id = id;
 		this.name = name;
 		this.threads = new CopyOnWriteArraySet<ThreadInfo>();
+		this.notifyWaitLog = new ConcurrentHashMap<Long, String>();
+		this.monitors = new ConcurrentHashMap<Long, Monitor>();
 	}
 
 	public int getId() {
@@ -61,7 +75,7 @@ public class JVM {
 	 *            a thread.
 	 */
 	public void addThread(ThreadInfo threadInfo) {
-		
+
 		if (threads.contains(threadInfo)) {
 			threads.remove(threadInfo);
 		}
@@ -75,11 +89,12 @@ public class JVM {
 	public void clearThreads() {
 		threads.clear();
 	}
-	
+
 	/**
 	 * Returns the thread based on its id.
 	 * 
-	 * @param id Thread id.
+	 * @param id
+	 *            Thread id.
 	 */
 	public ThreadInfo getThread(int id) {
 		for (ThreadInfo thread : threads) {
@@ -87,8 +102,16 @@ public class JVM {
 				return thread;
 			}
 		}
-		
 		return null;
 	}
 
+	public Map<Long,String> getNotifyWaitLog() {
+		return notifyWaitLog;
+	}
+
+	public Map<Long, Monitor> getMonitors() {
+		return monitors;
+	}
+	
+	
 }

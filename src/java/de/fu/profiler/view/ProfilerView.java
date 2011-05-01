@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -100,6 +101,29 @@ public class ProfilerView extends JFrame {
 	 */
 	JTextArea notifyWaitLog;
 
+	/**
+	 * A box to select one of the available monitors to view their information.
+	 */
+	JComboBox monitorSelection;
+
+	/**
+	 * Label which displays the number of times the owning thread has entered
+	 * the monitor.
+	 */
+	JLabel monitorEntryCount;
+
+	/**
+	 * Label which displays the number number of threads waiting to own this
+	 * monitor.
+	 */
+	JLabel monitorWaiterCount;
+
+	/**
+	 * Label which displays the number of threads waiting to be notified by this
+	 * monitor.
+	 */
+	JLabel monitorNotifyWaiterCount;
+
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
@@ -124,7 +148,16 @@ public class ProfilerView extends JFrame {
 		this.notifyWaitLog = new JTextArea();
 		this.notifyWaitPanel.add(notifyWaitLog);
 
-		this.locksPanel = new JPanel(new GridLayout(1, 1));
+		this.locksPanel = new JPanel();
+		this.monitorSelection = new JComboBox();
+		this.monitorEntryCount = new JLabel("Entry Count: N/A");
+		this.monitorWaiterCount = new JLabel("Waiter Count: N/A");
+		this.monitorNotifyWaiterCount = new JLabel("Notify Waiter Count: N/A");
+
+		this.locksPanel.add(monitorSelection);
+		this.locksPanel.add(monitorEntryCount);
+		this.locksPanel.add(monitorWaiterCount);
+		this.locksPanel.add(monitorNotifyWaiterCount);
 
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);

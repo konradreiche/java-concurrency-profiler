@@ -40,11 +40,6 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	int waitCount;
 
 	/**
-	 * Status of the last monitor event.
-	 */
-	String monitorStatus;
-
-	/**
 	 * After thread termination this value represents the time the CPU has spent
 	 * for this thread.
 	 */
@@ -121,14 +116,6 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	@Override
 	public boolean equals(Object o) {
 		return new Integer(id).equals(new Integer(((ThreadInfo) o).id));
-	}
-
-	public void changeMonitorStatus(String status) {
-		monitorStatus = status;
-	}
-
-	public String getMonitorStatus() {
-		return monitorStatus;
 	}
 
 	public void setState(String state) {

@@ -1,5 +1,6 @@
 package de.fu.profiler.view;
 
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -10,6 +11,7 @@ import javax.swing.table.AbstractTableModel;
 import org.jfree.data.general.DefaultPieDataset;
 
 import de.fu.profiler.model.JVM;
+import de.fu.profiler.model.Monitor;
 import de.fu.profiler.model.ThreadInfo;
 
 /**
@@ -35,20 +37,21 @@ public class ProfilerObserver implements Observer {
 
 			@Override
 			public void run() {
+
 				((DefaultListModel) view.list.getModel()).clear();
 				for (JVM jvm : view.model.getIDsToJVMs().values()) {
 					((DefaultListModel) view.list.getModel()).addElement("pid "
 							+ jvm.getId());
 				}
 
+				view.notifyWaitLog.setText(null);
 				if (view.model.getCurrentJVM() != null) {
-					for (ThreadInfo thread : view.model.getCurrentJVM()
-							.getThreads()) {
-						if (o.equals(thread)) {
-							view.notifyWaitLog.append(thread.getMonitorStatus());
-							view.notifyWaitLog.repaint();
-							break;
-						}
+
+					for (Entry<Long, String> entry : view.model.getCurrentJVM()
+							.getNotifyWaitLog().entrySet()) {
+						view.notifyWaitLog.append(entry.getKey() + ": "
+								+ entry.getValue());
+						view.notifyWaitLog.repaint();
 					}
 
 					int newCounter = 0;
@@ -94,6 +97,12 @@ public class ProfilerObserver implements Observer {
 
 					((AbstractTableModel) view.model.getTableModel())
 							.fireTableDataChanged();
+
+					view.monitorSelection.removeAllItems();
+					for (Monitor monitor : view.model.getCurrentJVM()
+							.getMonitors().values()) {
+						view.monitorSelection.addItem(monitor.getId());
+					}
 
 				}
 			}

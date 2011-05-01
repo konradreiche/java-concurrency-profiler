@@ -50,7 +50,7 @@ public class ProfilerModel extends Observable {
 	public ProfilerModel() throws IOException {
 		super();
 		this.IDsToJVMs = new ConcurrentHashMap<Integer, JVM>();
-		this.tableModel = new ThreadTableModel(threadPieDataset);		
+		this.tableModel = new ThreadTableModel(threadPieDataset);
 		initializePieDataset();
 		initializeJVMs();
 	}
@@ -69,14 +69,14 @@ public class ProfilerModel extends Observable {
 		((DefaultPieDataset) threadPieDataset).setValue("Waiting", 0);
 		((DefaultPieDataset) threadPieDataset).setValue("Timed Waiting", 0);
 	}
-	
+
 	private void initializeJVMs() {
-		
+
 		for (VirtualMachineDescriptor vmd : VirtualMachine.list()) {
 			IDsToJVMs.put(Integer.parseInt(vmd.id()),
 					new JVM(Integer.parseInt(vmd.id()), vmd.displayName()));
 		}
-		
+
 		setChanged();
 	}
 
@@ -93,15 +93,16 @@ public class ProfilerModel extends Observable {
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	public void setThreadInfoState(int pid, ThreadInfo threadInfo, String state) {
 		IDsToJVMs.get(pid).getThread(threadInfo.getId()).setState(state);
 		setChanged();
 		notifyObservers();
 	}
-	
-	public void setThreadInfoMonitorStatus(int pid, ThreadInfo threadInfo, String status) {
-		IDsToJVMs.get(pid).getThread(threadInfo.getId()).changeMonitorStatus(status);
+
+	public void setThreadInfoMonitorStatus(int pid, ThreadInfo threadInfo,
+			long timestamp, String status) {
+		IDsToJVMs.get(pid).notifyWaitLog.put(timestamp, status);
 		setChanged();
 		notifyObservers();
 	}
@@ -114,6 +115,9 @@ public class ProfilerModel extends Observable {
 		this.currentJVM = currentJVM;
 	}
 	
-	
-
+	public void addMonitor(int pid, Monitor monitor) {
+		IDsToJVMs.get(pid).monitors.put(monitor.id, monitor);
+		setChanged();
+		notifyObservers();
+	}
 }

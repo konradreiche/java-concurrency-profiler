@@ -80,8 +80,8 @@ public class ConnectionHandler implements Runnable {
 					if (thread.hasCpuTime()) {
 						threadInfo.setCpuTime(thread.getCpuTime());
 					}
-					
-					profilerModel.addThreadInfo(jvm_id, threadInfo);					
+
+					profilerModel.addThreadInfo(jvm_id, threadInfo);
 				}
 			}
 
@@ -107,18 +107,30 @@ public class ConnectionHandler implements Runnable {
 
 				switch (agentMessage.getMonitorEvent().getEventType()) {
 				case WAIT:
-					profilerModel.setThreadInfoMonitorStatus(jvm_id, thread, thread.getName() + " invoked"
-							+ " wait()\n");
+					profilerModel.setThreadInfoMonitorStatus(jvm_id, thread,
+							agentMessage.getTimestamp(), thread.getName()
+									+ " invoked" + " wait()\n");
 					thread.increaseWaitCounter();
 					break;
 				case WAITED:
-					profilerModel.setThreadInfoMonitorStatus(jvm_id, thread, thread.getName() + " left"
-							+ " wait()\n");
+					profilerModel.setThreadInfoMonitorStatus(jvm_id, thread,
+							agentMessage.getTimestamp(), thread.getName()
+									+ " left" + " wait()\n");
 					break;
 				case NOTIFY_ALL:
-					profilerModel.setThreadInfoMonitorStatus(jvm_id, thread, thread.getName() + " invoked"
-							+ " notifyAll()\n");
+					profilerModel.setThreadInfoMonitorStatus(jvm_id, thread,
+							agentMessage.getTimestamp(), thread.getName()
+									+ " invoked" + " notifyAll()\n");
 					break;
+				}
+
+				if (agentMessage.getMonitorEvent().hasMonitorId()) {
+					Monitor monitor = new Monitor(agentMessage
+							.getMonitorEvent().getMonitorId(), agentMessage
+							.getMonitorEvent().getEntryCount(), agentMessage
+							.getMonitorEvent().getWaiterCount(), agentMessage
+							.getMonitorEvent().getNotifyWaiterCount());
+					profilerModel.addMonitor(jvm_id, monitor);
 				}
 			}
 
