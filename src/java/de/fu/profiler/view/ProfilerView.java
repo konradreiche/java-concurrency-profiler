@@ -264,4 +264,8 @@ public class ProfilerView extends JFrame {
 		monitorNotifyWaiterCount.setText("Notify Waiter Count: "
 				+ notifyWaiterCount);
 	}
+	
+	public void setEnabledPreviousEventButton(boolean isEnabled) {
+		previousEvent.setEnabled(isEnabled);
+	}
 }

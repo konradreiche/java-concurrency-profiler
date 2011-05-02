@@ -68,9 +68,9 @@ public class ProfilerController {
 			JComboBox monitorSelection = (JComboBox) e.getSource();
 			Object selection = monitorSelection.getSelectedItem();
 			Long id = null;
-			
+
 			if (selection != null) {
-				id = (Long)selection;
+				id = (Long) selection;
 			}
 
 			JVM currentJvm = model.getCurrentJVM();
@@ -82,20 +82,39 @@ public class ProfilerController {
 			}
 		}
 	}
-	
+
 	public class NextEventListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+			int newEventIndex = model.getCurrentEventHistory().indexOf(
+					model.getCurrentEvent());
+			if (newEventIndex == model.getCurrentEventHistory().size() - 1) {
+				view.setEnabledPreviousEventButton(false);
+			} else {
+				view.setEnabledPreviousEventButton(true);
+				++newEventIndex;
+				model.setCurrentEvent(newEventIndex);
+				model.applyDataUntilEvent(model.getCurrentEvent());
+			}
 		}
 	}
-	
+
 	public class PreviousEventListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+
+			int newEventIndex = model.getCurrentEventHistory().indexOf(
+					model.getCurrentEvent());
+			if (newEventIndex == 0) {
+				view.setEnabledPreviousEventButton(false);
+			} else {
+				view.setEnabledPreviousEventButton(true);
+				--newEventIndex;
+				model.setCurrentEvent(newEventIndex);
+				model.applyDataUntilEvent(model.getCurrentEvent());
+			}
 		}
 	}
 }

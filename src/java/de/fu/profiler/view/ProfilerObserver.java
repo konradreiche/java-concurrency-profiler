@@ -114,11 +114,11 @@ public class ProfilerObserver implements Observer {
 					
 					view.previousEvent.setEnabled(false);
 					view.nextEvent.setEnabled(false);
-					if (!currentEvent.equals(eventHistory.get(0))) {
+					if (eventHistory.size() > 1 && !currentEvent.equals(eventHistory.get(0))) {
 						view.previousEvent.setEnabled(true);
 					}
 
-					if (!currentEvent.equals(eventHistory.get(eventHistory
+					if (eventHistory.size() > 1 && !currentEvent.equals(eventHistory.get(eventHistory
 							.size() - 1))) {
 						view.nextEvent.setEnabled(true);
 					}

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 
 import org.jfree.data.general.DefaultPieDataset;
@@ -154,6 +155,118 @@ public class ProfilerModel extends Observable {
 	public AgentMessage getCurrentEvent() {
 		return currentEvent;
 	}
-	
-	
+
+	public List<AgentMessage> getCurrentEventHistory() {
+		return messageHistory.get(currentJVM.id);
+	}
+
+	public void setCurrentEvent(int index) {
+		currentEvent = getCurrentEventHistory().get(index);
+		setChanged();
+		notifyObservers();
+	}
+
+	public void applyData(AgentMessage agentMessage) {
+		int jvm_id = agentMessage.getJvmId();
+		JVM jvm = null;
+
+		synchronized (IDsToJVMs) {
+			jvm = IDsToJVMs.get(jvm_id);
+			if (jvm == null) {
+				jvm = new JVM(jvm_id, "default");
+				IDsToJVMs.put(jvm_id, jvm);
+				((ThreadTableModel) getTableModel()).setCurrentJVM(jvm);
+				setCurrentJVM(jvm);
+			}
+		}
+
+		addAgentMessage(jvm_id, agentMessage);
+
+		if (agentMessage.hasThreadEvent()) {
+			for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread : agentMessage
+					.getThreadEvent().getThreadList()) {
+
+				ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
+						thread.getName(), thread.getPriority(), thread
+								.getState().toString(),
+						thread.getIsContextClassLoaderSet());
+
+				if (thread.hasCpuTime()) {
+					threadInfo.setCpuTime(thread.getCpuTime());
+				}
+
+				addThreadInfo(jvm_id, threadInfo);
+			}
+		}
+
+		if (agentMessage.hasMonitorEvent()) {
+
+			de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread t = agentMessage
+					.getMonitorEvent().getThread();
+
+			ThreadInfo thread = jvm.getThread(agentMessage.getMonitorEvent()
+					.getThread().getId());
+
+			if (thread == null) {
+				thread = new ThreadInfo(t.getId(), t.getName(),
+						t.getPriority(), t.getState().toString(),
+						t.getIsContextClassLoaderSet());
+				addThreadInfo(jvm_id, thread);
+			}
+
+			setThreadInfoState(jvm_id, thread, agentMessage.getMonitorEvent()
+					.getThread().getState().toString());
+
+			addThreadInfo(jvm_id, thread);
+
+			switch (agentMessage.getMonitorEvent().getEventType()) {
+			case WAIT:
+				setThreadInfoMonitorStatus(jvm_id, thread,
+						agentMessage.getTimestamp(), thread.getName()
+								+ " invoked" + " wait()\n");
+				thread.increaseWaitCounter();
+				break;
+			case WAITED:
+				setThreadInfoMonitorStatus(jvm_id, thread,
+						agentMessage.getTimestamp(), thread.getName() + " left"
+								+ " wait()\n");
+				break;
+			case NOTIFY_ALL:
+				setThreadInfoMonitorStatus(jvm_id, thread,
+						agentMessage.getTimestamp(), thread.getName()
+								+ " invoked" + " notifyAll()\n");
+				break;
+			}
+
+			if (agentMessage.getMonitorEvent().hasMonitorId()) {
+				Monitor monitor = new Monitor(agentMessage.getMonitorEvent()
+						.getMonitorId(), agentMessage.getMonitorEvent()
+						.getEntryCount(), agentMessage.getMonitorEvent()
+						.getWaiterCount(), agentMessage.getMonitorEvent()
+						.getNotifyWaiterCount());
+				addMonitor(jvm_id, monitor);
+			}
+		}
+	}
+
+	public void applyDataUntilEvent(final AgentMessage currentEvent) {
+
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				clearAllStates();
+				
+				int index = getCurrentEventHistory().indexOf(currentEvent);
+				for (int i = 0; i < index; ++i) {
+					applyData(getCurrentEventHistory().get(i));
+				}
+			}
+		});
+	}
+
+	private void clearAllStates() {
+		IDsToJVMs.remove(currentJVM);
+		
+	}
 }
