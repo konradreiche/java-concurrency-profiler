@@ -59,8 +59,8 @@ all_javas = $(OUTPUT_DIR)/all.javas
 # compile - Compile the source
 .PHONY: compile
 	
-compile: $(all_javas)
-	$(JAVAC) $(JFLAGS) @$<
+compile: agent \
+	java
 
 # all_javas - Gather source file list
 .INTERMEDIATE: $(all_javas)
@@ -89,8 +89,6 @@ bin/cpp/%.o : src/cpp/%.cc src/cpp/%.h
 	${CC} $(INCLUDES) -c $(CCFLAGS) -o $@ $<
 
 libagent : $(OBJECTS)
-	${PROTOBUF} -I=src/protobuf --java_out=./src/java src/protobuf/AgentMessage.proto
-	${PROTOBUF} -I=src/protobuf --cpp_out=./src/cpp src/protobuf/AgentMessage.proto
 	${CC} -shared -o bin/cpp/libagent.so $(OBJECTS) $(LIBS)
 
 protobuf:
@@ -99,7 +97,12 @@ protobuf:
 
 	
 
-all: libagent
+agent: protobuf \
+	libagent
+
+java:  $(all_javas)
+	$(JAVAC) $(JFLAGS) @$<
+
 
 clean :
 	rm ${OBJECTS}
