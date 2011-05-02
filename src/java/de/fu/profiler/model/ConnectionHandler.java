@@ -67,6 +67,8 @@ public class ConnectionHandler implements Runnable {
 					profilerModel.setCurrentJVM(jvm);
 				}
 			}
+			
+			profilerModel.addAgentMessage(jvm_id, agentMessage);
 
 			if (agentMessage.hasThreadEvent()) {
 				for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread : agentMessage

@@ -29,6 +29,8 @@ public class ProfilerController {
 		this.model = model;
 		this.view.addJVMSelectionListener(new JVMSelectionListener());
 		this.view.addMonitorSelectionListener(new MonitorSelectionListener());
+		this.view.addNextEventListener(new NextEventListener());
+		this.view.addPreviousEventListener(new PreviousEventListener());
 	}
 
 	public class JVMSelectionListener implements ListSelectionListener {
@@ -79,6 +81,21 @@ public class ProfilerController {
 						monitor.getNotifyWaiterCount());
 			}
 		}
+	}
+	
+	public class NextEventListener implements ActionListener {
 
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+		}
+	}
+	
+	public class PreviousEventListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+		}
 	}
 }

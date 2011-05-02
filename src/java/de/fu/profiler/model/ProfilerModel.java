@@ -1,6 +1,8 @@
 package de.fu.profiler.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +14,8 @@ import org.jfree.data.general.PieDataset;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
+
+import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
 
 /**
  * Models the state of the profiler itself.
@@ -42,6 +46,17 @@ public class ProfilerModel extends Observable {
 	JVM currentJVM;
 
 	/**
+	 * A message history of all received agent messages mapped by their target
+	 * JVMs.
+	 */
+	Map<Integer, List<AgentMessage>> messageHistory;
+
+	/**
+	 * The current event being displayed.
+	 */
+	AgentMessage currentEvent;
+
+	/**
 	 * At the start of the profiler all available JVMs are read and listed.
 	 * 
 	 * @throws IOException
@@ -51,6 +66,7 @@ public class ProfilerModel extends Observable {
 		super();
 		this.IDsToJVMs = new ConcurrentHashMap<Integer, JVM>();
 		this.tableModel = new ThreadTableModel(threadPieDataset);
+		this.messageHistory = new ConcurrentHashMap<Integer, List<AgentMessage>>();
 		initializePieDataset();
 		initializeJVMs();
 	}
@@ -114,10 +130,30 @@ public class ProfilerModel extends Observable {
 	public void setCurrentJVM(JVM currentJVM) {
 		this.currentJVM = currentJVM;
 	}
-	
+
 	public void addMonitor(int pid, Monitor monitor) {
 		IDsToJVMs.get(pid).monitors.put(monitor.id, monitor);
 		setChanged();
 		notifyObservers();
 	}
+
+	public void addAgentMessage(int pid, AgentMessage agentMessage) {
+		if (!messageHistory.containsKey(pid)) {
+			messageHistory.put(pid, new ArrayList<AgentMessage>());
+		}
+		messageHistory.get(pid).add(agentMessage);
+		currentEvent = agentMessage;
+		setChanged();
+		notifyObservers();
+	}
+
+	public Map<Integer, List<AgentMessage>> getMessageHistory() {
+		return messageHistory;
+	}
+
+	public AgentMessage getCurrentEvent() {
+		return currentEvent;
+	}
+	
+	
 }

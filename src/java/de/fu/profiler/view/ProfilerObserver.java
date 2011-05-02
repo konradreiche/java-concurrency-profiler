@@ -1,6 +1,7 @@
 package de.fu.profiler.view;
 
 import java.util.Map.Entry;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -10,6 +11,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.jfree.data.general.DefaultPieDataset;
 
+import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.Monitor;
 import de.fu.profiler.model.ThreadInfo;
@@ -103,6 +105,26 @@ public class ProfilerObserver implements Observer {
 							.getMonitors().values()) {
 						view.monitorSelection.addItem(monitor.getId());
 					}
+
+					int jvmId = view.model.getCurrentJVM().getId();
+					List<AgentMessage> eventHistory = view.model
+							.getMessageHistory().get(jvmId);
+					AgentMessage currentEvent = view.model.getCurrentEvent();
+
+					
+					view.previousEvent.setEnabled(false);
+					view.nextEvent.setEnabled(false);
+					if (!currentEvent.equals(eventHistory.get(0))) {
+						view.previousEvent.setEnabled(true);
+					}
+
+					if (!currentEvent.equals(eventHistory.get(eventHistory
+							.size() - 1))) {
+						view.nextEvent.setEnabled(true);
+					}
+
+					view.eventLabel.setText("Event #"
+							+ eventHistory.indexOf(currentEvent));
 
 				}
 			}

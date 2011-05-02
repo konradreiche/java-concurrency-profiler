@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -125,6 +126,27 @@ public class ProfilerView extends JFrame {
 	 */
 	JLabel monitorNotifyWaiterCount;
 
+	/**
+	 * Button to display the next event from the event history.
+	 */
+	JButton nextEvent;
+
+	/**
+	 * Button to display the previous event from the event history-
+	 */
+	JButton previousEvent;
+
+	/**
+	 * Packages all elements which help to navigate through the available
+	 * events.
+	 */
+	JPanel eventNavigation;
+
+	/**
+	 * Displays the current event number.
+	 */
+	JLabel eventLabel;
+
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
@@ -136,10 +158,21 @@ public class ProfilerView extends JFrame {
 		this.list = new JList(new DefaultListModel());
 		this.threadTableScrollPane = new JScrollPane(table);
 
-		this.jvmSelection = new JPanel(new GridLayout(2, 1));
+		this.nextEvent = new JButton(">>");
+		this.nextEvent.setEnabled(false);
+		this.previousEvent = new JButton("<<");
+		this.previousEvent.setEnabled(false);
+		this.eventLabel = new JLabel("Event #?");
+		this.eventNavigation = new JPanel();
+		this.eventNavigation.add(previousEvent);
+		this.eventNavigation.add(eventLabel);
+		this.eventNavigation.add(nextEvent);
+
+		this.jvmSelection = new JPanel(new GridLayout(3, 1));
 		this.jvmSelection.add(new JLabel("Available JVMs"));
 		this.jvmSelectionScrollPane = new JScrollPane(list);
 		this.jvmSelection.add(jvmSelectionScrollPane);
+		this.jvmSelection.add(eventNavigation);
 
 		this.overviewPanel = new JPanel(new GridLayout(2, 1));
 		this.overviewPanel.add(threadTableScrollPane);
@@ -210,9 +243,17 @@ public class ProfilerView extends JFrame {
 			JVMSelectionListener jvmSelectionListener) {
 		this.list.addListSelectionListener(jvmSelectionListener);
 	}
-	
+
 	public void addMonitorSelectionListener(ActionListener actionListener) {
 		this.monitorSelection.addActionListener(actionListener);
+	}
+	
+	public void addNextEventListener(ActionListener actionListener) {
+		this.nextEvent.addActionListener(actionListener);
+	}
+	
+	public void addPreviousEventListener(ActionListener actionListener) {
+		this.previousEvent.addActionListener(actionListener);
 	}
 
 	public void setMonitorLabels(int entryCount, int waiterCount,
@@ -220,6 +261,7 @@ public class ProfilerView extends JFrame {
 
 		monitorEntryCount.setText("Entry Count: " + entryCount);
 		monitorWaiterCount.setText("Waiter Count: " + waiterCount);
-		monitorNotifyWaiterCount.setText("Notify Waiter Count: " + notifyWaiterCount);
+		monitorNotifyWaiterCount.setText("Notify Waiter Count: "
+				+ notifyWaiterCount);
 	}
 }
