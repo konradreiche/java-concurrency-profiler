@@ -159,9 +159,7 @@ public class ProfilerView extends JFrame {
 		this.threadTableScrollPane = new JScrollPane(table);
 
 		this.nextEvent = new JButton(">>");
-		this.nextEvent.setEnabled(false);
 		this.previousEvent = new JButton("<<");
-		this.previousEvent.setEnabled(false);
 		this.eventLabel = new JLabel("Event #?");
 		this.eventNavigation = new JPanel();
 		this.eventNavigation.add(previousEvent);

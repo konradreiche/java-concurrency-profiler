@@ -53,7 +53,7 @@ public class ConnectionHandler implements Runnable {
 		try {
 			AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
 					.parseDelimitedFrom(socket.getInputStream());
-			profilerModel.applyData(agentMessage);
+			profilerModel.applyData(agentMessage,true);
 
 		} catch (IOException e) {
 			System.err.println("IOException: " + e.getMessage());

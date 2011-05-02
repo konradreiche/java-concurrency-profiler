@@ -166,7 +166,7 @@ public class ProfilerModel extends Observable {
 		notifyObservers();
 	}
 
-	public void applyData(AgentMessage agentMessage) {
+	public void applyData(AgentMessage agentMessage, boolean isLogging) {
 		int jvm_id = agentMessage.getJvmId();
 		JVM jvm = null;
 
@@ -179,8 +179,11 @@ public class ProfilerModel extends Observable {
 				setCurrentJVM(jvm);
 			}
 		}
+		
+		if (isLogging) {
+			addAgentMessage(jvm_id, agentMessage);			
+		}
 
-		addAgentMessage(jvm_id, agentMessage);
 
 		if (agentMessage.hasThreadEvent()) {
 			for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread : agentMessage
@@ -259,14 +262,14 @@ public class ProfilerModel extends Observable {
 				
 				int index = getCurrentEventHistory().indexOf(currentEvent);
 				for (int i = 0; i < index; ++i) {
-					applyData(getCurrentEventHistory().get(i));
+					applyData(getCurrentEventHistory().get(i),false);
 				}
 			}
 		});
 	}
 
 	private void clearAllStates() {
-		IDsToJVMs.remove(currentJVM);
+		IDsToJVMs.remove(currentJVM.id);
 		
 	}
 }

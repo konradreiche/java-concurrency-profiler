@@ -95,8 +95,8 @@ public class ProfilerController {
 				view.setEnabledPreviousEventButton(true);
 				++newEventIndex;
 				model.setCurrentEvent(newEventIndex);
-				model.applyDataUntilEvent(model.getCurrentEvent());
 			}
+			model.applyDataUntilEvent(model.getCurrentEvent());
 		}
 	}
 
@@ -113,8 +113,8 @@ public class ProfilerController {
 				view.setEnabledPreviousEventButton(true);
 				--newEventIndex;
 				model.setCurrentEvent(newEventIndex);
-				model.applyDataUntilEvent(model.getCurrentEvent());
 			}
+			model.applyDataUntilEvent(model.getCurrentEvent());
 		}
 	}
 }
