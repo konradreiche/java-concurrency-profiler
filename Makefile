@@ -53,6 +53,7 @@ class_path = OUTPUT_DIR \
 	PROTOBUF_JAR \
 	TOOLS_JAR
 
+
 # all_javas - Temp file for holding source file list
 all_javas = $(OUTPUT_DIR)/all.javas
 
@@ -110,3 +111,8 @@ clean :
 .PHONY: classpath
 classpath:
 	@echo CLASSPATH='$(CLASSPATH)'
+
+get-libs:
+	wget http://userpages.fu-berlin.de/~kuonrat/Profiling-Concurrency/lib.tar.gz
+	tar -xf lib.tar.gz 
+	rm lib.tar.gz
