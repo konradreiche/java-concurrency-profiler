@@ -179,11 +179,10 @@ public class ProfilerModel extends Observable {
 				setCurrentJVM(jvm);
 			}
 		}
-		
-		if (isLogging) {
-			addAgentMessage(jvm_id, agentMessage);			
-		}
 
+		if (isLogging) {
+			addAgentMessage(jvm_id, agentMessage);
+		}
 
 		if (agentMessage.hasThreadEvent()) {
 			for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread : agentMessage
@@ -226,18 +225,27 @@ public class ProfilerModel extends Observable {
 			case WAIT:
 				setThreadInfoMonitorStatus(jvm_id, thread,
 						agentMessage.getTimestamp(), thread.getName()
-								+ " invoked" + " wait()\n");
+								+ " invoked"
+								+ " wait() in "
+								+ agentMessage.getMonitorEvent()
+										.getContextMethod() + "\n");
 				thread.increaseWaitCounter();
 				break;
 			case WAITED:
 				setThreadInfoMonitorStatus(jvm_id, thread,
-						agentMessage.getTimestamp(), thread.getName() + " left"
-								+ " wait()\n");
+						agentMessage.getTimestamp(), thread.getName()
+								+ " left"
+								+ " wait() in "
+								+ agentMessage.getMonitorEvent()
+										.getContextMethod() + "\n");
 				break;
 			case NOTIFY_ALL:
 				setThreadInfoMonitorStatus(jvm_id, thread,
 						agentMessage.getTimestamp(), thread.getName()
-								+ " invoked" + " notifyAll()\n");
+								+ " invoked"
+								+ " notifyAll() in "
+								+ agentMessage.getMonitorEvent()
+										.getContextMethod() + "\n");
 				break;
 			}
 
@@ -259,10 +267,10 @@ public class ProfilerModel extends Observable {
 			@Override
 			public void run() {
 				clearAllStates();
-				
+
 				int index = getCurrentEventHistory().indexOf(currentEvent);
 				for (int i = 0; i < index; ++i) {
-					applyData(getCurrentEventHistory().get(i),false);
+					applyData(getCurrentEventHistory().get(i), false);
 				}
 			}
 		});
@@ -270,6 +278,5 @@ public class ProfilerModel extends Observable {
 
 	private void clearAllStates() {
 		IDsToJVMs.remove(currentJVM.id);
-		
 	}
 }

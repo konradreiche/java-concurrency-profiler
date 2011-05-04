@@ -32,11 +32,12 @@ message AgentMessage {
 		}
 
 		required EventType eventType = 2 [default = NONE];
+		required string contextMethod = 3;
 
-		optional int64 monitorId = 3;
-		optional int32 entryCount = 4;
-		optional int32 waiterCount = 5;
-		optional int32 notifyWaiterCount = 6;
+		optional int64 monitorId = 4;
+		optional int32 entryCount = 5;
+		optional int32 waiterCount = 6;
+		optional int32 notifyWaiterCount = 7;
 	}
 
 	message Thread {

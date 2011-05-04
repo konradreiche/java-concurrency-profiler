@@ -63,6 +63,8 @@ all_javas = $(OUTPUT_DIR)/all.javas
 compile: agent \
 	java
 
+all: compile
+
 # all_javas - Gather source file list
 .INTERMEDIATE: $(all_javas)
 

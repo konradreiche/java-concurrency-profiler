@@ -12,6 +12,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
@@ -35,6 +36,7 @@ namespace Helper {
 void commitAgentMessage(AgentMessage agentMessage, AgentSocket agentSocket,
 		int JVM_ID);
 
+std::string getMethodContext(jvmtiEnv *jvmti_env, jthread thread, bool isMonitorCall);
 }
 }
 

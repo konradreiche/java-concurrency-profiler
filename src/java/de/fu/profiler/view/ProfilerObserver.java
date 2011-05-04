@@ -4,6 +4,8 @@ import java.util.Map.Entry;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
@@ -49,10 +51,15 @@ public class ProfilerObserver implements Observer {
 				view.notifyWaitLog.setText(null);
 				if (view.model.getCurrentJVM() != null) {
 
-					for (Entry<Long, String> entry : view.model.getCurrentJVM()
-							.getNotifyWaitLog().entrySet()) {
-						view.notifyWaitLog.append(entry.getKey() + ": "
-								+ entry.getValue());
+					SortedSet<Long> sortedTimestamp = new TreeSet<Long>(
+							view.model.getCurrentJVM().getNotifyWaitLog()
+									.keySet());
+
+					for (Long timestamp : sortedTimestamp) {
+						view.notifyWaitLog.append(timestamp
+								+ ": "
+								+ view.model.getCurrentJVM().getNotifyWaitLog()
+										.get(timestamp));
 						view.notifyWaitLog.repaint();
 					}
 
@@ -111,15 +118,16 @@ public class ProfilerObserver implements Observer {
 							.getMessageHistory().get(jvmId);
 					AgentMessage currentEvent = view.model.getCurrentEvent();
 
-					
 					view.previousEvent.setEnabled(false);
 					view.nextEvent.setEnabled(false);
-					if (eventHistory.size() > 1 && !currentEvent.equals(eventHistory.get(0))) {
+					if (eventHistory.size() > 1
+							&& !currentEvent.equals(eventHistory.get(0))) {
 						view.previousEvent.setEnabled(true);
 					}
 
-					if (eventHistory.size() > 1 && !currentEvent.equals(eventHistory.get(eventHistory
-							.size() - 1))) {
+					if (eventHistory.size() > 1
+							&& !currentEvent.equals(eventHistory
+									.get(eventHistory.size() - 1))) {
 						view.nextEvent.setEnabled(true);
 					}
 

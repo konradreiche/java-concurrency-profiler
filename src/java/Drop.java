@@ -10,6 +10,7 @@ public class Drop {
 		while (empty) {
 			try {
 				wait();
+				System.out.println(Thread.currentThread().getName() + " invoked wait()");
 			} catch (InterruptedException e) {
 			}
 		}
@@ -17,6 +18,7 @@ public class Drop {
 		empty = true;
 		// Notify producer that status has changed.
 		notifyAll();
+		System.out.println(Thread.currentThread().getName() + " invoked notifyAll()");
 		return message;
 	}
 
@@ -25,6 +27,7 @@ public class Drop {
 		while (!empty) {
 			try {
 				wait();
+				System.out.println(Thread.currentThread().getName() + " invoked wait()");
 			} catch (InterruptedException e) {
 			}
 		}
@@ -34,5 +37,6 @@ public class Drop {
 		this.message = message;
 		// Notify consumer that status has changed.
 		notifyAll();
+		System.out.println(Thread.currentThread().getName() + " invoked notifyAll()");
 	}
 }
