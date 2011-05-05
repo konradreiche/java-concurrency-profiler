@@ -29,7 +29,7 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static AgentSocket agentSocket("127.0.0.1", "50000");
+static AgentSocket agentSocket("192.168.1.101", "50000");
 static int jvmPid;
 static int objectId = 1;
 

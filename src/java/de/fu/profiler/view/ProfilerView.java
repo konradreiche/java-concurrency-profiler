@@ -106,12 +106,22 @@ public class ProfilerView extends JFrame {
 	/**
 	 * A text area which displays the logged data of the notify and wait events.
 	 */
-	JTextArea notifyWaitLog;
+	JTextArea notifyWaitLogTextArea;
 
+	/**
+	 * The scroll pane for the notify wait log.
+	 */
+	JScrollPane notifyWaitLogScrollPane;
+	
+	/**
+	 * The scroll pane for the synchronized log.
+	 */
+	JScrollPane synchronizedLogScrollPane;
+	
 	/**
 	 * A text area which displays the logged data of the synchronized events.
 	 */
-	JTextArea synchronizedLog;
+	JTextArea synchronizedLogTextArea;
 
 	/**
 	 * A box to select one of the available monitors to view their information.
@@ -187,8 +197,9 @@ public class ProfilerView extends JFrame {
 		this.overviewPanel.add(setUpThreadPieChart());
 
 		this.notifyWaitPanel = new JPanel(new GridLayout(1, 1));
-		this.notifyWaitLog = new JTextArea();
-		this.notifyWaitPanel.add(notifyWaitLog);
+		this.notifyWaitLogTextArea = new JTextArea();
+		this.notifyWaitLogScrollPane = new JScrollPane(notifyWaitLogTextArea);
+		this.notifyWaitPanel.add(notifyWaitLogScrollPane);
 
 		this.monitorSelection = new JComboBox();
 		this.monitorEntryCount = new JLabel("Entry Count: N/A");
@@ -202,8 +213,9 @@ public class ProfilerView extends JFrame {
 		this.locksPanel.add(monitorNotifyWaiterCount);
 		
 		this.synchronizedPanel = new JPanel(new GridLayout(1, 1));
-		this.synchronizedLog = new JTextArea();
-		this.synchronizedPanel.add(synchronizedLog);
+		this.synchronizedLogTextArea = new JTextArea();
+		this.synchronizedLogScrollPane = new JScrollPane(synchronizedLogTextArea);
+		this.synchronizedPanel.add(synchronizedLogScrollPane);
 		
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);

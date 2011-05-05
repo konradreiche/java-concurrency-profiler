@@ -54,6 +54,7 @@ public class ConnectionHandler implements Runnable {
 			AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
 					.parseDelimitedFrom(socket.getInputStream());
 			profilerModel.applyData(agentMessage,true);
+			profilerModel.notifyGUI();
 
 		} catch (IOException e) {
 			System.err.println("IOException: " + e.getMessage());

@@ -47,7 +47,7 @@ public class ProfilerObserver implements Observer {
 							+ jvm.getId());
 				}
 
-				view.notifyWaitLog.setText(null);
+				view.notifyWaitLogTextArea.setText(null);
 				if (view.model.getCurrentJVM() != null) {
 
 					SortedSet<Long> sortedTimestamp = new TreeSet<Long>(
@@ -55,14 +55,14 @@ public class ProfilerObserver implements Observer {
 									.keySet());
 
 					for (Long timestamp : sortedTimestamp) {
-						view.notifyWaitLog.append(timestamp
+						view.notifyWaitLogTextArea.append(timestamp
 								+ ": "
 								+ view.model.getCurrentJVM().getNotifyWaitLog()
 										.get(timestamp));
-						view.notifyWaitLog.repaint();
+						view.notifyWaitLogTextArea.repaint();
 					}
 					
-					view.synchronizedLog.setText((null));
+					view.synchronizedLogTextArea.setText((null));
 					if (view.model.getCurrentJVM() != null) {
 						
 						sortedTimestamp = new TreeSet<Long>(
@@ -70,11 +70,11 @@ public class ProfilerObserver implements Observer {
 										.keySet());
 
 						for (Long timestamp : sortedTimestamp) {
-							view.synchronizedLog.append(timestamp
+							view.synchronizedLogTextArea.append(timestamp
 									+ ": "
 									+ view.model.getCurrentJVM().getSynchronizedLog()
 											.get(timestamp));
-							view.notifyWaitLog.repaint();
+							view.notifyWaitLogTextArea.repaint();
 						}
 						
 					}

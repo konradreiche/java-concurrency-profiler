@@ -93,8 +93,7 @@ public class ProfilerModel extends Observable {
 			IDsToJVMs.put(Integer.parseInt(vmd.id()), new JVM(Integer
 					.parseInt(vmd.id()), vmd.displayName()));
 		}
-
-		setChanged();
+		notifyGUI();
 	}
 
 	public TableModel getTableModel() {
@@ -107,14 +106,10 @@ public class ProfilerModel extends Observable {
 
 	public void addThreadInfo(int pid, ThreadInfo threadInfo) {
 		IDsToJVMs.get(pid).addThread(threadInfo);
-		setChanged();
-		notifyObservers();
 	}
 
 	public void setThreadInfoState(int pid, ThreadInfo threadInfo, String state) {
 		IDsToJVMs.get(pid).getThread(threadInfo.getId()).setState(state);
-		setChanged();
-		notifyObservers();
 	}
 
 	public void setThreadInfoMonitorStatus(int pid, ThreadInfo threadInfo,
@@ -124,8 +119,6 @@ public class ProfilerModel extends Observable {
 			IDsToJVMs.get(pid).synchronizedLog.put(timestamp, status);
 		} else {
 			IDsToJVMs.get(pid).notifyWaitLog.put(timestamp, status);
-			setChanged();
-			notifyObservers();
 		}
 	}
 
@@ -139,8 +132,6 @@ public class ProfilerModel extends Observable {
 
 	public void addMonitor(int pid, Monitor monitor) {
 		IDsToJVMs.get(pid).monitors.put(monitor.id, monitor);
-		setChanged();
-		notifyObservers();
 	}
 
 	public void addAgentMessage(int pid, AgentMessage agentMessage) {
@@ -149,8 +140,6 @@ public class ProfilerModel extends Observable {
 		}
 		messageHistory.get(pid).add(agentMessage);
 		currentEvent = agentMessage;
-		setChanged();
-		notifyObservers();
 	}
 
 	public Map<Integer, List<AgentMessage>> getMessageHistory() {
@@ -167,8 +156,6 @@ public class ProfilerModel extends Observable {
 
 	public void setCurrentEvent(int index) {
 		currentEvent = getCurrentEventHistory().get(index);
-		setChanged();
-		notifyObservers();
 	}
 
 	public void applyData(AgentMessage agentMessage, boolean isLogging) {
@@ -290,11 +277,17 @@ public class ProfilerModel extends Observable {
 				for (int i = 0; i < index; ++i) {
 					applyData(getCurrentEventHistory().get(i), false);
 				}
+				notifyGUI();
 			}
 		});
 	}
 
 	private void clearAllStates() {
 		IDsToJVMs.remove(currentJVM.id);
+	}
+	
+	public void notifyGUI() {
+		setChanged();
+		notifyObservers();
 	}
 }
