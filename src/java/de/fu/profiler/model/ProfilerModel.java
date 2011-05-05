@@ -118,10 +118,15 @@ public class ProfilerModel extends Observable {
 	}
 
 	public void setThreadInfoMonitorStatus(int pid, ThreadInfo threadInfo,
-			long timestamp, String status) {
-		IDsToJVMs.get(pid).notifyWaitLog.put(timestamp, status);
-		setChanged();
-		notifyObservers();
+			long timestamp, String status, boolean isContendedEvent) {
+
+		if (isContendedEvent) {
+			IDsToJVMs.get(pid).synchronizedLog.put(timestamp, status);
+		} else {
+			IDsToJVMs.get(pid).notifyWaitLog.put(timestamp, status);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	public JVM getCurrentJVM() {
@@ -228,7 +233,7 @@ public class ProfilerModel extends Observable {
 						+ agentMessage.getMonitorEvent().getMonitorClass()
 						+ "."
 						+ agentMessage.getMonitorEvent().getContextMethod()
-						+ "\n");
+						+ "\n", false);
 				thread.increaseWaitCounter();
 				break;
 			case WAITED:
@@ -238,7 +243,7 @@ public class ProfilerModel extends Observable {
 						+ agentMessage.getMonitorEvent().getMonitorClass()
 						+ "."
 						+ agentMessage.getMonitorEvent().getContextMethod()
-						+ "\n");
+						+ "\n", false);
 				break;
 			case NOTIFY_ALL:
 				setThreadInfoMonitorStatus(jvm_id, thread, agentMessage
@@ -247,7 +252,17 @@ public class ProfilerModel extends Observable {
 						+ agentMessage.getMonitorEvent().getMonitorClass()
 						+ "."
 						+ agentMessage.getMonitorEvent().getContextMethod()
-						+ "\n");
+						+ "\n", false);
+				break;
+			case CONTENDED:
+				setThreadInfoMonitorStatus(jvm_id, thread, agentMessage
+						.getTimestamp(), thread.getName()
+						+ " failed to acquire a monitor." + "\n", true);
+				break;
+			case ENTERED:
+				setThreadInfoMonitorStatus(jvm_id, thread, agentMessage
+						.getTimestamp(), thread.getName()
+						+ " acquired a monitor." + "\n", true);
 				break;
 			}
 

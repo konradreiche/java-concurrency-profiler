@@ -61,6 +61,23 @@ public class ProfilerObserver implements Observer {
 										.get(timestamp));
 						view.notifyWaitLog.repaint();
 					}
+					
+					view.synchronizedLog.setText((null));
+					if (view.model.getCurrentJVM() != null) {
+						
+						sortedTimestamp = new TreeSet<Long>(
+								view.model.getCurrentJVM().getSynchronizedLog()
+										.keySet());
+
+						for (Long timestamp : sortedTimestamp) {
+							view.synchronizedLog.append(timestamp
+									+ ": "
+									+ view.model.getCurrentJVM().getSynchronizedLog()
+											.get(timestamp));
+							view.notifyWaitLog.repaint();
+						}
+						
+					}
 
 					int newCounter = 0;
 					int terminatedCounter = 0;

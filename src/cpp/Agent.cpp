@@ -216,10 +216,61 @@ void describe(jvmtiError err) {
 	}
 }
 
-/** Monitor wait callback */
+/** Sent when a thread is attempting to enter a Java programming language
+ *  monitor already acquired by another thread.
+ */
 static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 		JNIEnv *jni_env, jthread thread, jobject object) {
 
+	enter_critical_section(jvmti);
+	{
+		jvmtiMonitorUsage monitorUseage;
+		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
+		jlong currentObjectId;
+
+		jvmti->GetTag(object, &currentObjectId);
+		if (currentObjectId == 0) {
+			jvmti->SetTag(object, objectId);
+			++objectId;
+			jvmti->GetTag(object, &currentObjectId);
+		}
+
+		AgentMessage agentMessage;
+		agentMessage = createMonitorEventMessage(agentMessage, thread,
+				AgentMessage::MonitorEvent::CONTENDED, "N/A", "N/A",
+				currentObjectId, monitorUseage);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+	}
+	exit_critical_section(jvmti);
+}
+
+/**
+ * Sent when a thread enters a Java programming language monitor after waiting
+ * for it to be released by another thread.
+ */
+static void JNICALL callbackMonitorContendedEntered(jvmtiEnv *jvmti_env,
+		JNIEnv *jni_env, jthread thread, jobject object) {
+
+	enter_critical_section(jvmti);
+	{
+		jvmtiMonitorUsage monitorUseage;
+		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
+		jlong currentObjectId;
+
+		jvmti->GetTag(object, &currentObjectId);
+		if (currentObjectId == 0) {
+			jvmti->SetTag(object, objectId);
+			++objectId;
+			jvmti->GetTag(object, &currentObjectId);
+		}
+
+		AgentMessage agentMessage;
+		agentMessage = createMonitorEventMessage(agentMessage, thread,
+				AgentMessage::MonitorEvent::ENTERED, "N/A", "N/A",
+				currentObjectId, monitorUseage);
+		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+	}
+	exit_critical_section(jvmti);
 }
 
 /**
@@ -443,6 +494,9 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				JVMTI_EVENT_MONITOR_CONTENDED_ENTER, (jthread) NULL);
 
 		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
+				JVMTI_EVENT_MONITOR_CONTENDED_ENTERED, (jthread) NULL);
+
+		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
 				JVMTI_EVENT_MONITOR_WAIT, (jthread) NULL);
 
 		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
@@ -653,6 +707,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	callbacks.ThreadStart = &callbackThreadStart;/* JVMTI_EVENT_THREAD_START */
 	callbacks.ThreadEnd = &callbackThreadEnd;/* JVMTI_EVENT_THREAD_END */
 	callbacks.MonitorContendedEnter = &callbackMonitorContendedEnter;/* JVMTI_EVENT_MONITOR_CONTENDED_ENTER*/
+	callbacks.MonitorContendedEntered = &callbackMonitorContendedEntered;/* JVMTI_EVENT_MONITOR_CONTENDED_ENTERED*/
 	callbacks.MonitorWait = &callbackMonitorWait;/* JVMTI_EVENT_MONITOR_WAIT*/
 	callbacks.MonitorWaited = &callbackMonitorWaited;/* JVMTI_EVENT_MONITOR_WAIT*/
 	callbacks.MethodExit = &callbackMethodExit;/* JVMTI_EVENT_METHOD_EXIT */

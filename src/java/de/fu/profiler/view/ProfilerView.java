@@ -88,6 +88,11 @@ public class ProfilerView extends JFrame {
 	JPanel locksPanel;
 
 	/**
+	 * This panel shows information about the synchronized events which occur.
+	 */
+	JPanel synchronizedPanel;
+
+	/**
 	 * The tabbed pane enables to select different views in the profiler.
 	 */
 	JTabbedPane tabbedPane;
@@ -102,6 +107,11 @@ public class ProfilerView extends JFrame {
 	 * A text area which displays the logged data of the notify and wait events.
 	 */
 	JTextArea notifyWaitLog;
+
+	/**
+	 * A text area which displays the logged data of the synchronized events.
+	 */
+	JTextArea synchronizedLog;
 
 	/**
 	 * A box to select one of the available monitors to view their information.
@@ -180,21 +190,26 @@ public class ProfilerView extends JFrame {
 		this.notifyWaitLog = new JTextArea();
 		this.notifyWaitPanel.add(notifyWaitLog);
 
-		this.locksPanel = new JPanel();
 		this.monitorSelection = new JComboBox();
 		this.monitorEntryCount = new JLabel("Entry Count: N/A");
 		this.monitorWaiterCount = new JLabel("Waiter Count: N/A");
 		this.monitorNotifyWaiterCount = new JLabel("Notify Waiter Count: N/A");
 
+		this.locksPanel = new JPanel();
 		this.locksPanel.add(monitorSelection);
 		this.locksPanel.add(monitorEntryCount);
 		this.locksPanel.add(monitorWaiterCount);
 		this.locksPanel.add(monitorNotifyWaiterCount);
-
+		
+		this.synchronizedPanel = new JPanel(new GridLayout(1, 1));
+		this.synchronizedLog = new JTextArea();
+		this.synchronizedPanel.add(synchronizedLog);
+		
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);
 		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
 		this.tabbedPane.add("Locks", locksPanel);
+		this.tabbedPane.add("Synchronized", synchronizedPanel);
 
 		this.splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		this.splitPane.add(jvmSelection);
@@ -207,8 +222,8 @@ public class ProfilerView extends JFrame {
 
 	private ChartPanel setUpThreadPieChart() {
 
-		JFreeChart chart = ChartFactory.createPieChart3D("Threads",
-				model.getThreadPieDataset(), true, true, false);
+		JFreeChart chart = ChartFactory.createPieChart3D("Threads", model
+				.getThreadPieDataset(), true, true, false);
 		PiePlot3D plot = (PiePlot3D) chart.getPlot();
 		plot.setStartAngle(290);
 		plot.setDirection(Rotation.CLOCKWISE);
@@ -245,11 +260,11 @@ public class ProfilerView extends JFrame {
 	public void addMonitorSelectionListener(ActionListener actionListener) {
 		this.monitorSelection.addActionListener(actionListener);
 	}
-	
+
 	public void addNextEventListener(ActionListener actionListener) {
 		this.nextEvent.addActionListener(actionListener);
 	}
-	
+
 	public void addPreviousEventListener(ActionListener actionListener) {
 		this.previousEvent.addActionListener(actionListener);
 	}
@@ -262,7 +277,7 @@ public class ProfilerView extends JFrame {
 		monitorNotifyWaiterCount.setText("Notify Waiter Count: "
 				+ notifyWaiterCount);
 	}
-	
+
 	public void setEnabledPreviousEventButton(boolean isEnabled) {
 		previousEvent.setEnabled(isEnabled);
 	}

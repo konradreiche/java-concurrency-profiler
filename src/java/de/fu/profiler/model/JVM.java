@@ -29,15 +29,22 @@ public class JVM {
 	final Set<ThreadInfo> threads;
 
 	/**
-	 * A list of events concerning invocations to notify and wait.
+	 * A list of events where its timestamp is mapped to a certain notify and
+	 * wait log entry.
 	 */
-	final Map<Long,String> notifyWaitLog;
+	final Map<Long, String> notifyWaitLog;
+
+	/**
+	 * A list of events where its timestamp is mapped to a certain synchronized
+	 * log entry.
+	 */
+	final Map<Long, String> synchronizedLog;
 
 	/**
 	 * A list of monitors mapped by their ids.
 	 */
-	final Map<Long,Monitor> monitors;
-	
+	final Map<Long, Monitor> monitors;
+
 	/**
 	 * Standard constructor.
 	 * 
@@ -52,6 +59,7 @@ public class JVM {
 		this.name = name;
 		this.threads = new CopyOnWriteArraySet<ThreadInfo>();
 		this.notifyWaitLog = new ConcurrentHashMap<Long, String>();
+		this.synchronizedLog = new ConcurrentHashMap<Long, String>();
 		this.monitors = new ConcurrentHashMap<Long, Monitor>();
 	}
 
@@ -105,12 +113,16 @@ public class JVM {
 		return null;
 	}
 
-	public Map<Long,String> getNotifyWaitLog() {
+	public Map<Long, String> getNotifyWaitLog() {
 		return notifyWaitLog;
 	}
 
 	public Map<Long, Monitor> getMonitors() {
 		return monitors;
+	}
+
+	public Map<Long, String> getSynchronizedLog() {
+		return synchronizedLog;
 	}
 	
 	

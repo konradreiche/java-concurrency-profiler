@@ -59,7 +59,9 @@ enum AgentMessage_MonitorEvent_EventType {
   AgentMessage_MonitorEvent_EventType_WAIT = 0,
   AgentMessage_MonitorEvent_EventType_WAITED = 1,
   AgentMessage_MonitorEvent_EventType_NOTIFY_ALL = 2,
-  AgentMessage_MonitorEvent_EventType_NONE = 3
+  AgentMessage_MonitorEvent_EventType_CONTENDED = 3,
+  AgentMessage_MonitorEvent_EventType_ENTERED = 4,
+  AgentMessage_MonitorEvent_EventType_NONE = 5
 };
 bool AgentMessage_MonitorEvent_EventType_IsValid(int value);
 const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent_EventType_EventType_MIN = AgentMessage_MonitorEvent_EventType_WAIT;
@@ -277,6 +279,8 @@ class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
   static const EventType WAIT = AgentMessage_MonitorEvent_EventType_WAIT;
   static const EventType WAITED = AgentMessage_MonitorEvent_EventType_WAITED;
   static const EventType NOTIFY_ALL = AgentMessage_MonitorEvent_EventType_NOTIFY_ALL;
+  static const EventType CONTENDED = AgentMessage_MonitorEvent_EventType_CONTENDED;
+  static const EventType ENTERED = AgentMessage_MonitorEvent_EventType_ENTERED;
   static const EventType NONE = AgentMessage_MonitorEvent_EventType_NONE;
   static inline bool EventType_IsValid(int value) {
     return AgentMessage_MonitorEvent_EventType_IsValid(value);
@@ -787,7 +791,7 @@ inline void AgentMessage_MonitorEvent::clear_has_eventtype() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void AgentMessage_MonitorEvent::clear_eventtype() {
-  eventtype_ = 3;
+  eventtype_ = 5;
   clear_has_eventtype();
 }
 inline ::AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::eventtype() const {
