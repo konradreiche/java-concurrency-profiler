@@ -13,7 +13,7 @@ void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 		AgentSocket agentSocket, int JVM_ID) {
 
 	timespec ts;
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID,&ts);
+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
 
 	agentMessage.set_timestamp(ts.tv_nsec);
 	agentMessage.set_jvm_id(JVM_ID);
@@ -33,11 +33,25 @@ void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 	agentSocket.send(b);
 }
 
-
-std::string Agent::Helper::getMethodContext(jvmtiEnv *jvmti, jthread thread, bool isMonitorCall)
-{
+std::string Agent::Helper::getMethodContext(jvmtiEnv *jvmti, jthread thread,
+		bool isMonitorCall) {
 	int monitorCallOffset = isMonitorCall ? 0 : 1;
 
+	jvmtiFrameInfo stackTraceFrames[4];
+	jclass declaring_class;
+	char *signature_ptr;
+	char *methodName;
+	std::string className;
+	jint count;
+
+	jvmti->GetStackTrace(thread, 0, 3, stackTraceFrames, &count);
+	jvmti->GetMethodName(stackTraceFrames[2 - monitorCallOffset].method, &methodName,
+			NULL, NULL);
+
+	return methodName;
+}
+
+std::string Agent::Helper::getMonitorClass(jvmtiEnv *jvmti, jthread thread) {
 	jvmtiFrameInfo stackTraceFrames[4];
 	jclass declaring_class;
 	char *signature_ptr;
@@ -50,11 +64,9 @@ std::string Agent::Helper::getMethodContext(jvmtiEnv *jvmti, jthread thread, boo
 	jvmti->GetClassSignature(declaring_class, &signature_ptr, NULL);
 	className = std::string(signature_ptr);
 
-	boost::algorithm::replace_first(className,"L","");
-	boost::algorithm::replace_all(className,"/",".");
-	boost::algorithm::replace_first(className,";","");
+	boost::algorithm::replace_first(className, "L", "");
+	boost::algorithm::replace_all(className, "/", ".");
+	boost::algorithm::replace_first(className, ";", "");
 
-	jvmti->GetMethodName(stackTraceFrames[2 - monitorCallOffset].method, &name, NULL, NULL);
-
-	return className + "." + name;
+	return className;
 }

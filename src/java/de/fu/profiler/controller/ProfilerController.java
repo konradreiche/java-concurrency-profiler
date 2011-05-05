@@ -3,6 +3,7 @@ package de.fu.profiler.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.event.ListSelectionEvent;
@@ -66,19 +67,19 @@ public class ProfilerController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JComboBox monitorSelection = (JComboBox) e.getSource();
-			Object selection = monitorSelection.getSelectedItem();
-			Long id = null;
-
-			if (selection != null) {
-				id = (Long) selection;
-			}
+			int index = monitorSelection.getSelectedIndex();
 
 			JVM currentJvm = model.getCurrentJVM();
+			Long id = null;
+			if (index > -1) {
+				id = new ArrayList<Long>(currentJvm.getMonitors().keySet())
+						.get(index);
+			}
+
 			if (currentJvm != null && id != null) {
 				Monitor monitor = currentJvm.getMonitors().get(id);
-				view.setMonitorLabels(monitor.getEntryCount(),
-						monitor.getWaiterCount(),
-						monitor.getNotifyWaiterCount());
+				view.setMonitorLabels(monitor.getEntryCount(), monitor
+						.getWaiterCount(), monitor.getNotifyWaiterCount());
 			}
 		}
 	}

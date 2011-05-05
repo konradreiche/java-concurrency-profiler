@@ -90,8 +90,8 @@ public class ProfilerModel extends Observable {
 	private void initializeJVMs() {
 
 		for (VirtualMachineDescriptor vmd : VirtualMachine.list()) {
-			IDsToJVMs.put(Integer.parseInt(vmd.id()),
-					new JVM(Integer.parseInt(vmd.id()), vmd.displayName()));
+			IDsToJVMs.put(Integer.parseInt(vmd.id()), new JVM(Integer
+					.parseInt(vmd.id()), vmd.displayName()));
 		}
 
 		setChanged();
@@ -188,10 +188,9 @@ public class ProfilerModel extends Observable {
 			for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread : agentMessage
 					.getThreadEvent().getThreadList()) {
 
-				ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
-						thread.getName(), thread.getPriority(), thread
-								.getState().toString(),
-						thread.getIsContextClassLoaderSet());
+				ThreadInfo threadInfo = new ThreadInfo(thread.getId(), thread
+						.getName(), thread.getPriority(), thread.getState()
+						.toString(), thread.getIsContextClassLoaderSet());
 
 				if (thread.hasCpuTime()) {
 					threadInfo.setCpuTime(thread.getCpuTime());
@@ -211,8 +210,8 @@ public class ProfilerModel extends Observable {
 
 			if (thread == null) {
 				thread = new ThreadInfo(t.getId(), t.getName(),
-						t.getPriority(), t.getState().toString(),
-						t.getIsContextClassLoaderSet());
+						t.getPriority(), t.getState().toString(), t
+								.getIsContextClassLoaderSet());
 				addThreadInfo(jvm_id, thread);
 			}
 
@@ -223,35 +222,39 @@ public class ProfilerModel extends Observable {
 
 			switch (agentMessage.getMonitorEvent().getEventType()) {
 			case WAIT:
-				setThreadInfoMonitorStatus(jvm_id, thread,
-						agentMessage.getTimestamp(), thread.getName()
-								+ " invoked"
-								+ " wait() in "
-								+ agentMessage.getMonitorEvent()
-										.getContextMethod() + "\n");
+				setThreadInfoMonitorStatus(jvm_id, thread, agentMessage
+						.getTimestamp(), thread.getName() + " invoked"
+						+ " wait() in "
+						+ agentMessage.getMonitorEvent().getMonitorClass()
+						+ "."
+						+ agentMessage.getMonitorEvent().getContextMethod()
+						+ "\n");
 				thread.increaseWaitCounter();
 				break;
 			case WAITED:
-				setThreadInfoMonitorStatus(jvm_id, thread,
-						agentMessage.getTimestamp(), thread.getName()
-								+ " left"
-								+ " wait() in "
-								+ agentMessage.getMonitorEvent()
-										.getContextMethod() + "\n");
+				setThreadInfoMonitorStatus(jvm_id, thread, agentMessage
+						.getTimestamp(), thread.getName() + " left"
+						+ " wait() in "
+						+ agentMessage.getMonitorEvent().getMonitorClass()
+						+ "."
+						+ agentMessage.getMonitorEvent().getContextMethod()
+						+ "\n");
 				break;
 			case NOTIFY_ALL:
-				setThreadInfoMonitorStatus(jvm_id, thread,
-						agentMessage.getTimestamp(), thread.getName()
-								+ " invoked"
-								+ " notifyAll() in "
-								+ agentMessage.getMonitorEvent()
-										.getContextMethod() + "\n");
+				setThreadInfoMonitorStatus(jvm_id, thread, agentMessage
+						.getTimestamp(), thread.getName() + " invoked"
+						+ " notifyAll() in "
+						+ agentMessage.getMonitorEvent().getMonitorClass()
+						+ "."
+						+ agentMessage.getMonitorEvent().getContextMethod()
+						+ "\n");
 				break;
 			}
 
 			if (agentMessage.getMonitorEvent().hasMonitorId()) {
 				Monitor monitor = new Monitor(agentMessage.getMonitorEvent()
 						.getMonitorId(), agentMessage.getMonitorEvent()
+						.getMonitorClass(), agentMessage.getMonitorEvent()
 						.getEntryCount(), agentMessage.getMonitorEvent()
 						.getWaiterCount(), agentMessage.getMonitorEvent()
 						.getNotifyWaiterCount());

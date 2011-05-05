@@ -36,7 +36,9 @@ namespace Helper {
 void commitAgentMessage(AgentMessage agentMessage, AgentSocket agentSocket,
 		int JVM_ID);
 
-std::string getMethodContext(jvmtiEnv *jvmti_env, jthread thread, bool isMonitorCall);
+std::string getMethodContext(jvmtiEnv *jvmti, jthread thread, bool isMonitorCall);
+std::string getMonitorClass(jvmtiEnv *jvmti, jthread thread);
+
 }
 }
 

@@ -29,7 +29,7 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static AgentSocket agentSocket("192.168.1.101", "50000");
+static AgentSocket agentSocket("127.0.0.1", "50000");
 static int jvmPid;
 static int objectId = 1;
 
@@ -162,7 +162,7 @@ static AgentMessage createThreadEventMessage(AgentMessage agentMessage,
 
 static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 		jthread thread, AgentMessage::MonitorEvent::EventType eventType,
-		std::string contextMethod, jlong objectId,
+		std::string contextMethod, std::string className, jlong objectId,
 		jvmtiMonitorUsage monitorUseage) {
 
 	AgentMessage::MonitorEvent *monitorEvent =
@@ -171,6 +171,7 @@ static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 	initializeThreadMessage(threadMessage, thread);
 	monitorEvent->set_eventtype(eventType);
 	monitorEvent->set_contextmethod(contextMethod);
+	monitorEvent->set_monitorclass(className);
 
 	if (eventType != AgentMessage::MonitorEvent::NOTIFY_ALL) {
 		monitorEvent->set_monitorid(objectId);
@@ -244,7 +245,8 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
 				AgentMessage::MonitorEvent::WAIT,
-				Agent::Helper::getMethodContext(jvmti_env, thread,true),
+				Agent::Helper::getMethodContext(jvmti_env, thread, true),
+				Agent::Helper::getMonitorClass(jvmti_env, thread),
 				currentObjectId, monitorUseage);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
@@ -274,7 +276,8 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
 				AgentMessage::MonitorEvent::WAITED,
-				Agent::Helper::getMethodContext(jvmti_env, thread,true),
+				Agent::Helper::getMethodContext(jvmti_env, thread, true),
+				Agent::Helper::getMonitorClass(jvmti_env, thread),
 				currentObjectId, monitorUseage);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
@@ -322,7 +325,8 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
 				AgentMessage::MonitorEvent::NOTIFY_ALL,
-				Agent::Helper::getMethodContext(jvmti_env, thread, false), 0,
+				Agent::Helper::getMethodContext(jvmti_env, thread, false),
+				Agent::Helper::getMonitorClass(jvmti_env, thread), 0,
 				monitorUseage);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}

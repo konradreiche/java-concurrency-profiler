@@ -14,6 +14,10 @@ public class Monitor {
 	final long id;
 
 	/**
+	 * The name of the class which is used as a monitor.
+	 */
+	final String className;
+	/**
 	 * The number of times the owning thread has entered the monitor.
 	 */
 	int entryCount;
@@ -28,10 +32,11 @@ public class Monitor {
 	 */
 	int notifyWaiterCount;
 
-	public Monitor(long id, int entryCount, int waiterCount,
+	public Monitor(long id, String className, int entryCount, int waiterCount,
 			int notifyWaiterCount) {
 		super();
 		this.id = id;
+		this.className = className;
 		this.entryCount = entryCount;
 		this.waiterCount = waiterCount;
 		this.notifyWaiterCount = notifyWaiterCount;
@@ -51,5 +56,9 @@ public class Monitor {
 
 	public int getNotifyWaiterCount() {
 		return notifyWaiterCount;
+	}
+
+	public String getClassName() {
+		return className;
 	}
 }

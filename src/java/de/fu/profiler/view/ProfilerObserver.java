@@ -1,6 +1,5 @@
 package de.fu.profiler.view;
 
-import java.util.Map.Entry;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -110,7 +109,11 @@ public class ProfilerObserver implements Observer {
 					view.monitorSelection.removeAllItems();
 					for (Monitor monitor : view.model.getCurrentJVM()
 							.getMonitors().values()) {
-						view.monitorSelection.addItem(monitor.getId());
+
+						String monitorItem = monitor.getClassName() + " (id: "
+								+ monitor.getId() + ")";
+
+						view.monitorSelection.addItem(monitorItem);
 					}
 
 					int jvmId = view.model.getCurrentJVM().getId();
