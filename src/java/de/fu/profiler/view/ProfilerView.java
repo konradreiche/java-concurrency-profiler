@@ -166,7 +166,7 @@ public class ProfilerView extends JFrame {
 	 * Displays the current event number.
 	 */
 	JLabel eventLabel;
-
+	
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;

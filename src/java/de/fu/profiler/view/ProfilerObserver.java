@@ -61,22 +61,22 @@ public class ProfilerObserver implements Observer {
 										.get(timestamp));
 						view.notifyWaitLogTextArea.repaint();
 					}
-					
+
 					view.synchronizedLogTextArea.setText((null));
 					if (view.model.getCurrentJVM() != null) {
-						
-						sortedTimestamp = new TreeSet<Long>(
-								view.model.getCurrentJVM().getSynchronizedLog()
-										.keySet());
+
+						sortedTimestamp = new TreeSet<Long>(view.model
+								.getCurrentJVM().getSynchronizedLog().keySet());
 
 						for (Long timestamp : sortedTimestamp) {
 							view.synchronizedLogTextArea.append(timestamp
 									+ ": "
-									+ view.model.getCurrentJVM().getSynchronizedLog()
+									+ view.model.getCurrentJVM()
+											.getSynchronizedLog()
 											.get(timestamp));
 							view.notifyWaitLogTextArea.repaint();
 						}
-						
+
 					}
 
 					int newCounter = 0;
@@ -151,9 +151,18 @@ public class ProfilerObserver implements Observer {
 						view.nextEvent.setEnabled(true);
 					}
 
-					view.eventLabel.setText("Event #"
-							+ eventHistory.indexOf(currentEvent));
+					String eventType = new String();
+					if (currentEvent.hasThreadEvent()) {
+						eventType = "Thread Event";
+					} else if (currentEvent.hasMonitorEvent()) {
+						eventType = "Monitor Event";
+					} else {
+						eventType = "N/A";
+					}
 
+					view.eventLabel.setText("Event #"
+							+ eventHistory.indexOf(currentEvent) + " ("
+							+ eventType + ")");
 				}
 			}
 		});
