@@ -3,6 +3,8 @@ package de.fu.profiler.view;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -22,9 +24,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.StackedBarRenderer3D;
+import org.jfree.ui.TextAnchor;
 import org.jfree.util.Rotation;
 
 import de.fu.profiler.controller.ProfilerController.JVMSelectionListener;
@@ -202,7 +208,8 @@ public class ProfilerView extends JFrame {
 		this.tabbedDiagramPane = new JTabbedPane();
 		this.tabbedDiagramPane.add("Overall Thread State",
 				setUpOverallThreadStatePieChart());
-		this.tabbedDiagramPane.add("Thread State Over Time", setUpThreadStateOverTimeBarChart());
+		this.tabbedDiagramPane.add("Thread State Over Time",
+				setUpThreadStateOverTimeBarChart());
 
 		this.overviewPanel = new JPanel(new GridLayout(2, 1));
 		this.overviewPanel.add(threadTableScrollPane);
@@ -264,10 +271,25 @@ public class ProfilerView extends JFrame {
 
 		JFreeChart chart = ChartFactory.createStackedBarChart3D(
 				"Thread State Over Time", "Threads", "Time",
-				model.getCategoryDataset(), PlotOrientation.VERTICAL, true,
+				model.getCategoryDataset(), PlotOrientation.HORIZONTAL, true,
 				true, false);
 
-		chart.getCategoryPlot().setRenderer(new StackedBarRenderer3D(true));
+		StackedBarRenderer3D renderer = (StackedBarRenderer3D) chart
+				.getCategoryPlot().getRenderer();
+		renderer.setRenderAsPercentages(true);
+		renderer.setDrawBarOutline(false);
+		
+		for (int i = 0; i < 6; ++i) {
+			renderer.setSeriesItemLabelGenerator(
+					i,
+					new StandardCategoryItemLabelGenerator("{3}", NumberFormat
+							.getIntegerInstance(), new DecimalFormat("0.0%")));
+			renderer.setSeriesItemLabelsVisible(i, true);
+			renderer.setSeriesPositiveItemLabelPosition(i, new ItemLabelPosition(
+					ItemLabelAnchor.CENTER, TextAnchor.CENTER));
+			renderer.setSeriesNegativeItemLabelPosition(i, new ItemLabelPosition(
+					ItemLabelAnchor.CENTER, TextAnchor.CENTER));
+		}
 
 		ChartPanel chartPanel = new ChartPanel(chart);
 		return chartPanel;
