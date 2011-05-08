@@ -1,5 +1,8 @@
 package de.fu.profiler.model;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Models a java thread and describes selected and analysed information of a
  * thread.
@@ -17,12 +20,12 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	/**
 	 * The threads name.
 	 */
-	final String name;
+	String name;
 
 	/**
 	 * The threads priority.
 	 */
-	final int priority;
+	int priority;
 
 	/**
 	 * The threads state.
@@ -32,7 +35,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	/**
 	 * Whether the context class loader is set.
 	 */
-	final boolean isContextClassLoaderSet;
+	boolean isContextClassLoaderSet;
 
 	/**
 	 * The number how much the thread has called wait.
@@ -44,6 +47,17 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	 * for this thread.
 	 */
 	long cpuTime;
+
+	/**
+	 * The time which was spent inside each state for the life time of the
+	 * thread.
+	 */
+	Map<String, Long> stateToDuration;
+
+	/**
+	 * The system time since the last state update was done.
+	 */
+	long timeSinceLastUpdate;
 
 	/**
 	 * Standard constructor.
@@ -69,6 +83,16 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 		this.state = state;
 		this.isContextClassLoaderSet = ccl;
 		this.cpuTime = -1;
+		this.stateToDuration = new ConcurrentHashMap<String, Long>();
+
+		String possibleStates[] = new String[] { "NEW", "RUNNABLE", "BLOCKED",
+				"WAITING", "TIMED_WAITING", "TERMINATED" };
+		
+		for (String possibleState : possibleStates) {
+				stateToDuration.put(possibleState, 0l);
+		}
+		
+		stateToDuration.put(state, 1l);		
 	}
 
 	public int getId() {
@@ -124,5 +148,43 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 
 	public void setCpuTime(long cpuTime) {
 		this.cpuTime = cpuTime;
+	}
+
+	public void compareAndSet(long timestamp, int id, String name,
+			int priority, String state, boolean isContextClassLoaderSet) {
+
+		if (this.id != id) {
+			throw new IllegalStateException(
+					"The threads id does not match the threads id to be updated.");
+		}
+
+		if (!this.name.equals(name)) {
+			this.name = name;
+		}
+
+		if (this.priority != priority) {
+			this.priority = priority;
+		}
+
+		if (!stateToDuration.containsKey(state)) {
+			stateToDuration.put(state, 1l);
+		}
+
+		long timeSpentInState = timestamp - timeSinceLastUpdate;
+		long oldTimeSpentInState = stateToDuration.get(this.state);
+		stateToDuration.put(this.state, oldTimeSpentInState + timeSpentInState);
+		timeSinceLastUpdate = timestamp;
+
+		if (!this.state.equals(state)) {
+			this.state = state;
+		}
+
+		if (this.isContextClassLoaderSet != isContextClassLoaderSet) {
+			this.isContextClassLoaderSet = isContextClassLoaderSet;
+		}
+	}
+
+	public Map<String, Long> getStateToDuration() {
+		return stateToDuration;
 	}
 }

@@ -23,6 +23,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.StackedBarRenderer3D;
 import org.jfree.util.Rotation;
 
 import de.fu.profiler.controller.ProfilerController.JVMSelectionListener;
@@ -98,6 +100,11 @@ public class ProfilerView extends JFrame {
 	JTabbedPane tabbedPane;
 
 	/**
+	 * The tabbed pane enables to select different diagrams.
+	 */
+	JTabbedPane tabbedDiagramPane;
+
+	/**
 	 * The split pane splits the whole frame into two sides. One side is for the
 	 * JVM selection and one is for the information views.
 	 */
@@ -112,12 +119,12 @@ public class ProfilerView extends JFrame {
 	 * The scroll pane for the notify wait log.
 	 */
 	JScrollPane notifyWaitLogScrollPane;
-	
+
 	/**
 	 * The scroll pane for the synchronized log.
 	 */
 	JScrollPane synchronizedLogScrollPane;
-	
+
 	/**
 	 * A text area which displays the logged data of the synchronized events.
 	 */
@@ -166,7 +173,7 @@ public class ProfilerView extends JFrame {
 	 * Displays the current event number.
 	 */
 	JLabel eventLabel;
-	
+
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
@@ -192,9 +199,14 @@ public class ProfilerView extends JFrame {
 		this.jvmSelection.add(jvmSelectionScrollPane);
 		this.jvmSelection.add(eventNavigation);
 
+		this.tabbedDiagramPane = new JTabbedPane();
+		this.tabbedDiagramPane.add("Overall Thread State",
+				setUpOverallThreadStatePieChart());
+		this.tabbedDiagramPane.add("Thread State Over Time", setUpThreadStateOverTimeBarChart());
+
 		this.overviewPanel = new JPanel(new GridLayout(2, 1));
 		this.overviewPanel.add(threadTableScrollPane);
-		this.overviewPanel.add(setUpThreadPieChart());
+		this.overviewPanel.add(tabbedDiagramPane);
 
 		this.notifyWaitPanel = new JPanel(new GridLayout(1, 1));
 		this.notifyWaitLogTextArea = new JTextArea();
@@ -211,12 +223,13 @@ public class ProfilerView extends JFrame {
 		this.locksPanel.add(monitorEntryCount);
 		this.locksPanel.add(monitorWaiterCount);
 		this.locksPanel.add(monitorNotifyWaiterCount);
-		
+
 		this.synchronizedPanel = new JPanel(new GridLayout(1, 1));
 		this.synchronizedLogTextArea = new JTextArea();
-		this.synchronizedLogScrollPane = new JScrollPane(synchronizedLogTextArea);
+		this.synchronizedLogScrollPane = new JScrollPane(
+				synchronizedLogTextArea);
 		this.synchronizedPanel.add(synchronizedLogScrollPane);
-		
+
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);
 		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
@@ -229,13 +242,14 @@ public class ProfilerView extends JFrame {
 
 		this.add(splitPane);
 		this.jvmSelectionScrollPane.setMinimumSize(new Dimension(700, 35));
-		this.setSize(700, 700);
+		this.setSize(700, 800);
 	}
 
-	private ChartPanel setUpThreadPieChart() {
+	private ChartPanel setUpOverallThreadStatePieChart() {
 
-		JFreeChart chart = ChartFactory.createPieChart3D("Threads", model
-				.getThreadPieDataset(), true, true, false);
+		JFreeChart chart = ChartFactory.createPieChart3D(
+				"Overall Threads State", model.getThreadPieDataset(), true,
+				true, false);
 		PiePlot3D plot = (PiePlot3D) chart.getPlot();
 		plot.setStartAngle(290);
 		plot.setDirection(Rotation.CLOCKWISE);
@@ -243,6 +257,19 @@ public class ProfilerView extends JFrame {
 
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(300, 200));
+		return chartPanel;
+	}
+
+	private ChartPanel setUpThreadStateOverTimeBarChart() {
+
+		JFreeChart chart = ChartFactory.createStackedBarChart3D(
+				"Thread State Over Time", "Threads", "Time",
+				model.getCategoryDataset(), PlotOrientation.VERTICAL, true,
+				true, false);
+
+		chart.getCategoryPlot().setRenderer(new StackedBarRenderer3D(true));
+
+		ChartPanel chartPanel = new ChartPanel(chart);
 		return chartPanel;
 	}
 

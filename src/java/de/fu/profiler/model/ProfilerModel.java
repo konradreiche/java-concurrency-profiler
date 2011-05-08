@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 
@@ -17,6 +18,7 @@ import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
+import de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread;
 
 /**
  * Models the state of the profiler itself.
@@ -37,9 +39,14 @@ public class ProfilerModel extends Observable {
 	TableModel tableModel;
 
 	/**
-	 * The dataset on which the thread state pie chart is based on.
+	 * The data set on which the thread state pie chart is based on.
 	 */
-	PieDataset threadPieDataset;
+	DefaultPieDataset threadPieDataSet;
+
+	/**
+	 * The data set on which the thread state over time diagram is based on.
+	 */
+	DefaultCategoryDataset threadOverTimeDataSet;
 
 	/**
 	 * The currently inspected JVM;
@@ -66,9 +73,10 @@ public class ProfilerModel extends Observable {
 	public ProfilerModel() throws IOException {
 		super();
 		this.IDsToJVMs = new ConcurrentHashMap<Integer, JVM>();
-		this.tableModel = new ThreadTableModel(threadPieDataset);
+		this.tableModel = new ThreadTableModel(threadPieDataSet);
 		this.messageHistory = new ConcurrentHashMap<Integer, List<AgentMessage>>();
-		initializePieDataset();
+		initializeThreadStatePieDataset();
+		initializeThreadStateOverTimeBarDataSet();
 		initializeJVMs();
 	}
 
@@ -76,15 +84,12 @@ public class ProfilerModel extends Observable {
 		return IDsToJVMs;
 	}
 
-	private void initializePieDataset() {
+	private void initializeThreadStateOverTimeBarDataSet() {
+		threadOverTimeDataSet = new DefaultCategoryDataset();
+	}
 
-		threadPieDataset = new DefaultPieDataset();
-		((DefaultPieDataset) threadPieDataset).setValue("New", 0);
-		((DefaultPieDataset) threadPieDataset).setValue("Terminated", 0);
-		((DefaultPieDataset) threadPieDataset).setValue("Runnable", 0);
-		((DefaultPieDataset) threadPieDataset).setValue("Blocked", 0);
-		((DefaultPieDataset) threadPieDataset).setValue("Waiting", 0);
-		((DefaultPieDataset) threadPieDataset).setValue("Timed Waiting", 0);
+	private void initializeThreadStatePieDataset() {
+		threadPieDataSet = new DefaultPieDataset();
 	}
 
 	private void initializeJVMs() {
@@ -101,7 +106,7 @@ public class ProfilerModel extends Observable {
 	}
 
 	public PieDataset getThreadPieDataset() {
-		return threadPieDataset;
+		return threadPieDataSet;
 	}
 
 	public void addThreadInfo(int pid, ThreadInfo threadInfo) {
@@ -180,117 +185,100 @@ public class ProfilerModel extends Observable {
 			for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread : agentMessage
 					.getThreadEvent().getThreadList()) {
 
-				ThreadInfo threadInfo = new ThreadInfo(thread.getId(),
-						thread.getName(), thread.getPriority(), thread
-								.getState().toString(),
-						thread.getIsContextClassLoaderSet());
-
-				if (thread.hasCpuTime()) {
-					threadInfo.setCpuTime(thread.getCpuTime());
-				}
-
-				addThreadInfo(jvm_id, threadInfo);
+				updateThreadInfo(jvm, agentMessage, thread);
 			}
 		}
 
 		if (agentMessage.hasMonitorEvent()) {
 
-			de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread t = agentMessage
+			de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread = agentMessage
 					.getMonitorEvent().getThread();
 
-			ThreadInfo thread = jvm.getThread(agentMessage.getMonitorEvent()
-					.getThread().getId());
+			ThreadInfo threadInfo = jvm.getThread(thread.getId());
 
-			if (thread == null) {
-				thread = new ThreadInfo(t.getId(), t.getName(),
-						t.getPriority(), t.getState().toString(),
-						t.getIsContextClassLoaderSet());
-				addThreadInfo(jvm_id, thread);
+			if (threadInfo == null) {
+				threadInfo = new ThreadInfo(thread.getId(), thread.getName(),
+						thread.getPriority(), thread.getState().toString(),
+						thread.getIsContextClassLoaderSet());
+				addThreadInfo(jvm_id, threadInfo);
 			}
 
 			String stateChangeNotification = null;
-			if (!thread.getState().equals(
+			if (!threadInfo.getState().equals(
 					agentMessage.getMonitorEvent().getThread().getState()
 							.toString())) {
 
-				stateChangeNotification = thread.getName()
+				stateChangeNotification = threadInfo.getName()
 						+ " switched from "
-						+ thread.getState()
+						+ threadInfo.getState()
 						+ " to "
 						+ agentMessage.getMonitorEvent().getThread().getState()
 								.toString();
 
 			}
 
-			setThreadInfoState(jvm_id, thread, agentMessage.getMonitorEvent()
-					.getThread().getState().toString());
+			setThreadInfoState(jvm_id, threadInfo, agentMessage
+					.getMonitorEvent().getThread().getState().toString());
 
-			addThreadInfo(jvm_id, thread);
+			updateThreadInfo(jvm, agentMessage, thread);
 
 			String monitorStatus = null;
 			switch (agentMessage.getMonitorEvent().getEventType()) {
 			case WAIT:
-				monitorStatus = thread.getName()
-				+ " invoked"
-				+ " wait() in "
-				+ agentMessage.getMonitorEvent()
-						.getMonitorClass()
-				+ "."
-				+ agentMessage.getMonitorEvent()
-						.getContextMethod() + "\n";
-				
+				monitorStatus = threadInfo.getName() + " invoked"
+						+ " wait() in "
+						+ agentMessage.getMonitorEvent().getMonitorClass()
+						+ "."
+						+ agentMessage.getMonitorEvent().getContextMethod()
+						+ "\n";
+
 				if (stateChangeNotification != null) {
-					monitorStatus += stateChangeNotification + "\n"; 
+					monitorStatus += stateChangeNotification + "\n";
 				}
-				
-				setThreadInfoMonitorStatus(jvm_id, thread,
+
+				setThreadInfoMonitorStatus(jvm_id, threadInfo,
 						agentMessage.getTimestamp(), monitorStatus, false);
-				thread.increaseWaitCounter();
+				threadInfo.increaseWaitCounter();
 				break;
 			case WAITED:
-				monitorStatus = thread.getName()
-				+ " left"
-				+ " wait() in "
-				+ agentMessage.getMonitorEvent()
-						.getMonitorClass()
-				+ "."
-				+ agentMessage.getMonitorEvent()
-						.getContextMethod() + "\n";
-				
+				monitorStatus = threadInfo.getName() + " left" + " wait() in "
+						+ agentMessage.getMonitorEvent().getMonitorClass()
+						+ "."
+						+ agentMessage.getMonitorEvent().getContextMethod()
+						+ "\n";
+
 				if (stateChangeNotification != null) {
-					monitorStatus += stateChangeNotification + "\n"; 
+					monitorStatus += stateChangeNotification + "\n";
 				}
-				setThreadInfoMonitorStatus(jvm_id, thread,
+				setThreadInfoMonitorStatus(jvm_id, threadInfo,
 						agentMessage.getTimestamp(), monitorStatus, false);
 				break;
 			case NOTIFY_ALL:
-				monitorStatus = thread.getName()
-				+ " invoked"
-				+ " notifyAll() in "
-				+ agentMessage.getMonitorEvent()
-						.getMonitorClass()
-				+ "."
-				+ agentMessage.getMonitorEvent()
-						.getContextMethod() + "\n";
-				
+				monitorStatus = threadInfo.getName() + " invoked"
+						+ " notifyAll() in "
+						+ agentMessage.getMonitorEvent().getMonitorClass()
+						+ "."
+						+ agentMessage.getMonitorEvent().getContextMethod()
+						+ "\n";
+
 				if (stateChangeNotification != null) {
-					monitorStatus += stateChangeNotification + "\n"; 
+					monitorStatus += stateChangeNotification + "\n";
 				}
-				setThreadInfoMonitorStatus(jvm_id, thread,
+				setThreadInfoMonitorStatus(jvm_id, threadInfo,
 						agentMessage.getTimestamp(), monitorStatus, false);
 				break;
 			case CONTENDED:
-				setThreadInfoMonitorStatus(jvm_id, thread,
-						agentMessage.getTimestamp(), thread.getName()
+				setThreadInfoMonitorStatus(jvm_id, threadInfo,
+						agentMessage.getTimestamp(), threadInfo.getName()
 								+ " failed to acquire a monitor." + "\n", true);
 				break;
 			case ENTERED:
-				setThreadInfoMonitorStatus(jvm_id, thread,
-						agentMessage.getTimestamp(), thread.getName()
+				setThreadInfoMonitorStatus(jvm_id, threadInfo,
+						agentMessage.getTimestamp(), threadInfo.getName()
 								+ " acquired a monitor." + "\n", true);
 				break;
 			}
-			
+
 			if (agentMessage.getMonitorEvent().hasMonitorId()) {
 				Monitor monitor = new Monitor(agentMessage.getMonitorEvent()
 						.getMonitorId(), agentMessage.getMonitorEvent()
@@ -299,6 +287,29 @@ public class ProfilerModel extends Observable {
 						.getWaiterCount(), agentMessage.getMonitorEvent()
 						.getNotifyWaiterCount());
 				addMonitor(jvm_id, monitor);
+			}
+		}
+	}
+
+	private void updateThreadInfo(JVM jvm, AgentMessage agentMessage,
+			Thread thread) {
+		ThreadInfo threadInfo = jvm.getThread(thread.getId());
+
+		if (threadInfo == null) {
+			threadInfo = new ThreadInfo(thread.getId(), thread.getName(),
+					thread.getPriority(), thread.getState().toString(),
+					thread.getIsContextClassLoaderSet());
+			addThreadInfo(jvm.getId(), threadInfo);
+		} else {
+
+			jvm.getThread(thread.getId()).compareAndSet(
+					agentMessage.getTimestamp(), thread.getId(),
+					thread.getName(), thread.getPriority(),
+					thread.getState().toString(),
+					thread.getIsContextClassLoaderSet());
+
+			if (thread.hasCpuTime()) {
+				threadInfo.setCpuTime(thread.getCpuTime());
 			}
 		}
 	}
@@ -327,5 +338,9 @@ public class ProfilerModel extends Observable {
 	public void notifyGUI() {
 		setChanged();
 		notifyObservers();
+	}
+
+	public DefaultCategoryDataset getCategoryDataset() {
+		return threadOverTimeDataSet;
 	}
 }

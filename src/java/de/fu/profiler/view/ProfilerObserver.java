@@ -10,6 +10,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
@@ -118,6 +119,9 @@ public class ProfilerObserver implements Observer {
 								.setValue("Waiting", waitingCounter);
 						((DefaultPieDataset) view.model.getThreadPieDataset())
 								.setValue("Timed Waiting", timedWaitingCounter);
+
+						updateThreadStateOverTimeChart(thread,
+								view.model.getCategoryDataset());
 					}
 
 					((AbstractTableModel) view.model.getTableModel())
@@ -166,5 +170,21 @@ public class ProfilerObserver implements Observer {
 				}
 			}
 		});
+	}
+
+	private void updateThreadStateOverTimeChart(ThreadInfo threadInfo,
+			DefaultCategoryDataset threadOverTimeDataSet) {
+
+		String possibleStates[] = new String[] { "NEW", "TERMINATED",
+				"RUNNABLE", "BLOCKED", "WAITING", "TIMED_WAITING" };
+
+		for (String possibleState : possibleStates) {
+
+			long duration = threadInfo.getStateToDuration().get(possibleState);
+
+			threadOverTimeDataSet.setValue(duration, possibleState,
+					threadInfo.getName());
+
+		}
 	}
 }
