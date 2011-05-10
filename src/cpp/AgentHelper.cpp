@@ -9,13 +9,22 @@
 
 using namespace google::protobuf::io;
 
+extern "C" {
+__inline__ uint64_t rdtsc() {
+	uint32_t lo, hi;
+	__asm__ __volatile__ ( // serialize
+			"xorl %%eax,%%eax \n        cpuid"
+			::: "%rax", "%rbx", "%rcx", "%rdx");
+	/* We cannot use "=A", since this would use %rax on x86_64 and return only the lower 32bits of the TSC */
+	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+	return (uint64_t) hi << 32 | lo;
+}
+}
+
 void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 		AgentSocket agentSocket, int JVM_ID) {
 
-	timespec ts;
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
-
-	agentMessage.set_timestamp(ts.tv_nsec);
+	agentMessage.set_timestamp(rdtsc());
 	agentMessage.set_jvm_id(JVM_ID);
 
 	boost::asio::streambuf b;
@@ -45,8 +54,8 @@ std::string Agent::Helper::getMethodContext(jvmtiEnv *jvmti, jthread thread,
 	jint count;
 
 	jvmti->GetStackTrace(thread, 0, 3, stackTraceFrames, &count);
-	jvmti->GetMethodName(stackTraceFrames[2 - monitorCallOffset].method, &methodName,
-			NULL, NULL);
+	jvmti->GetMethodName(stackTraceFrames[2 - monitorCallOffset].method,
+			&methodName, NULL, NULL);
 
 	return methodName;
 }

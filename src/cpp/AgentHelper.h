@@ -17,7 +17,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-#include <sys/time.h>
+#include <stdint.h>
 #include "AgentSocket.h"
 #include "AgentMessage.pb.h"
 
