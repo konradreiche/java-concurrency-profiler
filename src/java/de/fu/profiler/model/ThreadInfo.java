@@ -87,12 +87,12 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 
 		String possibleStates[] = new String[] { "NEW", "RUNNABLE", "BLOCKED",
 				"WAITING", "TIMED_WAITING", "TERMINATED" };
-		
+
 		for (String possibleState : possibleStates) {
-				stateToDuration.put(possibleState, 0l);
+			stateToDuration.put(possibleState, 0l);
 		}
-		
-		stateToDuration.put(state, 1l);		
+
+		stateToDuration.put(state, 1l);
 	}
 
 	public int getId() {

@@ -52,13 +52,13 @@ public class ProfilerObserver implements Observer {
 				if (view.model.getCurrentJVM() != null) {
 
 					SortedSet<Long> sortedTimestamp = new TreeSet<Long>(
-							view.model.getCurrentJVM().getNotifyWaitLog()
+							view.model.getCurrentJVM().getNotifyWaitTextualLog()
 									.keySet());
 
 					for (Long timestamp : sortedTimestamp) {
 						view.notifyWaitLogTextArea.append(timestamp
 								+ ": "
-								+ view.model.getCurrentJVM().getNotifyWaitLog()
+								+ view.model.getCurrentJVM().getNotifyWaitTextualLog()
 										.get(timestamp));
 						view.notifyWaitLogTextArea.repaint();
 					}
@@ -167,6 +167,8 @@ public class ProfilerObserver implements Observer {
 					view.eventLabel.setText("Event #"
 							+ eventHistory.indexOf(currentEvent) + " ("
 							+ eventType + ")");
+
+					view.graphBuilder.createNotifyWaitGraph(view.model.getCurrentJVM());
 				}
 			}
 		});

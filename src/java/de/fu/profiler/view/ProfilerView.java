@@ -1,5 +1,6 @@
 package de.fu.profiler.view;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
@@ -179,6 +180,16 @@ public class ProfilerView extends JFrame {
 	 * Displays the current event number.
 	 */
 	JLabel eventLabel;
+	
+	/**
+	 * Helper class to create the graphs.
+	 */
+	GraphBuilder graphBuilder;
+
+	/**
+	 * The component displaying the notify wait graph.
+	 */
+	Component notifyWaitGraph;
 
 	public ProfilerView(ProfilerModel model) {
 
@@ -187,6 +198,7 @@ public class ProfilerView extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new GridLayout(1, 1));
 
+		this.graphBuilder = new GraphBuilder();
 		this.table = new JTable(model.getTableModel());
 		this.list = new JList(new DefaultListModel());
 		this.threadTableScrollPane = new JScrollPane(table);
@@ -215,10 +227,12 @@ public class ProfilerView extends JFrame {
 		this.overviewPanel.add(threadTableScrollPane);
 		this.overviewPanel.add(tabbedDiagramPane);
 
-		this.notifyWaitPanel = new JPanel(new GridLayout(1, 1));
+		this.notifyWaitGraph = graphBuilder.getNotifyWaitGraph();
+		this.notifyWaitPanel = new JPanel(new GridLayout(2, 1));
 		this.notifyWaitLogTextArea = new JTextArea();
 		this.notifyWaitLogScrollPane = new JScrollPane(notifyWaitLogTextArea);
 		this.notifyWaitPanel.add(notifyWaitLogScrollPane);
+		this.notifyWaitPanel.add(notifyWaitGraph);
 
 		this.monitorSelection = new JComboBox();
 		this.monitorEntryCount = new JLabel("Entry Count: N/A");
@@ -257,6 +271,7 @@ public class ProfilerView extends JFrame {
 		JFreeChart chart = ChartFactory.createPieChart3D(
 				"Overall Threads State", model.getThreadPieDataset(), true,
 				true, false);
+		
 		PiePlot3D plot = (PiePlot3D) chart.getPlot();
 		plot.setStartAngle(290);
 		plot.setDirection(Rotation.CLOCKWISE);

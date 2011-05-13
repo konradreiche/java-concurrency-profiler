@@ -118,12 +118,14 @@ public class ProfilerModel extends Observable {
 	}
 
 	public void setThreadInfoMonitorStatus(int pid, ThreadInfo threadInfo,
-			long timestamp, String status, boolean isContendedEvent) {
+			long timestamp, String status, boolean isContendedEvent,
+			NotifyWaitLogEntry notifyWaitLogEntry) {
 
 		if (isContendedEvent) {
 			IDsToJVMs.get(pid).synchronizedLog.put(timestamp, status);
 		} else {
-			IDsToJVMs.get(pid).notifyWaitLog.put(timestamp, status);
+			IDsToJVMs.get(pid).notifyWaitTextualLog.put(timestamp, status);
+			IDsToJVMs.get(pid).notifyWaitLog.put(timestamp, notifyWaitLogEntry);
 		}
 	}
 
@@ -208,7 +210,7 @@ public class ProfilerModel extends Observable {
 					agentMessage.getMonitorEvent().getThread().getState()
 							.toString())) {
 
-				stateChangeNotification = threadInfo.getName()
+				stateChangeNotification = agentMessage.getTimestamp() + ": " + threadInfo.getName()
 						+ " switched from "
 						+ threadInfo.getState()
 						+ " to "
@@ -222,6 +224,7 @@ public class ProfilerModel extends Observable {
 
 			updateThreadInfo(jvm, agentMessage, thread);
 
+			NotifyWaitLogEntry notifyWaitLogEntry = null;
 			String monitorStatus = null;
 			switch (agentMessage.getMonitorEvent().getEventType()) {
 			case WAIT:
@@ -236,8 +239,16 @@ public class ProfilerModel extends Observable {
 					monitorStatus += stateChangeNotification + "\n";
 				}
 
+				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+						threadInfo.getState(),
+						NotifyWaitLogEntry.Type.INVOKED_WAIT, agentMessage
+								.getMonitorEvent().getContextMethod(),
+						agentMessage.getMonitorEvent().getMonitorClass());
+
 				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), monitorStatus, false);
+						agentMessage.getTimestamp(), monitorStatus, false,
+						notifyWaitLogEntry);
+
 				threadInfo.increaseWaitCounter();
 				break;
 			case WAITED:
@@ -250,8 +261,16 @@ public class ProfilerModel extends Observable {
 				if (stateChangeNotification != null) {
 					monitorStatus += stateChangeNotification + "\n";
 				}
+
+				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+						threadInfo.getState(),
+						NotifyWaitLogEntry.Type.LEFT_WAIT, agentMessage
+								.getMonitorEvent().getContextMethod(),
+						agentMessage.getMonitorEvent().getMonitorClass());
+
 				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), monitorStatus, false);
+						agentMessage.getTimestamp(), monitorStatus, false,
+						notifyWaitLogEntry);
 				break;
 			case NOTIFY_ALL:
 				monitorStatus = threadInfo.getName() + " invoked"
@@ -264,18 +283,26 @@ public class ProfilerModel extends Observable {
 				if (stateChangeNotification != null) {
 					monitorStatus += stateChangeNotification + "\n";
 				}
+				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+						threadInfo.getState(),
+						NotifyWaitLogEntry.Type.INVOKED_NOTIFY_ALL,
+						agentMessage.getMonitorEvent().getContextMethod(),
+						agentMessage.getMonitorEvent().getMonitorClass());
+
 				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), monitorStatus, false);
+						agentMessage.getTimestamp(), monitorStatus, false,
+						notifyWaitLogEntry);
 				break;
 			case CONTENDED:
 				setThreadInfoMonitorStatus(jvm_id, threadInfo,
 						agentMessage.getTimestamp(), threadInfo.getName()
-								+ " failed to acquire a monitor." + "\n", true);
+								+ " failed to acquire a monitor." + "\n", true,
+						null);
 				break;
 			case ENTERED:
 				setThreadInfoMonitorStatus(jvm_id, threadInfo,
 						agentMessage.getTimestamp(), threadInfo.getName()
-								+ " acquired a monitor." + "\n", true);
+								+ " acquired a monitor." + "\n", true, null);
 				break;
 			}
 

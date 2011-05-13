@@ -30,9 +30,15 @@ public class JVM {
 
 	/**
 	 * A list of events where its timestamp is mapped to a certain notify and
+	 * wait log entry with a textual representation.
+	 */
+	final Map<Long, String> notifyWaitTextualLog;
+	
+	/**
+	 * A list of events where its timestamp is mapped to a certain notify and
 	 * wait log entry.
 	 */
-	final Map<Long, String> notifyWaitLog;
+	final Map<Long, NotifyWaitLogEntry> notifyWaitLog;	
 
 	/**
 	 * A list of events where its timestamp is mapped to a certain synchronized
@@ -58,7 +64,8 @@ public class JVM {
 		this.id = id;
 		this.name = name;
 		this.threads = new CopyOnWriteArraySet<ThreadInfo>();
-		this.notifyWaitLog = new ConcurrentHashMap<Long, String>();
+		this.notifyWaitTextualLog = new ConcurrentHashMap<Long, String>();
+		this.notifyWaitLog = new ConcurrentHashMap<Long, NotifyWaitLogEntry>();
 		this.synchronizedLog = new ConcurrentHashMap<Long, String>();
 		this.monitors = new ConcurrentHashMap<Long, Monitor>();
 	}
@@ -113,7 +120,11 @@ public class JVM {
 		return null;
 	}
 
-	public Map<Long, String> getNotifyWaitLog() {
+	public Map<Long, String> getNotifyWaitTextualLog() {
+		return notifyWaitTextualLog;
+	}
+
+	public Map<Long, NotifyWaitLogEntry> getNotifyWaitLog() {
 		return notifyWaitLog;
 	}
 
