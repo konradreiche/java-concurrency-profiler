@@ -42,40 +42,55 @@ void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 	agentSocket.send(b);
 }
 
-std::string Agent::Helper::getMethodContext(jvmtiEnv *jvmti, jthread thread,
-		bool isMonitorCall) {
-	int monitorCallOffset = isMonitorCall ? 0 : 1;
+/**
+ * jvmtiFrameInfo is initialized with index + 2, thus one more than required due to the case
+ * of an inherited method.
+ *
+ * @param jvmti
+ * @param thread
+ * @param index
+ * @param isInheritedMethod
+ * @return
+ */
+Agent::Helper::StrackTraceElement Agent::Helper::getStackTraceElement(
+		jvmtiEnv *jvmti, jthread thread, int index) {
 
-	jvmtiFrameInfo stackTraceFrames[4];
-	jclass declaring_class;
-	char *signature_ptr;
+	Agent::Helper::StrackTraceElement stackTraceElement;
+	jvmtiFrameInfo stackTraceFrames[index + 1];
+	jclass declaringClass;
+	jint count;
+
 	char *methodName;
+	char *classSignature;
+	char *sourceFile;
+	jboolean isNative;
+
 	std::string className;
-	jint count;
 
-	jvmti->GetStackTrace(thread, 0, 3, stackTraceFrames, &count);
-	jvmti->GetMethodName(stackTraceFrames[2 - monitorCallOffset].method,
-			&methodName, NULL, NULL);
+	jvmti->GetStackTrace(thread, 0, index+1, stackTraceFrames, &count);
 
-	return methodName;
-}
+	if (index > count - 1) {
+		index = count - 1;
+	}
 
-std::string Agent::Helper::getMonitorClass(jvmtiEnv *jvmti, jthread thread) {
-	jvmtiFrameInfo stackTraceFrames[4];
-	jclass declaring_class;
-	char *signature_ptr;
-	char *name;
-	std::string className;
-	jint count;
+	jvmti->GetMethodName(stackTraceFrames[index].method, &methodName, NULL,
+			NULL);
+	jvmti->GetMethodDeclaringClass(
+			stackTraceFrames[index].method, &declaringClass);
+	jvmti->GetClassSignature(declaringClass, &classSignature, NULL);
+	jvmti->GetSourceFileName(declaringClass, &sourceFile);
+	jvmti->IsMethodNative(stackTraceFrames[index].method, &isNative);
 
-	jvmti->GetStackTrace(thread, 0, 3, stackTraceFrames, &count);
-	jvmti->GetMethodDeclaringClass(stackTraceFrames[2].method, &declaring_class);
-	jvmti->GetClassSignature(declaring_class, &signature_ptr, NULL);
-	className = std::string(signature_ptr);
+	className = std::string(classSignature);
 
 	boost::algorithm::replace_first(className, "L", "");
 	boost::algorithm::replace_all(className, "/", ".");
 	boost::algorithm::replace_first(className, ";", "");
 
-	return className;
+	stackTraceElement.className = className;
+	stackTraceElement.methodName = methodName;
+	stackTraceElement.sourceFile = sourceFile;
+	stackTraceElement.isNativeMethod = isNative;
+
+	return stackTraceElement;
 }

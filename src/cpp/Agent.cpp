@@ -162,22 +162,27 @@ static AgentMessage createThreadEventMessage(AgentMessage agentMessage,
 
 static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 		jthread thread, AgentMessage::MonitorEvent::EventType eventType,
-		std::string contextMethod, std::string className, jlong objectId,
+		std::string methodName, std::string className, jlong objectId,
 		jvmtiMonitorUsage monitorUseage) {
 
 	AgentMessage::MonitorEvent *monitorEvent =
 			agentMessage.mutable_monitorevent();
+
+	monitorEvent->set_eventtype(eventType);
+	monitorEvent->set_classname(className);
+	monitorEvent->set_methodname(methodName);
+
 	AgentMessage::Thread *threadMessage = monitorEvent->mutable_thread();
 	initializeThreadMessage(threadMessage, thread);
-	monitorEvent->set_eventtype(eventType);
-	monitorEvent->set_contextmethod(contextMethod);
-	monitorEvent->set_monitorclass(className);
 
-	if (eventType != AgentMessage::MonitorEvent::NOTIFY_ALL) {
-		monitorEvent->set_monitorid(objectId);
-		monitorEvent->set_entrycount(monitorUseage.entry_count);
-		monitorEvent->set_waitercount(monitorUseage.waiter_count);
-		monitorEvent->set_notifywaitercount(monitorUseage.notify_waiter_count);
+	if (objectId != -1) {
+
+		AgentMessage::Monitor *monitorMessage = monitorEvent->mutable_monitor();
+
+		monitorMessage->set_id(objectId);
+		monitorMessage->set_entrycount(monitorUseage.entry_count);
+		monitorMessage->set_waitercount(monitorUseage.waiter_count);
+		monitorMessage->set_notifywaitercount(monitorUseage.notify_waiter_count);
 	}
 
 	return agentMessage;
@@ -236,9 +241,15 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 		}
 
 		AgentMessage agentMessage;
+
+		Agent::Helper::StrackTraceElement stackTraceElement =
+				Agent::Helper::getStackTraceElement(jvmti_env, thread, 0);
+
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				AgentMessage::MonitorEvent::CONTENDED, "N/A", "N/A",
+				AgentMessage::MonitorEvent::CONTENDED,
+				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
+
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 	exit_critical_section(jvmti);
@@ -265,9 +276,15 @@ static void JNICALL callbackMonitorContendedEntered(jvmtiEnv *jvmti_env,
 		}
 
 		AgentMessage agentMessage;
+
+		Agent::Helper::StrackTraceElement stackTraceElement =
+				Agent::Helper::getStackTraceElement(jvmti_env, thread, 0);
+
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				AgentMessage::MonitorEvent::ENTERED, "N/A", "N/A",
+				AgentMessage::MonitorEvent::ENTERED,
+				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
+
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 	exit_critical_section(jvmti);
@@ -293,12 +310,13 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 			jvmti->GetTag(object, &currentObjectId);
 		}
 
+		Agent::Helper::StrackTraceElement stackTraceElement =
+				Agent::Helper::getStackTraceElement(jvmti_env, thread, 2);
+
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				AgentMessage::MonitorEvent::WAIT,
-				Agent::Helper::getMethodContext(jvmti_env, thread, true),
-				Agent::Helper::getMonitorClass(jvmti_env, thread),
-				currentObjectId, monitorUseage);
+				AgentMessage::MonitorEvent::WAIT, stackTraceElement.methodName,
+				stackTraceElement.className, currentObjectId, monitorUseage);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 	exit_critical_section(jvmti);
@@ -324,11 +342,13 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 			jvmti->GetTag(object, &currentObjectId);
 		}
 
+		Agent::Helper::StrackTraceElement stackTraceElement =
+				Agent::Helper::getStackTraceElement(jvmti_env, thread, 2);
+
 		AgentMessage agentMessage;
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
 				AgentMessage::MonitorEvent::WAITED,
-				Agent::Helper::getMethodContext(jvmti_env, thread, true),
-				Agent::Helper::getMonitorClass(jvmti_env, thread),
+				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
@@ -371,14 +391,25 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 	jvmti_env->GetMethodName(method, &name, NULL, NULL);
 	std::string methodName = name;
 
-	if (methodName == "notifyAll") {
+	if (methodName == "notify" || methodName == "notifyAll") {
+
+		AgentMessage::MonitorEvent::EventType eventType;
+
+		if (methodName == "notify") {
+			eventType = AgentMessage::MonitorEvent::NOTIFY;
+		} else if (methodName == "notifyAll") {
+			eventType = AgentMessage::MonitorEvent::NOTIFY_ALL;
+		}
+
 		jvmtiMonitorUsage monitorUseage;
 		AgentMessage agentMessage;
+
+		Agent::Helper::StrackTraceElement stackTraceElement =
+				Agent::Helper::getStackTraceElement(jvmti_env, thread, 1);
+
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				AgentMessage::MonitorEvent::NOTIFY_ALL,
-				Agent::Helper::getMethodContext(jvmti_env, thread, false),
-				Agent::Helper::getMonitorClass(jvmti_env, thread), 0,
-				monitorUseage);
+				eventType, stackTraceElement.methodName,
+				stackTraceElement.className, -1, monitorUseage);
 		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
 }
@@ -693,6 +724,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	capa.can_generate_method_exit_events = 1;
 	capa.can_get_monitor_info = 1;
 	capa.can_maintain_original_method_order = 1;
+	capa.can_get_source_file_name = 1;
 
 	error = jvmti->AddCapabilities(&capa);
 	check_jvmti_error(jvmti, error,

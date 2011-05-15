@@ -34,6 +34,7 @@ class AgentMessage;
 class AgentMessage_ThreadEvent;
 class AgentMessage_MonitorEvent;
 class AgentMessage_Thread;
+class AgentMessage_Monitor;
 
 enum AgentMessage_ThreadEvent_EventType {
   AgentMessage_ThreadEvent_EventType_STARTED = 0,
@@ -58,10 +59,11 @@ inline bool AgentMessage_ThreadEvent_EventType_Parse(
 enum AgentMessage_MonitorEvent_EventType {
   AgentMessage_MonitorEvent_EventType_WAIT = 0,
   AgentMessage_MonitorEvent_EventType_WAITED = 1,
-  AgentMessage_MonitorEvent_EventType_NOTIFY_ALL = 2,
-  AgentMessage_MonitorEvent_EventType_CONTENDED = 3,
-  AgentMessage_MonitorEvent_EventType_ENTERED = 4,
-  AgentMessage_MonitorEvent_EventType_NONE = 5
+  AgentMessage_MonitorEvent_EventType_NOTIFY = 2,
+  AgentMessage_MonitorEvent_EventType_NOTIFY_ALL = 3,
+  AgentMessage_MonitorEvent_EventType_CONTENDED = 4,
+  AgentMessage_MonitorEvent_EventType_ENTERED = 5,
+  AgentMessage_MonitorEvent_EventType_NONE = 6
 };
 bool AgentMessage_MonitorEvent_EventType_IsValid(int value);
 const AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent_EventType_EventType_MIN = AgentMessage_MonitorEvent_EventType_WAIT;
@@ -278,6 +280,7 @@ class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
   typedef AgentMessage_MonitorEvent_EventType EventType;
   static const EventType WAIT = AgentMessage_MonitorEvent_EventType_WAIT;
   static const EventType WAITED = AgentMessage_MonitorEvent_EventType_WAITED;
+  static const EventType NOTIFY = AgentMessage_MonitorEvent_EventType_NOTIFY;
   static const EventType NOTIFY_ALL = AgentMessage_MonitorEvent_EventType_NOTIFY_ALL;
   static const EventType CONTENDED = AgentMessage_MonitorEvent_EventType_CONTENDED;
   static const EventType ENTERED = AgentMessage_MonitorEvent_EventType_ENTERED;
@@ -320,55 +323,35 @@ class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
   inline ::AgentMessage_MonitorEvent_EventType eventtype() const;
   inline void set_eventtype(::AgentMessage_MonitorEvent_EventType value);
   
-  // required string monitorClass = 3;
-  inline bool has_monitorclass() const;
-  inline void clear_monitorclass();
-  static const int kMonitorClassFieldNumber = 3;
-  inline const ::std::string& monitorclass() const;
-  inline void set_monitorclass(const ::std::string& value);
-  inline void set_monitorclass(const char* value);
-  inline void set_monitorclass(const char* value, size_t size);
-  inline ::std::string* mutable_monitorclass();
-  inline ::std::string* release_monitorclass();
+  // optional .AgentMessage.Monitor monitor = 3;
+  inline bool has_monitor() const;
+  inline void clear_monitor();
+  static const int kMonitorFieldNumber = 3;
+  inline const ::AgentMessage_Monitor& monitor() const;
+  inline ::AgentMessage_Monitor* mutable_monitor();
+  inline ::AgentMessage_Monitor* release_monitor();
   
-  // required string contextMethod = 4;
-  inline bool has_contextmethod() const;
-  inline void clear_contextmethod();
-  static const int kContextMethodFieldNumber = 4;
-  inline const ::std::string& contextmethod() const;
-  inline void set_contextmethod(const ::std::string& value);
-  inline void set_contextmethod(const char* value);
-  inline void set_contextmethod(const char* value, size_t size);
-  inline ::std::string* mutable_contextmethod();
-  inline ::std::string* release_contextmethod();
+  // required string className = 4;
+  inline bool has_classname() const;
+  inline void clear_classname();
+  static const int kClassNameFieldNumber = 4;
+  inline const ::std::string& classname() const;
+  inline void set_classname(const ::std::string& value);
+  inline void set_classname(const char* value);
+  inline void set_classname(const char* value, size_t size);
+  inline ::std::string* mutable_classname();
+  inline ::std::string* release_classname();
   
-  // optional int64 monitorId = 5;
-  inline bool has_monitorid() const;
-  inline void clear_monitorid();
-  static const int kMonitorIdFieldNumber = 5;
-  inline ::google::protobuf::int64 monitorid() const;
-  inline void set_monitorid(::google::protobuf::int64 value);
-  
-  // optional int32 entryCount = 6;
-  inline bool has_entrycount() const;
-  inline void clear_entrycount();
-  static const int kEntryCountFieldNumber = 6;
-  inline ::google::protobuf::int32 entrycount() const;
-  inline void set_entrycount(::google::protobuf::int32 value);
-  
-  // optional int32 waiterCount = 7;
-  inline bool has_waitercount() const;
-  inline void clear_waitercount();
-  static const int kWaiterCountFieldNumber = 7;
-  inline ::google::protobuf::int32 waitercount() const;
-  inline void set_waitercount(::google::protobuf::int32 value);
-  
-  // optional int32 notifyWaiterCount = 8;
-  inline bool has_notifywaitercount() const;
-  inline void clear_notifywaitercount();
-  static const int kNotifyWaiterCountFieldNumber = 8;
-  inline ::google::protobuf::int32 notifywaitercount() const;
-  inline void set_notifywaitercount(::google::protobuf::int32 value);
+  // required string methodName = 5;
+  inline bool has_methodname() const;
+  inline void clear_methodname();
+  static const int kMethodNameFieldNumber = 5;
+  inline const ::std::string& methodname() const;
+  inline void set_methodname(const ::std::string& value);
+  inline void set_methodname(const char* value);
+  inline void set_methodname(const char* value, size_t size);
+  inline ::std::string* mutable_methodname();
+  inline ::std::string* release_methodname();
   
   // @@protoc_insertion_point(class_scope:AgentMessage.MonitorEvent)
  private:
@@ -376,32 +359,23 @@ class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
   inline void clear_has_thread();
   inline void set_has_eventtype();
   inline void clear_has_eventtype();
-  inline void set_has_monitorclass();
-  inline void clear_has_monitorclass();
-  inline void set_has_contextmethod();
-  inline void clear_has_contextmethod();
-  inline void set_has_monitorid();
-  inline void clear_has_monitorid();
-  inline void set_has_entrycount();
-  inline void clear_has_entrycount();
-  inline void set_has_waitercount();
-  inline void clear_has_waitercount();
-  inline void set_has_notifywaitercount();
-  inline void clear_has_notifywaitercount();
+  inline void set_has_monitor();
+  inline void clear_has_monitor();
+  inline void set_has_classname();
+  inline void clear_has_classname();
+  inline void set_has_methodname();
+  inline void clear_has_methodname();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::AgentMessage_Thread* thread_;
-  ::std::string* monitorclass_;
-  ::std::string* contextmethod_;
+  ::AgentMessage_Monitor* monitor_;
+  ::std::string* classname_;
+  ::std::string* methodname_;
   int eventtype_;
-  ::google::protobuf::int32 entrycount_;
-  ::google::protobuf::int64 monitorid_;
-  ::google::protobuf::int32 waitercount_;
-  ::google::protobuf::int32 notifywaitercount_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -576,6 +550,118 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class AgentMessage_Monitor : public ::google::protobuf::Message {
+ public:
+  AgentMessage_Monitor();
+  virtual ~AgentMessage_Monitor();
+  
+  AgentMessage_Monitor(const AgentMessage_Monitor& from);
+  
+  inline AgentMessage_Monitor& operator=(const AgentMessage_Monitor& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentMessage_Monitor& default_instance();
+  
+  void Swap(AgentMessage_Monitor* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AgentMessage_Monitor* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentMessage_Monitor& from);
+  void MergeFrom(const AgentMessage_Monitor& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required int64 id = 1;
+  inline bool has_id() const;
+  inline void clear_id();
+  static const int kIdFieldNumber = 1;
+  inline ::google::protobuf::int64 id() const;
+  inline void set_id(::google::protobuf::int64 value);
+  
+  // required int32 entryCount = 2;
+  inline bool has_entrycount() const;
+  inline void clear_entrycount();
+  static const int kEntryCountFieldNumber = 2;
+  inline ::google::protobuf::int32 entrycount() const;
+  inline void set_entrycount(::google::protobuf::int32 value);
+  
+  // required int32 waiterCount = 3;
+  inline bool has_waitercount() const;
+  inline void clear_waitercount();
+  static const int kWaiterCountFieldNumber = 3;
+  inline ::google::protobuf::int32 waitercount() const;
+  inline void set_waitercount(::google::protobuf::int32 value);
+  
+  // required int32 notifyWaiterCount = 4;
+  inline bool has_notifywaitercount() const;
+  inline void clear_notifywaitercount();
+  static const int kNotifyWaiterCountFieldNumber = 4;
+  inline ::google::protobuf::int32 notifywaitercount() const;
+  inline void set_notifywaitercount(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:AgentMessage.Monitor)
+ private:
+  inline void set_has_id();
+  inline void clear_has_id();
+  inline void set_has_entrycount();
+  inline void clear_has_entrycount();
+  inline void set_has_waitercount();
+  inline void clear_has_waitercount();
+  inline void set_has_notifywaitercount();
+  inline void clear_has_notifywaitercount();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::int64 id_;
+  ::google::protobuf::int32 entrycount_;
+  ::google::protobuf::int32 waitercount_;
+  ::google::protobuf::int32 notifywaitercount_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_AgentMessage_2eproto();
+  friend void protobuf_AssignDesc_AgentMessage_2eproto();
+  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AgentMessage_Monitor* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class AgentMessage : public ::google::protobuf::Message {
  public:
   AgentMessage();
@@ -631,6 +717,7 @@ class AgentMessage : public ::google::protobuf::Message {
   typedef AgentMessage_ThreadEvent ThreadEvent;
   typedef AgentMessage_MonitorEvent MonitorEvent;
   typedef AgentMessage_Thread Thread;
+  typedef AgentMessage_Monitor Monitor;
   
   // accessors -------------------------------------------------------
   
@@ -791,7 +878,7 @@ inline void AgentMessage_MonitorEvent::clear_has_eventtype() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void AgentMessage_MonitorEvent::clear_eventtype() {
-  eventtype_ = 5;
+  eventtype_ = 6;
   clear_has_eventtype();
 }
 inline ::AgentMessage_MonitorEvent_EventType AgentMessage_MonitorEvent::eventtype() const {
@@ -803,208 +890,149 @@ inline void AgentMessage_MonitorEvent::set_eventtype(::AgentMessage_MonitorEvent
   eventtype_ = value;
 }
 
-// required string monitorClass = 3;
-inline bool AgentMessage_MonitorEvent::has_monitorclass() const {
+// optional .AgentMessage.Monitor monitor = 3;
+inline bool AgentMessage_MonitorEvent::has_monitor() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void AgentMessage_MonitorEvent::set_has_monitorclass() {
+inline void AgentMessage_MonitorEvent::set_has_monitor() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void AgentMessage_MonitorEvent::clear_has_monitorclass() {
+inline void AgentMessage_MonitorEvent::clear_has_monitor() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void AgentMessage_MonitorEvent::clear_monitorclass() {
-  if (monitorclass_ != &::google::protobuf::internal::kEmptyString) {
-    monitorclass_->clear();
-  }
-  clear_has_monitorclass();
+inline void AgentMessage_MonitorEvent::clear_monitor() {
+  if (monitor_ != NULL) monitor_->::AgentMessage_Monitor::Clear();
+  clear_has_monitor();
 }
-inline const ::std::string& AgentMessage_MonitorEvent::monitorclass() const {
-  return *monitorclass_;
+inline const ::AgentMessage_Monitor& AgentMessage_MonitorEvent::monitor() const {
+  return monitor_ != NULL ? *monitor_ : *default_instance_->monitor_;
 }
-inline void AgentMessage_MonitorEvent::set_monitorclass(const ::std::string& value) {
-  set_has_monitorclass();
-  if (monitorclass_ == &::google::protobuf::internal::kEmptyString) {
-    monitorclass_ = new ::std::string;
-  }
-  monitorclass_->assign(value);
+inline ::AgentMessage_Monitor* AgentMessage_MonitorEvent::mutable_monitor() {
+  set_has_monitor();
+  if (monitor_ == NULL) monitor_ = new ::AgentMessage_Monitor;
+  return monitor_;
 }
-inline void AgentMessage_MonitorEvent::set_monitorclass(const char* value) {
-  set_has_monitorclass();
-  if (monitorclass_ == &::google::protobuf::internal::kEmptyString) {
-    monitorclass_ = new ::std::string;
-  }
-  monitorclass_->assign(value);
-}
-inline void AgentMessage_MonitorEvent::set_monitorclass(const char* value, size_t size) {
-  set_has_monitorclass();
-  if (monitorclass_ == &::google::protobuf::internal::kEmptyString) {
-    monitorclass_ = new ::std::string;
-  }
-  monitorclass_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* AgentMessage_MonitorEvent::mutable_monitorclass() {
-  set_has_monitorclass();
-  if (monitorclass_ == &::google::protobuf::internal::kEmptyString) {
-    monitorclass_ = new ::std::string;
-  }
-  return monitorclass_;
-}
-inline ::std::string* AgentMessage_MonitorEvent::release_monitorclass() {
-  clear_has_monitorclass();
-  if (monitorclass_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = monitorclass_;
-    monitorclass_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
+inline ::AgentMessage_Monitor* AgentMessage_MonitorEvent::release_monitor() {
+  clear_has_monitor();
+  ::AgentMessage_Monitor* temp = monitor_;
+  monitor_ = NULL;
+  return temp;
 }
 
-// required string contextMethod = 4;
-inline bool AgentMessage_MonitorEvent::has_contextmethod() const {
+// required string className = 4;
+inline bool AgentMessage_MonitorEvent::has_classname() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void AgentMessage_MonitorEvent::set_has_contextmethod() {
+inline void AgentMessage_MonitorEvent::set_has_classname() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void AgentMessage_MonitorEvent::clear_has_contextmethod() {
+inline void AgentMessage_MonitorEvent::clear_has_classname() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void AgentMessage_MonitorEvent::clear_contextmethod() {
-  if (contextmethod_ != &::google::protobuf::internal::kEmptyString) {
-    contextmethod_->clear();
+inline void AgentMessage_MonitorEvent::clear_classname() {
+  if (classname_ != &::google::protobuf::internal::kEmptyString) {
+    classname_->clear();
   }
-  clear_has_contextmethod();
+  clear_has_classname();
 }
-inline const ::std::string& AgentMessage_MonitorEvent::contextmethod() const {
-  return *contextmethod_;
+inline const ::std::string& AgentMessage_MonitorEvent::classname() const {
+  return *classname_;
 }
-inline void AgentMessage_MonitorEvent::set_contextmethod(const ::std::string& value) {
-  set_has_contextmethod();
-  if (contextmethod_ == &::google::protobuf::internal::kEmptyString) {
-    contextmethod_ = new ::std::string;
+inline void AgentMessage_MonitorEvent::set_classname(const ::std::string& value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
   }
-  contextmethod_->assign(value);
+  classname_->assign(value);
 }
-inline void AgentMessage_MonitorEvent::set_contextmethod(const char* value) {
-  set_has_contextmethod();
-  if (contextmethod_ == &::google::protobuf::internal::kEmptyString) {
-    contextmethod_ = new ::std::string;
+inline void AgentMessage_MonitorEvent::set_classname(const char* value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
   }
-  contextmethod_->assign(value);
+  classname_->assign(value);
 }
-inline void AgentMessage_MonitorEvent::set_contextmethod(const char* value, size_t size) {
-  set_has_contextmethod();
-  if (contextmethod_ == &::google::protobuf::internal::kEmptyString) {
-    contextmethod_ = new ::std::string;
+inline void AgentMessage_MonitorEvent::set_classname(const char* value, size_t size) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
   }
-  contextmethod_->assign(reinterpret_cast<const char*>(value), size);
+  classname_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* AgentMessage_MonitorEvent::mutable_contextmethod() {
-  set_has_contextmethod();
-  if (contextmethod_ == &::google::protobuf::internal::kEmptyString) {
-    contextmethod_ = new ::std::string;
+inline ::std::string* AgentMessage_MonitorEvent::mutable_classname() {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
   }
-  return contextmethod_;
+  return classname_;
 }
-inline ::std::string* AgentMessage_MonitorEvent::release_contextmethod() {
-  clear_has_contextmethod();
-  if (contextmethod_ == &::google::protobuf::internal::kEmptyString) {
+inline ::std::string* AgentMessage_MonitorEvent::release_classname() {
+  clear_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
   } else {
-    ::std::string* temp = contextmethod_;
-    contextmethod_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    ::std::string* temp = classname_;
+    classname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }
 
-// optional int64 monitorId = 5;
-inline bool AgentMessage_MonitorEvent::has_monitorid() const {
+// required string methodName = 5;
+inline bool AgentMessage_MonitorEvent::has_methodname() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void AgentMessage_MonitorEvent::set_has_monitorid() {
+inline void AgentMessage_MonitorEvent::set_has_methodname() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void AgentMessage_MonitorEvent::clear_has_monitorid() {
+inline void AgentMessage_MonitorEvent::clear_has_methodname() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void AgentMessage_MonitorEvent::clear_monitorid() {
-  monitorid_ = GOOGLE_LONGLONG(0);
-  clear_has_monitorid();
+inline void AgentMessage_MonitorEvent::clear_methodname() {
+  if (methodname_ != &::google::protobuf::internal::kEmptyString) {
+    methodname_->clear();
+  }
+  clear_has_methodname();
 }
-inline ::google::protobuf::int64 AgentMessage_MonitorEvent::monitorid() const {
-  return monitorid_;
+inline const ::std::string& AgentMessage_MonitorEvent::methodname() const {
+  return *methodname_;
 }
-inline void AgentMessage_MonitorEvent::set_monitorid(::google::protobuf::int64 value) {
-  set_has_monitorid();
-  monitorid_ = value;
+inline void AgentMessage_MonitorEvent::set_methodname(const ::std::string& value) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(value);
 }
-
-// optional int32 entryCount = 6;
-inline bool AgentMessage_MonitorEvent::has_entrycount() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+inline void AgentMessage_MonitorEvent::set_methodname(const char* value) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(value);
 }
-inline void AgentMessage_MonitorEvent::set_has_entrycount() {
-  _has_bits_[0] |= 0x00000020u;
+inline void AgentMessage_MonitorEvent::set_methodname(const char* value, size_t size) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline void AgentMessage_MonitorEvent::clear_has_entrycount() {
-  _has_bits_[0] &= ~0x00000020u;
+inline ::std::string* AgentMessage_MonitorEvent::mutable_methodname() {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  return methodname_;
 }
-inline void AgentMessage_MonitorEvent::clear_entrycount() {
-  entrycount_ = 0;
-  clear_has_entrycount();
-}
-inline ::google::protobuf::int32 AgentMessage_MonitorEvent::entrycount() const {
-  return entrycount_;
-}
-inline void AgentMessage_MonitorEvent::set_entrycount(::google::protobuf::int32 value) {
-  set_has_entrycount();
-  entrycount_ = value;
-}
-
-// optional int32 waiterCount = 7;
-inline bool AgentMessage_MonitorEvent::has_waitercount() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
-}
-inline void AgentMessage_MonitorEvent::set_has_waitercount() {
-  _has_bits_[0] |= 0x00000040u;
-}
-inline void AgentMessage_MonitorEvent::clear_has_waitercount() {
-  _has_bits_[0] &= ~0x00000040u;
-}
-inline void AgentMessage_MonitorEvent::clear_waitercount() {
-  waitercount_ = 0;
-  clear_has_waitercount();
-}
-inline ::google::protobuf::int32 AgentMessage_MonitorEvent::waitercount() const {
-  return waitercount_;
-}
-inline void AgentMessage_MonitorEvent::set_waitercount(::google::protobuf::int32 value) {
-  set_has_waitercount();
-  waitercount_ = value;
-}
-
-// optional int32 notifyWaiterCount = 8;
-inline bool AgentMessage_MonitorEvent::has_notifywaitercount() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
-}
-inline void AgentMessage_MonitorEvent::set_has_notifywaitercount() {
-  _has_bits_[0] |= 0x00000080u;
-}
-inline void AgentMessage_MonitorEvent::clear_has_notifywaitercount() {
-  _has_bits_[0] &= ~0x00000080u;
-}
-inline void AgentMessage_MonitorEvent::clear_notifywaitercount() {
-  notifywaitercount_ = 0;
-  clear_has_notifywaitercount();
-}
-inline ::google::protobuf::int32 AgentMessage_MonitorEvent::notifywaitercount() const {
-  return notifywaitercount_;
-}
-inline void AgentMessage_MonitorEvent::set_notifywaitercount(::google::protobuf::int32 value) {
-  set_has_notifywaitercount();
-  notifywaitercount_ = value;
+inline ::std::string* AgentMessage_MonitorEvent::release_methodname() {
+  clear_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = methodname_;
+    methodname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 // -------------------------------------------------------------------
@@ -1178,6 +1206,98 @@ inline ::google::protobuf::int64 AgentMessage_Thread::cputime() const {
 inline void AgentMessage_Thread::set_cputime(::google::protobuf::int64 value) {
   set_has_cputime();
   cputime_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// AgentMessage_Monitor
+
+// required int64 id = 1;
+inline bool AgentMessage_Monitor::has_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AgentMessage_Monitor::set_has_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AgentMessage_Monitor::clear_has_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AgentMessage_Monitor::clear_id() {
+  id_ = GOOGLE_LONGLONG(0);
+  clear_has_id();
+}
+inline ::google::protobuf::int64 AgentMessage_Monitor::id() const {
+  return id_;
+}
+inline void AgentMessage_Monitor::set_id(::google::protobuf::int64 value) {
+  set_has_id();
+  id_ = value;
+}
+
+// required int32 entryCount = 2;
+inline bool AgentMessage_Monitor::has_entrycount() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AgentMessage_Monitor::set_has_entrycount() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AgentMessage_Monitor::clear_has_entrycount() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage_Monitor::clear_entrycount() {
+  entrycount_ = 0;
+  clear_has_entrycount();
+}
+inline ::google::protobuf::int32 AgentMessage_Monitor::entrycount() const {
+  return entrycount_;
+}
+inline void AgentMessage_Monitor::set_entrycount(::google::protobuf::int32 value) {
+  set_has_entrycount();
+  entrycount_ = value;
+}
+
+// required int32 waiterCount = 3;
+inline bool AgentMessage_Monitor::has_waitercount() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void AgentMessage_Monitor::set_has_waitercount() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void AgentMessage_Monitor::clear_has_waitercount() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void AgentMessage_Monitor::clear_waitercount() {
+  waitercount_ = 0;
+  clear_has_waitercount();
+}
+inline ::google::protobuf::int32 AgentMessage_Monitor::waitercount() const {
+  return waitercount_;
+}
+inline void AgentMessage_Monitor::set_waitercount(::google::protobuf::int32 value) {
+  set_has_waitercount();
+  waitercount_ = value;
+}
+
+// required int32 notifyWaiterCount = 4;
+inline bool AgentMessage_Monitor::has_notifywaitercount() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void AgentMessage_Monitor::set_has_notifywaitercount() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void AgentMessage_Monitor::clear_has_notifywaitercount() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void AgentMessage_Monitor::clear_notifywaitercount() {
+  notifywaitercount_ = 0;
+  clear_has_notifywaitercount();
+}
+inline ::google::protobuf::int32 AgentMessage_Monitor::notifywaitercount() const {
+  return notifywaitercount_;
+}
+inline void AgentMessage_Monitor::set_notifywaitercount(::google::protobuf::int32 value) {
+  set_has_notifywaitercount();
+  notifywaitercount_ = value;
 }
 
 // -------------------------------------------------------------------

@@ -779,29 +779,18 @@ public final class AgentMessageProtos {
       boolean hasEventType();
       de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.EventType getEventType();
       
-      // required string monitorClass = 3;
-      boolean hasMonitorClass();
-      String getMonitorClass();
+      // optional .AgentMessage.Monitor monitor = 3;
+      boolean hasMonitor();
+      de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor getMonitor();
+      de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorOrBuilder getMonitorOrBuilder();
       
-      // required string contextMethod = 4;
-      boolean hasContextMethod();
-      String getContextMethod();
+      // required string className = 4;
+      boolean hasClassName();
+      String getClassName();
       
-      // optional int64 monitorId = 5;
-      boolean hasMonitorId();
-      long getMonitorId();
-      
-      // optional int32 entryCount = 6;
-      boolean hasEntryCount();
-      int getEntryCount();
-      
-      // optional int32 waiterCount = 7;
-      boolean hasWaiterCount();
-      int getWaiterCount();
-      
-      // optional int32 notifyWaiterCount = 8;
-      boolean hasNotifyWaiterCount();
-      int getNotifyWaiterCount();
+      // required string methodName = 5;
+      boolean hasMethodName();
+      String getMethodName();
     }
     public static final class MonitorEvent extends
         com.google.protobuf.GeneratedMessage
@@ -835,18 +824,20 @@ public final class AgentMessageProtos {
           implements com.google.protobuf.ProtocolMessageEnum {
         WAIT(0, 0),
         WAITED(1, 1),
-        NOTIFY_ALL(2, 2),
-        CONTENDED(3, 3),
-        ENTERED(4, 4),
-        NONE(5, 5),
+        NOTIFY(2, 2),
+        NOTIFY_ALL(3, 3),
+        CONTENDED(4, 4),
+        ENTERED(5, 5),
+        NONE(6, 6),
         ;
         
         public static final int WAIT_VALUE = 0;
         public static final int WAITED_VALUE = 1;
-        public static final int NOTIFY_ALL_VALUE = 2;
-        public static final int CONTENDED_VALUE = 3;
-        public static final int ENTERED_VALUE = 4;
-        public static final int NONE_VALUE = 5;
+        public static final int NOTIFY_VALUE = 2;
+        public static final int NOTIFY_ALL_VALUE = 3;
+        public static final int CONTENDED_VALUE = 4;
+        public static final int ENTERED_VALUE = 5;
+        public static final int NONE_VALUE = 6;
         
         
         public final int getNumber() { return value; }
@@ -855,10 +846,11 @@ public final class AgentMessageProtos {
           switch (value) {
             case 0: return WAIT;
             case 1: return WAITED;
-            case 2: return NOTIFY_ALL;
-            case 3: return CONTENDED;
-            case 4: return ENTERED;
-            case 5: return NONE;
+            case 2: return NOTIFY;
+            case 3: return NOTIFY_ALL;
+            case 4: return CONTENDED;
+            case 5: return ENTERED;
+            case 6: return NONE;
             default: return null;
           }
         }
@@ -889,7 +881,7 @@ public final class AgentMessageProtos {
         }
         
         private static final EventType[] VALUES = {
-          WAIT, WAITED, NOTIFY_ALL, CONTENDED, ENTERED, NONE, 
+          WAIT, WAITED, NOTIFY, NOTIFY_ALL, CONTENDED, ENTERED, NONE, 
         };
         
         public static EventType valueOf(
@@ -936,46 +928,27 @@ public final class AgentMessageProtos {
         return eventType_;
       }
       
-      // required string monitorClass = 3;
-      public static final int MONITORCLASS_FIELD_NUMBER = 3;
-      private Object monitorClass_;
-      public boolean hasMonitorClass() {
+      // optional .AgentMessage.Monitor monitor = 3;
+      public static final int MONITOR_FIELD_NUMBER = 3;
+      private de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor monitor_;
+      public boolean hasMonitor() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
-      public String getMonitorClass() {
-        Object ref = monitorClass_;
-        if (ref instanceof String) {
-          return (String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
-          if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-            monitorClass_ = s;
-          }
-          return s;
-        }
+      public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor getMonitor() {
+        return monitor_;
       }
-      private com.google.protobuf.ByteString getMonitorClassBytes() {
-        Object ref = monitorClass_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-          monitorClass_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
+      public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorOrBuilder getMonitorOrBuilder() {
+        return monitor_;
       }
       
-      // required string contextMethod = 4;
-      public static final int CONTEXTMETHOD_FIELD_NUMBER = 4;
-      private Object contextMethod_;
-      public boolean hasContextMethod() {
+      // required string className = 4;
+      public static final int CLASSNAME_FIELD_NUMBER = 4;
+      private Object className_;
+      public boolean hasClassName() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
-      public String getContextMethod() {
-        Object ref = contextMethod_;
+      public String getClassName() {
+        Object ref = className_;
         if (ref instanceof String) {
           return (String) ref;
         } else {
@@ -983,72 +956,61 @@ public final class AgentMessageProtos {
               (com.google.protobuf.ByteString) ref;
           String s = bs.toStringUtf8();
           if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-            contextMethod_ = s;
+            className_ = s;
           }
           return s;
         }
       }
-      private com.google.protobuf.ByteString getContextMethodBytes() {
-        Object ref = contextMethod_;
+      private com.google.protobuf.ByteString getClassNameBytes() {
+        Object ref = className_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-          contextMethod_ = b;
+          className_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       
-      // optional int64 monitorId = 5;
-      public static final int MONITORID_FIELD_NUMBER = 5;
-      private long monitorId_;
-      public boolean hasMonitorId() {
+      // required string methodName = 5;
+      public static final int METHODNAME_FIELD_NUMBER = 5;
+      private Object methodName_;
+      public boolean hasMethodName() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
-      public long getMonitorId() {
-        return monitorId_;
+      public String getMethodName() {
+        Object ref = methodName_;
+        if (ref instanceof String) {
+          return (String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+            methodName_ = s;
+          }
+          return s;
+        }
       }
-      
-      // optional int32 entryCount = 6;
-      public static final int ENTRYCOUNT_FIELD_NUMBER = 6;
-      private int entryCount_;
-      public boolean hasEntryCount() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
-      }
-      public int getEntryCount() {
-        return entryCount_;
-      }
-      
-      // optional int32 waiterCount = 7;
-      public static final int WAITERCOUNT_FIELD_NUMBER = 7;
-      private int waiterCount_;
-      public boolean hasWaiterCount() {
-        return ((bitField0_ & 0x00000040) == 0x00000040);
-      }
-      public int getWaiterCount() {
-        return waiterCount_;
-      }
-      
-      // optional int32 notifyWaiterCount = 8;
-      public static final int NOTIFYWAITERCOUNT_FIELD_NUMBER = 8;
-      private int notifyWaiterCount_;
-      public boolean hasNotifyWaiterCount() {
-        return ((bitField0_ & 0x00000080) == 0x00000080);
-      }
-      public int getNotifyWaiterCount() {
-        return notifyWaiterCount_;
+      private com.google.protobuf.ByteString getMethodNameBytes() {
+        Object ref = methodName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+          methodName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
       
       private void initFields() {
         thread_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.getDefaultInstance();
         eventType_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.EventType.NONE;
-        monitorClass_ = "";
-        contextMethod_ = "";
-        monitorId_ = 0L;
-        entryCount_ = 0;
-        waiterCount_ = 0;
-        notifyWaiterCount_ = 0;
+        monitor_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance();
+        className_ = "";
+        methodName_ = "";
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -1063,17 +1025,23 @@ public final class AgentMessageProtos {
           memoizedIsInitialized = 0;
           return false;
         }
-        if (!hasMonitorClass()) {
+        if (!hasClassName()) {
           memoizedIsInitialized = 0;
           return false;
         }
-        if (!hasContextMethod()) {
+        if (!hasMethodName()) {
           memoizedIsInitialized = 0;
           return false;
         }
         if (!getThread().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
+        }
+        if (hasMonitor()) {
+          if (!getMonitor().isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
         }
         memoizedIsInitialized = 1;
         return true;
@@ -1089,22 +1057,13 @@ public final class AgentMessageProtos {
           output.writeEnum(2, eventType_.getNumber());
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          output.writeBytes(3, getMonitorClassBytes());
+          output.writeMessage(3, monitor_);
         }
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          output.writeBytes(4, getContextMethodBytes());
+          output.writeBytes(4, getClassNameBytes());
         }
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
-          output.writeInt64(5, monitorId_);
-        }
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          output.writeInt32(6, entryCount_);
-        }
-        if (((bitField0_ & 0x00000040) == 0x00000040)) {
-          output.writeInt32(7, waiterCount_);
-        }
-        if (((bitField0_ & 0x00000080) == 0x00000080)) {
-          output.writeInt32(8, notifyWaiterCount_);
+          output.writeBytes(5, getMethodNameBytes());
         }
         getUnknownFields().writeTo(output);
       }
@@ -1125,27 +1084,15 @@ public final class AgentMessageProtos {
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(3, getMonitorClassBytes());
+            .computeMessageSize(3, monitor_);
         }
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(4, getContextMethodBytes());
+            .computeBytesSize(4, getClassNameBytes());
         }
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt64Size(5, monitorId_);
-        }
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(6, entryCount_);
-        }
-        if (((bitField0_ & 0x00000040) == 0x00000040)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(7, waiterCount_);
-        }
-        if (((bitField0_ & 0x00000080) == 0x00000080)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(8, notifyWaiterCount_);
+            .computeBytesSize(5, getMethodNameBytes());
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -1262,6 +1209,7 @@ public final class AgentMessageProtos {
         private void maybeForceBuilderInitialization() {
           if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
             getThreadFieldBuilder();
+            getMonitorFieldBuilder();
           }
         }
         private static Builder create() {
@@ -1278,18 +1226,16 @@ public final class AgentMessageProtos {
           bitField0_ = (bitField0_ & ~0x00000001);
           eventType_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.EventType.NONE;
           bitField0_ = (bitField0_ & ~0x00000002);
-          monitorClass_ = "";
+          if (monitorBuilder_ == null) {
+            monitor_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance();
+          } else {
+            monitorBuilder_.clear();
+          }
           bitField0_ = (bitField0_ & ~0x00000004);
-          contextMethod_ = "";
+          className_ = "";
           bitField0_ = (bitField0_ & ~0x00000008);
-          monitorId_ = 0L;
+          methodName_ = "";
           bitField0_ = (bitField0_ & ~0x00000010);
-          entryCount_ = 0;
-          bitField0_ = (bitField0_ & ~0x00000020);
-          waiterCount_ = 0;
-          bitField0_ = (bitField0_ & ~0x00000040);
-          notifyWaiterCount_ = 0;
-          bitField0_ = (bitField0_ & ~0x00000080);
           return this;
         }
         
@@ -1343,27 +1289,19 @@ public final class AgentMessageProtos {
           if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
             to_bitField0_ |= 0x00000004;
           }
-          result.monitorClass_ = monitorClass_;
+          if (monitorBuilder_ == null) {
+            result.monitor_ = monitor_;
+          } else {
+            result.monitor_ = monitorBuilder_.build();
+          }
           if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
             to_bitField0_ |= 0x00000008;
           }
-          result.contextMethod_ = contextMethod_;
+          result.className_ = className_;
           if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
             to_bitField0_ |= 0x00000010;
           }
-          result.monitorId_ = monitorId_;
-          if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-            to_bitField0_ |= 0x00000020;
-          }
-          result.entryCount_ = entryCount_;
-          if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-            to_bitField0_ |= 0x00000040;
-          }
-          result.waiterCount_ = waiterCount_;
-          if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-            to_bitField0_ |= 0x00000080;
-          }
-          result.notifyWaiterCount_ = notifyWaiterCount_;
+          result.methodName_ = methodName_;
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -1386,23 +1324,14 @@ public final class AgentMessageProtos {
           if (other.hasEventType()) {
             setEventType(other.getEventType());
           }
-          if (other.hasMonitorClass()) {
-            setMonitorClass(other.getMonitorClass());
+          if (other.hasMonitor()) {
+            mergeMonitor(other.getMonitor());
           }
-          if (other.hasContextMethod()) {
-            setContextMethod(other.getContextMethod());
+          if (other.hasClassName()) {
+            setClassName(other.getClassName());
           }
-          if (other.hasMonitorId()) {
-            setMonitorId(other.getMonitorId());
-          }
-          if (other.hasEntryCount()) {
-            setEntryCount(other.getEntryCount());
-          }
-          if (other.hasWaiterCount()) {
-            setWaiterCount(other.getWaiterCount());
-          }
-          if (other.hasNotifyWaiterCount()) {
-            setNotifyWaiterCount(other.getNotifyWaiterCount());
+          if (other.hasMethodName()) {
+            setMethodName(other.getMethodName());
           }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
@@ -1417,17 +1346,23 @@ public final class AgentMessageProtos {
             
             return false;
           }
-          if (!hasMonitorClass()) {
+          if (!hasClassName()) {
             
             return false;
           }
-          if (!hasContextMethod()) {
+          if (!hasMethodName()) {
             
             return false;
           }
           if (!getThread().isInitialized()) {
             
             return false;
+          }
+          if (hasMonitor()) {
+            if (!getMonitor().isInitialized()) {
+              
+              return false;
+            }
           }
           return true;
         }
@@ -1476,33 +1411,22 @@ public final class AgentMessageProtos {
                 break;
               }
               case 26: {
-                bitField0_ |= 0x00000004;
-                monitorClass_ = input.readBytes();
+                de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder subBuilder = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.newBuilder();
+                if (hasMonitor()) {
+                  subBuilder.mergeFrom(getMonitor());
+                }
+                input.readMessage(subBuilder, extensionRegistry);
+                setMonitor(subBuilder.buildPartial());
                 break;
               }
               case 34: {
                 bitField0_ |= 0x00000008;
-                contextMethod_ = input.readBytes();
+                className_ = input.readBytes();
                 break;
               }
-              case 40: {
+              case 42: {
                 bitField0_ |= 0x00000010;
-                monitorId_ = input.readInt64();
-                break;
-              }
-              case 48: {
-                bitField0_ |= 0x00000020;
-                entryCount_ = input.readInt32();
-                break;
-              }
-              case 56: {
-                bitField0_ |= 0x00000040;
-                waiterCount_ = input.readInt32();
-                break;
-              }
-              case 64: {
-                bitField0_ |= 0x00000080;
-                notifyWaiterCount_ = input.readInt32();
+                methodName_ = input.readBytes();
                 break;
               }
             }
@@ -1625,160 +1549,166 @@ public final class AgentMessageProtos {
           return this;
         }
         
-        // required string monitorClass = 3;
-        private Object monitorClass_ = "";
-        public boolean hasMonitorClass() {
+        // optional .AgentMessage.Monitor monitor = 3;
+        private de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor monitor_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance();
+        private com.google.protobuf.SingleFieldBuilder<
+            de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor, de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorOrBuilder> monitorBuilder_;
+        public boolean hasMonitor() {
           return ((bitField0_ & 0x00000004) == 0x00000004);
         }
-        public String getMonitorClass() {
-          Object ref = monitorClass_;
-          if (!(ref instanceof String)) {
-            String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
-            monitorClass_ = s;
-            return s;
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor getMonitor() {
+          if (monitorBuilder_ == null) {
+            return monitor_;
           } else {
-            return (String) ref;
+            return monitorBuilder_.getMessage();
           }
         }
-        public Builder setMonitorClass(String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-          monitorClass_ = value;
-          onChanged();
-          return this;
-        }
-        public Builder clearMonitorClass() {
-          bitField0_ = (bitField0_ & ~0x00000004);
-          monitorClass_ = getDefaultInstance().getMonitorClass();
-          onChanged();
-          return this;
-        }
-        void setMonitorClass(com.google.protobuf.ByteString value) {
+        public Builder setMonitor(de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor value) {
+          if (monitorBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            monitor_ = value;
+            onChanged();
+          } else {
+            monitorBuilder_.setMessage(value);
+          }
           bitField0_ |= 0x00000004;
-          monitorClass_ = value;
+          return this;
+        }
+        public Builder setMonitor(
+            de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder builderForValue) {
+          if (monitorBuilder_ == null) {
+            monitor_ = builderForValue.build();
+            onChanged();
+          } else {
+            monitorBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000004;
+          return this;
+        }
+        public Builder mergeMonitor(de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor value) {
+          if (monitorBuilder_ == null) {
+            if (((bitField0_ & 0x00000004) == 0x00000004) &&
+                monitor_ != de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance()) {
+              monitor_ =
+                de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.newBuilder(monitor_).mergeFrom(value).buildPartial();
+            } else {
+              monitor_ = value;
+            }
+            onChanged();
+          } else {
+            monitorBuilder_.mergeFrom(value);
+          }
+          bitField0_ |= 0x00000004;
+          return this;
+        }
+        public Builder clearMonitor() {
+          if (monitorBuilder_ == null) {
+            monitor_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance();
+            onChanged();
+          } else {
+            monitorBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000004);
+          return this;
+        }
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder getMonitorBuilder() {
+          bitField0_ |= 0x00000004;
           onChanged();
+          return getMonitorFieldBuilder().getBuilder();
+        }
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorOrBuilder getMonitorOrBuilder() {
+          if (monitorBuilder_ != null) {
+            return monitorBuilder_.getMessageOrBuilder();
+          } else {
+            return monitor_;
+          }
+        }
+        private com.google.protobuf.SingleFieldBuilder<
+            de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor, de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorOrBuilder> 
+            getMonitorFieldBuilder() {
+          if (monitorBuilder_ == null) {
+            monitorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+                de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor, de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorOrBuilder>(
+                    monitor_,
+                    getParentForChildren(),
+                    isClean());
+            monitor_ = null;
+          }
+          return monitorBuilder_;
         }
         
-        // required string contextMethod = 4;
-        private Object contextMethod_ = "";
-        public boolean hasContextMethod() {
+        // required string className = 4;
+        private Object className_ = "";
+        public boolean hasClassName() {
           return ((bitField0_ & 0x00000008) == 0x00000008);
         }
-        public String getContextMethod() {
-          Object ref = contextMethod_;
+        public String getClassName() {
+          Object ref = className_;
           if (!(ref instanceof String)) {
             String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
-            contextMethod_ = s;
+            className_ = s;
             return s;
           } else {
             return (String) ref;
           }
         }
-        public Builder setContextMethod(String value) {
+        public Builder setClassName(String value) {
           if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000008;
-          contextMethod_ = value;
+          className_ = value;
           onChanged();
           return this;
         }
-        public Builder clearContextMethod() {
+        public Builder clearClassName() {
           bitField0_ = (bitField0_ & ~0x00000008);
-          contextMethod_ = getDefaultInstance().getContextMethod();
+          className_ = getDefaultInstance().getClassName();
           onChanged();
           return this;
         }
-        void setContextMethod(com.google.protobuf.ByteString value) {
+        void setClassName(com.google.protobuf.ByteString value) {
           bitField0_ |= 0x00000008;
-          contextMethod_ = value;
+          className_ = value;
           onChanged();
         }
         
-        // optional int64 monitorId = 5;
-        private long monitorId_ ;
-        public boolean hasMonitorId() {
+        // required string methodName = 5;
+        private Object methodName_ = "";
+        public boolean hasMethodName() {
           return ((bitField0_ & 0x00000010) == 0x00000010);
         }
-        public long getMonitorId() {
-          return monitorId_;
+        public String getMethodName() {
+          Object ref = methodName_;
+          if (!(ref instanceof String)) {
+            String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+            methodName_ = s;
+            return s;
+          } else {
+            return (String) ref;
+          }
         }
-        public Builder setMonitorId(long value) {
-          bitField0_ |= 0x00000010;
-          monitorId_ = value;
+        public Builder setMethodName(String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000010;
+          methodName_ = value;
           onChanged();
           return this;
         }
-        public Builder clearMonitorId() {
+        public Builder clearMethodName() {
           bitField0_ = (bitField0_ & ~0x00000010);
-          monitorId_ = 0L;
+          methodName_ = getDefaultInstance().getMethodName();
           onChanged();
           return this;
         }
-        
-        // optional int32 entryCount = 6;
-        private int entryCount_ ;
-        public boolean hasEntryCount() {
-          return ((bitField0_ & 0x00000020) == 0x00000020);
-        }
-        public int getEntryCount() {
-          return entryCount_;
-        }
-        public Builder setEntryCount(int value) {
-          bitField0_ |= 0x00000020;
-          entryCount_ = value;
+        void setMethodName(com.google.protobuf.ByteString value) {
+          bitField0_ |= 0x00000010;
+          methodName_ = value;
           onChanged();
-          return this;
-        }
-        public Builder clearEntryCount() {
-          bitField0_ = (bitField0_ & ~0x00000020);
-          entryCount_ = 0;
-          onChanged();
-          return this;
-        }
-        
-        // optional int32 waiterCount = 7;
-        private int waiterCount_ ;
-        public boolean hasWaiterCount() {
-          return ((bitField0_ & 0x00000040) == 0x00000040);
-        }
-        public int getWaiterCount() {
-          return waiterCount_;
-        }
-        public Builder setWaiterCount(int value) {
-          bitField0_ |= 0x00000040;
-          waiterCount_ = value;
-          onChanged();
-          return this;
-        }
-        public Builder clearWaiterCount() {
-          bitField0_ = (bitField0_ & ~0x00000040);
-          waiterCount_ = 0;
-          onChanged();
-          return this;
-        }
-        
-        // optional int32 notifyWaiterCount = 8;
-        private int notifyWaiterCount_ ;
-        public boolean hasNotifyWaiterCount() {
-          return ((bitField0_ & 0x00000080) == 0x00000080);
-        }
-        public int getNotifyWaiterCount() {
-          return notifyWaiterCount_;
-        }
-        public Builder setNotifyWaiterCount(int value) {
-          bitField0_ |= 0x00000080;
-          notifyWaiterCount_ = value;
-          onChanged();
-          return this;
-        }
-        public Builder clearNotifyWaiterCount() {
-          bitField0_ = (bitField0_ & ~0x00000080);
-          notifyWaiterCount_ = 0;
-          onChanged();
-          return this;
         }
         
         // @@protoc_insertion_point(builder_scope:AgentMessage.MonitorEvent)
@@ -2580,6 +2510,545 @@ public final class AgentMessageProtos {
       // @@protoc_insertion_point(class_scope:AgentMessage.Thread)
     }
     
+    public interface MonitorOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+      
+      // required int64 id = 1;
+      boolean hasId();
+      long getId();
+      
+      // required int32 entryCount = 2;
+      boolean hasEntryCount();
+      int getEntryCount();
+      
+      // required int32 waiterCount = 3;
+      boolean hasWaiterCount();
+      int getWaiterCount();
+      
+      // required int32 notifyWaiterCount = 4;
+      boolean hasNotifyWaiterCount();
+      int getNotifyWaiterCount();
+    }
+    public static final class Monitor extends
+        com.google.protobuf.GeneratedMessage
+        implements MonitorOrBuilder {
+      // Use Monitor.newBuilder() to construct.
+      private Monitor(Builder builder) {
+        super(builder);
+      }
+      private Monitor(boolean noInit) {}
+      
+      private static final Monitor defaultInstance;
+      public static Monitor getDefaultInstance() {
+        return defaultInstance;
+      }
+      
+      public Monitor getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+      
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_Monitor_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_Monitor_fieldAccessorTable;
+      }
+      
+      private int bitField0_;
+      // required int64 id = 1;
+      public static final int ID_FIELD_NUMBER = 1;
+      private long id_;
+      public boolean hasId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public long getId() {
+        return id_;
+      }
+      
+      // required int32 entryCount = 2;
+      public static final int ENTRYCOUNT_FIELD_NUMBER = 2;
+      private int entryCount_;
+      public boolean hasEntryCount() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public int getEntryCount() {
+        return entryCount_;
+      }
+      
+      // required int32 waiterCount = 3;
+      public static final int WAITERCOUNT_FIELD_NUMBER = 3;
+      private int waiterCount_;
+      public boolean hasWaiterCount() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public int getWaiterCount() {
+        return waiterCount_;
+      }
+      
+      // required int32 notifyWaiterCount = 4;
+      public static final int NOTIFYWAITERCOUNT_FIELD_NUMBER = 4;
+      private int notifyWaiterCount_;
+      public boolean hasNotifyWaiterCount() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public int getNotifyWaiterCount() {
+        return notifyWaiterCount_;
+      }
+      
+      private void initFields() {
+        id_ = 0L;
+        entryCount_ = 0;
+        waiterCount_ = 0;
+        notifyWaiterCount_ = 0;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+        
+        if (!hasId()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasEntryCount()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasWaiterCount()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasNotifyWaiterCount()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+      
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt64(1, id_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeInt32(2, entryCount_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          output.writeInt32(3, waiterCount_);
+        }
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          output.writeInt32(4, notifyWaiterCount_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+      
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+      
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt64Size(1, id_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(2, entryCount_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(3, waiterCount_);
+        }
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(4, notifyWaiterCount_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+      
+      @java.lang.Override
+      protected Object writeReplace() throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+      
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+      
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_Monitor_descriptor;
+        }
+        
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_Monitor_fieldAccessorTable;
+        }
+        
+        // Construct using de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+        
+        private Builder(BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+        
+        public Builder clear() {
+          super.clear();
+          id_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          entryCount_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000002);
+          waiterCount_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000004);
+          notifyWaiterCount_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000008);
+          return this;
+        }
+        
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+        
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDescriptor();
+        }
+        
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor getDefaultInstanceForType() {
+          return de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance();
+        }
+        
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor build() {
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+        
+        private de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor buildParsed()
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(
+              result).asInvalidProtocolBufferException();
+          }
+          return result;
+        }
+        
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor buildPartial() {
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor result = new de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.id_ = id_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.entryCount_ = entryCount_;
+          if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+            to_bitField0_ |= 0x00000004;
+          }
+          result.waiterCount_ = waiterCount_;
+          if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+            to_bitField0_ |= 0x00000008;
+          }
+          result.notifyWaiterCount_ = notifyWaiterCount_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+        
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor) {
+            return mergeFrom((de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+        
+        public Builder mergeFrom(de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor other) {
+          if (other == de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance()) return this;
+          if (other.hasId()) {
+            setId(other.getId());
+          }
+          if (other.hasEntryCount()) {
+            setEntryCount(other.getEntryCount());
+          }
+          if (other.hasWaiterCount()) {
+            setWaiterCount(other.getWaiterCount());
+          }
+          if (other.hasNotifyWaiterCount()) {
+            setNotifyWaiterCount(other.getNotifyWaiterCount());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+        
+        public final boolean isInitialized() {
+          if (!hasId()) {
+            
+            return false;
+          }
+          if (!hasEntryCount()) {
+            
+            return false;
+          }
+          if (!hasWaiterCount()) {
+            
+            return false;
+          }
+          if (!hasNotifyWaiterCount()) {
+            
+            return false;
+          }
+          return true;
+        }
+        
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder(
+              this.getUnknownFields());
+          while (true) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  this.setUnknownFields(unknownFields.build());
+                  onChanged();
+                  return this;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                id_ = input.readInt64();
+                break;
+              }
+              case 16: {
+                bitField0_ |= 0x00000002;
+                entryCount_ = input.readInt32();
+                break;
+              }
+              case 24: {
+                bitField0_ |= 0x00000004;
+                waiterCount_ = input.readInt32();
+                break;
+              }
+              case 32: {
+                bitField0_ |= 0x00000008;
+                notifyWaiterCount_ = input.readInt32();
+                break;
+              }
+            }
+          }
+        }
+        
+        private int bitField0_;
+        
+        // required int64 id = 1;
+        private long id_ ;
+        public boolean hasId() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        public long getId() {
+          return id_;
+        }
+        public Builder setId(long value) {
+          bitField0_ |= 0x00000001;
+          id_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearId() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          id_ = 0L;
+          onChanged();
+          return this;
+        }
+        
+        // required int32 entryCount = 2;
+        private int entryCount_ ;
+        public boolean hasEntryCount() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        public int getEntryCount() {
+          return entryCount_;
+        }
+        public Builder setEntryCount(int value) {
+          bitField0_ |= 0x00000002;
+          entryCount_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearEntryCount() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          entryCount_ = 0;
+          onChanged();
+          return this;
+        }
+        
+        // required int32 waiterCount = 3;
+        private int waiterCount_ ;
+        public boolean hasWaiterCount() {
+          return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+        public int getWaiterCount() {
+          return waiterCount_;
+        }
+        public Builder setWaiterCount(int value) {
+          bitField0_ |= 0x00000004;
+          waiterCount_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearWaiterCount() {
+          bitField0_ = (bitField0_ & ~0x00000004);
+          waiterCount_ = 0;
+          onChanged();
+          return this;
+        }
+        
+        // required int32 notifyWaiterCount = 4;
+        private int notifyWaiterCount_ ;
+        public boolean hasNotifyWaiterCount() {
+          return ((bitField0_ & 0x00000008) == 0x00000008);
+        }
+        public int getNotifyWaiterCount() {
+          return notifyWaiterCount_;
+        }
+        public Builder setNotifyWaiterCount(int value) {
+          bitField0_ |= 0x00000008;
+          notifyWaiterCount_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearNotifyWaiterCount() {
+          bitField0_ = (bitField0_ & ~0x00000008);
+          notifyWaiterCount_ = 0;
+          onChanged();
+          return this;
+        }
+        
+        // @@protoc_insertion_point(builder_scope:AgentMessage.Monitor)
+      }
+      
+      static {
+        defaultInstance = new Monitor(true);
+        defaultInstance.initFields();
+      }
+      
+      // @@protoc_insertion_point(class_scope:AgentMessage.Monitor)
+    }
+    
     private int bitField0_;
     // required int64 timestamp = 1;
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
@@ -3270,6 +3739,11 @@ public final class AgentMessageProtos {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_AgentMessage_Thread_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_AgentMessage_Monitor_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_AgentMessage_Monitor_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3279,7 +3753,7 @@ public final class AgentMessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022AgentMessage.proto\"\377\006\n\014AgentMessage\022\021\n" +
+      "\n\022AgentMessage.proto\"\261\007\n\014AgentMessage\022\021\n" +
       "\ttimestamp\030\001 \002(\003\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre" +
       "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent" +
       "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo" +
@@ -3287,23 +3761,24 @@ public final class AgentMessageProtos {
       "(\0132\024.AgentMessage.Thread\022<\n\teventType\030\002 " +
       "\002(\0162#.AgentMessage.ThreadEvent.EventType" +
       ":\004NONE\"-\n\tEventType\022\013\n\007STARTED\020\000\022\t\n\005ENDE" +
-      "D\020\001\022\010\n\004NONE\020\002\032\320\002\n\014MonitorEvent\022$\n\006thread" +
+      "D\020\001\022\010\n\004NONE\020\002\032\247\002\n\014MonitorEvent\022$\n\006thread" +
       "\030\001 \002(\0132\024.AgentMessage.Thread\022=\n\teventTyp",
       "e\030\002 \002(\0162$.AgentMessage.MonitorEvent.Even" +
-      "tType:\004NONE\022\024\n\014monitorClass\030\003 \002(\t\022\025\n\rcon" +
-      "textMethod\030\004 \002(\t\022\021\n\tmonitorId\030\005 \001(\003\022\022\n\ne" +
-      "ntryCount\030\006 \001(\005\022\023\n\013waiterCount\030\007 \001(\005\022\031\n\021" +
-      "notifyWaiterCount\030\010 \001(\005\"W\n\tEventType\022\010\n\004" +
-      "WAIT\020\000\022\n\n\006WAITED\020\001\022\016\n\nNOTIFY_ALL\020\002\022\r\n\tCO" +
-      "NTENDED\020\003\022\013\n\007ENTERED\020\004\022\010\n\004NONE\020\005\032\363\001\n\006Thr" +
-      "ead\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010priorit" +
-      "y\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMessage.Th" +
-      "read.State:\003NEW\022\037\n\027isContextClassLoaderS",
-      "et\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005State\022\007\n\003NE" +
-      "W\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITIN" +
-      "G\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINATED\020\005B*" +
-      "\n\024de.fu.profiler.modelB\022AgentMessageProt" +
-      "os"
+      "tType:\004NONE\022&\n\007monitor\030\003 \001(\0132\025.AgentMess" +
+      "age.Monitor\022\021\n\tclassName\030\004 \002(\t\022\022\n\nmethod" +
+      "Name\030\005 \002(\t\"c\n\tEventType\022\010\n\004WAIT\020\000\022\n\n\006WAI" +
+      "TED\020\001\022\n\n\006NOTIFY\020\002\022\016\n\nNOTIFY_ALL\020\003\022\r\n\tCON" +
+      "TENDED\020\004\022\013\n\007ENTERED\020\005\022\010\n\004NONE\020\006\032\363\001\n\006Thre" +
+      "ad\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010priority" +
+      "\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMessage.Thr" +
+      "ead.State:\003NEW\022\037\n\027isContextClassLoaderSe" +
+      "t\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005State\022\007\n\003NEW",
+      "\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING" +
+      "\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINATED\020\005\032Y\n" +
+      "\007Monitor\022\n\n\002id\030\001 \002(\003\022\022\n\nentryCount\030\002 \002(\005" +
+      "\022\023\n\013waiterCount\030\003 \002(\005\022\031\n\021notifyWaiterCou" +
+      "nt\030\004 \002(\005B*\n\024de.fu.profiler.modelB\022AgentM" +
+      "essageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3331,7 +3806,7 @@ public final class AgentMessageProtos {
           internal_static_AgentMessage_MonitorEvent_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_MonitorEvent_descriptor,
-              new java.lang.String[] { "Thread", "EventType", "MonitorClass", "ContextMethod", "MonitorId", "EntryCount", "WaiterCount", "NotifyWaiterCount", },
+              new java.lang.String[] { "Thread", "EventType", "Monitor", "ClassName", "MethodName", },
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.class,
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.Builder.class);
           internal_static_AgentMessage_Thread_descriptor =
@@ -3342,6 +3817,14 @@ public final class AgentMessageProtos {
               new java.lang.String[] { "Id", "Name", "Priority", "State", "IsContextClassLoaderSet", "CpuTime", },
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.class,
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder.class);
+          internal_static_AgentMessage_Monitor_descriptor =
+            internal_static_AgentMessage_descriptor.getNestedTypes().get(3);
+          internal_static_AgentMessage_Monitor_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_AgentMessage_Monitor_descriptor,
+              new java.lang.String[] { "Id", "EntryCount", "WaiterCount", "NotifyWaiterCount", },
+              de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.class,
+              de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder.class);
           return null;
         }
       };

@@ -135,6 +135,10 @@ public class JVM {
 	public Map<Long, String> getSynchronizedLog() {
 		return synchronizedLog;
 	}
+
+	public Monitor getMonitor(long id) {
+		return monitors.get(id);
+	}
 	
 	
 }

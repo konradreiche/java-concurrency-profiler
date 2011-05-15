@@ -33,11 +33,22 @@ namespace Helper {
  * @param agentSocket
  * @param JVM_ID
  */
+
+struct StrackTraceElement {
+	std::string className;
+	std::string methodName;
+	std::string sourceFile;
+	bool isNativeMethod;
+};
+
 void commitAgentMessage(AgentMessage agentMessage, AgentSocket agentSocket,
 		int JVM_ID);
 
-std::string getMethodContext(jvmtiEnv *jvmti, jthread thread, bool isMonitorCall);
-std::string getMonitorClass(jvmtiEnv *jvmti, jthread thread);
+/**
+ * When this is a native call, the class signature is read from the stack trace element depth-1
+ */
+StrackTraceElement getStackTraceElement(jvmtiEnv *jvmti, jthread thread,
+		int index);
 
 }
 }

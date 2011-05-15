@@ -27,20 +27,17 @@ message AgentMessage {
 		enum EventType {
 			WAIT = 0;
 			WAITED = 1;
-			NOTIFY_ALL = 2;
-			CONTENDED = 3;
-			ENTERED = 4;
-			NONE = 5;
+			NOTIFY = 2;
+			NOTIFY_ALL = 3;
+			CONTENDED = 4;
+			ENTERED = 5;
+			NONE = 6;
 		}
 
 		required EventType eventType = 2 [default = NONE];
-		required string monitorClass = 3;
-		required string contextMethod = 4;
-
-		optional int64 monitorId = 5;
-		optional int32 entryCount = 6;
-		optional int32 waiterCount = 7;
-		optional int32 notifyWaiterCount = 8;
+		optional Monitor monitor = 3;
+		required string className = 4;
+		required string methodName = 5;
 	}
 
 	message Thread {
@@ -61,6 +58,14 @@ message AgentMessage {
 		required State state = 4 [default = NEW];
 		required bool isContextClassLoaderSet = 5;
 		optional int64 cpuTime = 6;
+	}
+
+	message Monitor {
+
+		required int64 id = 1;
+		required int32 entryCount = 2;
+		required int32 waiterCount = 3;
+		required int32 notifyWaiterCount = 4;
 	}
 
 	optional ThreadEvent threadEvent = 3;

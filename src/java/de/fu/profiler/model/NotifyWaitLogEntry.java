@@ -15,7 +15,7 @@ public class NotifyWaitLogEntry {
 	final String monitorClass;
 
 	public enum Type {
-		INVOKED_WAIT, LEFT_WAIT, INVOKED_NOTIFY_ALL
+		INVOKED_WAIT, LEFT_WAIT, INVOKED_NOTIFY_ALL, INVOKED_NOTIFY,
 	}
 	
 	

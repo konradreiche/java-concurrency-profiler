@@ -103,6 +103,9 @@ public class GraphBuilder {
 				case INVOKED_NOTIFY_ALL:
 					edgeLabel = "notifyAll()";
 					break;
+				case INVOKED_NOTIFY:
+					edgeLabel = "notify()";
+					break;
 				}
 
 				edgeLabel += "\n";

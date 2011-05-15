@@ -16,7 +16,7 @@ public class Monitor {
 	/**
 	 * The name of the class which is used as a monitor.
 	 */
-	final String className;
+	String className;
 	/**
 	 * The number of times the owning thread has entered the monitor.
 	 */
@@ -60,5 +60,29 @@ public class Monitor {
 
 	public String getClassName() {
 		return className;
+	}
+
+	public void compareAndSet(Monitor monitor) {
+
+		if (monitor.getId() != id) {
+			throw new IllegalStateException(
+					"The monitors id does not match the monitors id to be updated.");
+		}
+		
+		if (className.equals("N/A") && !monitor.getClassName().equals("N/A")) {
+			className = monitor.getClassName();
+		}
+		
+		if (entryCount != monitor.getEntryCount()) {
+			entryCount = monitor.getEntryCount();
+		}
+		
+		if (waiterCount != monitor.getWaiterCount()) {
+			waiterCount = monitor.getWaiterCount();
+		}
+		
+		if (notifyWaiterCount != monitor.getNotifyWaiterCount()) {
+			notifyWaiterCount = monitor.getNotifyWaiterCount();
+		}
 	}
 }
