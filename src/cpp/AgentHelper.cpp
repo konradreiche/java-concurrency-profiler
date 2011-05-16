@@ -21,6 +21,30 @@ __inline__ uint64_t rdtsc() {
 }
 }
 
+/** Every JVMTI interface returns an error code, which should be checked
+ *   to avoid any cascading errors down the line.
+ *   The interface GetErrorName() returns the actual enumeration constant
+ *   name, making the error messages much easier to understand.
+ */
+void Agent::Helper::checkError(jvmtiEnv *jvmti, jvmtiError errnum,
+		const char *str) {
+	if (errnum != JVMTI_ERROR_NONE) {
+		char *errnum_str;
+
+		errnum_str = NULL;
+		jvmti->GetErrorName(errnum, &errnum_str);
+
+
+		printf("ERROR: JVMTI: %d(%s): %s\n", errnum,
+				(errnum_str == NULL ? "Unknown" : errnum_str),
+				(str == NULL ? "" : str));
+
+		if (errnum == JVMTI_ERROR_WRONG_PHASE) {
+			exit(0);
+		}
+	}
+}
+
 void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 		AgentSocket agentSocket, int JVM_ID) {
 
@@ -55,6 +79,8 @@ void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
 Agent::Helper::StrackTraceElement Agent::Helper::getStackTraceElement(
 		jvmtiEnv *jvmti, jthread thread, int index) {
 
+	jvmtiError error;
+
 	Agent::Helper::StrackTraceElement stackTraceElement;
 	jvmtiFrameInfo stackTraceFrames[index + 1];
 	jclass declaringClass;
@@ -66,20 +92,30 @@ Agent::Helper::StrackTraceElement Agent::Helper::getStackTraceElement(
 	jboolean isNative;
 
 	std::string className;
+	error = jvmti->GetStackTrace(thread, 0, index+1, stackTraceFrames, &count);
+	checkError(jvmti, error, "GetStackTrace");
 
-	jvmti->GetStackTrace(thread, 0, index+1, stackTraceFrames, &count);
 
 	if (index > count - 1) {
 		index = count - 1;
 	}
 
-	jvmti->GetMethodName(stackTraceFrames[index].method, &methodName, NULL,
+	error = jvmti->GetMethodName(stackTraceFrames[index].method, &methodName, NULL,
 			NULL);
-	jvmti->GetMethodDeclaringClass(
+	checkError(jvmti, error, "GetMethodName");
+
+	error = jvmti->GetMethodDeclaringClass(
 			stackTraceFrames[index].method, &declaringClass);
-	jvmti->GetClassSignature(declaringClass, &classSignature, NULL);
-	jvmti->GetSourceFileName(declaringClass, &sourceFile);
-	jvmti->IsMethodNative(stackTraceFrames[index].method, &isNative);
+	checkError(jvmti, error, "GetMethodDeclaringClass");
+
+	error = jvmti->GetClassSignature(declaringClass, &classSignature, NULL);
+	checkError(jvmti, error, "GetClassSignature");
+
+	error = jvmti->GetSourceFileName(declaringClass, &sourceFile);
+	checkError(jvmti, error, "GetSourceFileName");
+
+	error = jvmti->IsMethodNative(stackTraceFrames[index].method, &isNative);
+	checkError(jvmti, error, "IsMethodNative");
 
 	className = std::string(classSignature);
 

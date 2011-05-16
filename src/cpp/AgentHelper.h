@@ -44,6 +44,13 @@ struct StrackTraceElement {
 void commitAgentMessage(AgentMessage agentMessage, AgentSocket agentSocket,
 		int JVM_ID);
 
+/** Every JVMTI interface returns an error code, which should be checked
+ *   to avoid any cascading errors down the line.
+ *   The interface GetErrorName() returns the actual enumeration constant
+ *   name, making the error messages much easier to understand.
+ */
+void checkError(jvmtiEnv *jvmti, jvmtiError errnum, const char *str);
+
 /**
  * When this is a native call, the class signature is read from the stack trace element depth-1
  */

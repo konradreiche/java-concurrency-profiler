@@ -55,25 +55,6 @@ static int num_interface_refs;
 static int num_static_field_refs;
 static int num_constant_pool_refs;
 
-/** Every JVMTI interface returns an error code, which should be checked
- *   to avoid any cascading errors down the line.
- *   The interface GetErrorName() returns the actual enumeration constant
- *   name, making the error messages much easier to understand.
- */
-static void check_jvmti_error(jvmtiEnv *jvmti, jvmtiError errnum,
-		const char *str) {
-	if (errnum != JVMTI_ERROR_NONE) {
-		char *errnum_str;
-
-		errnum_str = NULL;
-		jvmti->GetErrorName(errnum, &errnum_str);
-
-		printf("ERROR: JVMTI: %d(%s): %s\n", errnum,
-				(errnum_str == NULL ? "Unknown" : errnum_str),
-				(str == NULL ? "" : str));
-	}
-}
-
 static void initializeThreadMessage(AgentMessage::Thread *threadMessage,
 		jthread thread) {
 
@@ -84,10 +65,10 @@ static void initializeThreadMessage(AgentMessage::Thread *threadMessage,
 
 	(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
 	error = jvmti->GetThreadInfo(thread, &jvmtiThreadInfo);
-	check_jvmti_error(jvmti, error, "Cannot get thread information.");
+	Agent::Helper::checkError(jvmti, error, "Cannot get thread information.");
 
 	error = jvmti->GetThreadState(thread, &thr_st_ptr);
-	check_jvmti_error(jvmti, error, "Cannot get thread state.");
+	Agent::Helper::checkError(jvmti, error, "Cannot get thread state.");
 
 	AgentMessage::Thread::State state;
 	switch (thr_st_ptr & JVMTI_JAVA_LANG_THREAD_STATE_MASK) {
@@ -193,7 +174,7 @@ static void enter_critical_section(jvmtiEnv *jvmti) {
 	jvmtiError error;
 
 	error = jvmti->RawMonitorEnter(gdata->lock);
-	check_jvmti_error(jvmti, error, "Cannot enter with raw monitor");
+	Agent::Helper::checkError(jvmti, error, "Cannot enter with raw monitor");
 }
 
 /** Exit a critical section by doing a JVMTI Raw Monitor Exit */
@@ -201,7 +182,7 @@ static void exit_critical_section(jvmtiEnv *jvmti) {
 	jvmtiError error;
 
 	error = jvmti->RawMonitorExit(gdata->lock);
-	check_jvmti_error(jvmti, error, "Cannot exit with raw monitor");
+	Agent::Helper::checkError(jvmti, error, "Cannot exit with raw monitor");
 }
 
 /**
@@ -387,31 +368,35 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 		jthread thread, jmethodID method, jboolean was_popped_by_exception,
 		jvalue return_value) {
 
-	char *name;
-	jvmti_env->GetMethodName(method, &name, NULL, NULL);
-	std::string methodName = name;
+	enter_critical_section(jvmti);
+	{
+		char *name;
+		jvmti_env->GetMethodName(method, &name, NULL, NULL);
+		std::string methodName = name;
 
-	if (methodName == "notify" || methodName == "notifyAll") {
+		if (methodName == "notify" || methodName == "notifyAll") {
 
-		AgentMessage::MonitorEvent::EventType eventType;
+			AgentMessage::MonitorEvent::EventType eventType;
 
-		if (methodName == "notify") {
-			eventType = AgentMessage::MonitorEvent::NOTIFY;
-		} else if (methodName == "notifyAll") {
-			eventType = AgentMessage::MonitorEvent::NOTIFY_ALL;
+			if (methodName == "notify") {
+				eventType = AgentMessage::MonitorEvent::NOTIFY;
+			} else if (methodName == "notifyAll") {
+				eventType = AgentMessage::MonitorEvent::NOTIFY_ALL;
+			}
+
+			jvmtiMonitorUsage monitorUseage;
+			AgentMessage agentMessage;
+
+			Agent::Helper::StrackTraceElement stackTraceElement =
+					Agent::Helper::getStackTraceElement(jvmti_env, thread, 1);
+
+			agentMessage = createMonitorEventMessage(agentMessage, thread,
+					eventType, stackTraceElement.methodName,
+					stackTraceElement.className, -1, monitorUseage);
+			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 		}
-
-		jvmtiMonitorUsage monitorUseage;
-		AgentMessage agentMessage;
-
-		Agent::Helper::StrackTraceElement stackTraceElement =
-				Agent::Helper::getStackTraceElement(jvmti_env, thread, 1);
-
-		agentMessage = createMonitorEventMessage(agentMessage, thread,
-				eventType, stackTraceElement.methodName,
-				stackTraceElement.className, -1, monitorUseage);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
 	}
+	exit_critical_section(jvmti);
 }
 
 /** Exception callback */
@@ -440,7 +425,7 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 
 		AgentMessage agentMessage;
 		error = jvmti->GetAllThreads(&threadCount, &threads);
-		check_jvmti_error(jvmti, error, "Cannot get all threads.");
+		Agent::Helper::checkError(jvmti, error, "Cannot get all threads.");
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
@@ -467,7 +452,7 @@ static void get_thread_name(jvmtiEnv *jvmti, jthread thread, char *tname,
 
 	/* Get the thread information, which includes the name */
 	error = jvmti->GetThreadInfo(thread, &info);
-	check_jvmti_error(jvmti, error, "Cannot get thread info");
+	Agent::Helper::checkError(jvmti, error, "Cannot get thread info");
 
 	/* The thread might not have a name, be careful here. */
 	if (info.name != NULL) {
@@ -536,7 +521,8 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
 				JVMTI_EVENT_METHOD_EXIT, (jthread) NULL);
 
-		check_jvmti_error(jvmti_env, error, "Cannot set event notification");
+		Agent::Helper::checkError(jvmti_env, error,
+				"Cannot set event notification");
 
 		/*
 		 * get all available threads and send them via socket
@@ -546,7 +532,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		AgentMessage agentMessage;
 		error = jvmti->GetAllThreads(&threadCount, &threads);
-		check_jvmti_error(jvmti, error, "Cannot get all threads.");
+		Agent::Helper::checkError(jvmti, error, "Cannot get all threads.");
 
 		if (threadCount > 0) {
 			for (int i = 0; i < threadCount; ++i) {
@@ -727,7 +713,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	capa.can_get_source_file_name = 1;
 
 	error = jvmti->AddCapabilities(&capa);
-	check_jvmti_error(jvmti, error,
+	Agent::Helper::checkError(jvmti, error,
 			"Unable to get necessary JVMTI capabilities.");
 
 	/* register callback functions */
@@ -745,7 +731,7 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	callbacks.MethodExit = &callbackMethodExit;/* JVMTI_EVENT_METHOD_EXIT */
 
 	error = jvmti->SetEventCallbacks(&callbacks, (jint) sizeof(callbacks));
-	check_jvmti_error(jvmti, error, "Cannot set jvmti callbacks");
+	Agent::Helper::checkError(jvmti, error, "Cannot set jvmti callbacks");
 
 	/*
 	 * Activate the notification of certain events. At first only initial events are activated.
@@ -759,13 +745,13 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 			(jthread) NULL);
 	error = jvmti->SetEventNotificationMode(JVMTI_ENABLE,
 			JVMTI_EVENT_VM_OBJECT_ALLOC, (jthread) NULL);
-	check_jvmti_error(jvmti, error, "Cannot set event notification");
+	Agent::Helper::checkError(jvmti, error, "Cannot set event notification");
 
 	/* Here we create a raw monitor for our use in this agent to
 	 *   protect critical sections of code.
 	 */
 	error = jvmti->CreateRawMonitor("agent data", &(gdata->lock));
-	check_jvmti_error(jvmti, error, "Cannot create raw monitor");
+	Agent::Helper::checkError(jvmti, error, "Cannot create raw monitor");
 
 	/* Return JNI_OK to signify success */
 	return JNI_OK;
