@@ -201,7 +201,8 @@ public class ProfilerModel extends Observable {
 			if (threadInfo == null) {
 				threadInfo = new ThreadInfo(thread.getId(), thread.getName(),
 						thread.getPriority(), thread.getState().toString(),
-						thread.getIsContextClassLoaderSet());
+						thread.getIsContextClassLoaderSet(),
+						agentMessage.getTimestamp());
 				addThreadInfo(jvm_id, threadInfo);
 			}
 
@@ -301,8 +302,8 @@ public class ProfilerModel extends Observable {
 				}
 				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
 						threadInfo.getState(),
-						NotifyWaitLogEntry.Type.INVOKED_NOTIFY,
-						agentMessage.getMonitorEvent().getMethodName(),
+						NotifyWaitLogEntry.Type.INVOKED_NOTIFY, agentMessage
+								.getMonitorEvent().getMethodName(),
 						agentMessage.getMonitorEvent().getClassName());
 
 				setThreadInfoMonitorStatus(jvm_id, threadInfo,
@@ -350,7 +351,7 @@ public class ProfilerModel extends Observable {
 		if (threadInfo == null) {
 			threadInfo = new ThreadInfo(thread.getId(), thread.getName(),
 					thread.getPriority(), thread.getState().toString(),
-					thread.getIsContextClassLoaderSet());
+					thread.getIsContextClassLoaderSet(), agentMessage.getTimestamp());
 			addThreadInfo(jvm.getId(), threadInfo);
 		} else {
 

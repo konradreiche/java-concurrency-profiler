@@ -75,7 +75,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	 * @param notiyWaitController
 	 */
 	public ThreadInfo(int id, String name, int priority, String state,
-			boolean ccl) {
+			boolean ccl, long timestamp) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -83,6 +83,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 		this.state = state;
 		this.isContextClassLoaderSet = ccl;
 		this.cpuTime = -1;
+		this.timeSinceLastUpdate = timestamp;
 		this.stateToDuration = new ConcurrentHashMap<String, Long>();
 
 		String possibleStates[] = new String[] { "NEW", "RUNNABLE", "BLOCKED",
@@ -91,8 +92,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 		for (String possibleState : possibleStates) {
 			stateToDuration.put(possibleState, 0l);
 		}
-
-		stateToDuration.put(state, 1l);
+		
 	}
 
 	public int getId() {
@@ -164,10 +164,6 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 
 		if (this.priority != priority) {
 			this.priority = priority;
-		}
-
-		if (!stateToDuration.containsKey(state)) {
-			stateToDuration.put(state, 1l);
 		}
 
 		long timeSpentInState = timestamp - timeSinceLastUpdate;

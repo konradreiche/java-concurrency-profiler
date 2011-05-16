@@ -76,12 +76,12 @@ public class Santa extends Thread {
 	}
 	public synchronized void deliverToys() {
 		reindeers++;
-		if (reindeers == Santa.REINDEERS) notify();
+		if (reindeers == Santa.REINDEERS) notifyAll();
 	}
 
 	public synchronized void ask(Elf elf) {
 		elves.add(elf);
-		if (elves.size() == Santa.ELF_GROUP) notify();
+		if (elves.size() == Santa.ELF_GROUP) notifyAll();
 	}
 
 	public static void main(String[] args) {
