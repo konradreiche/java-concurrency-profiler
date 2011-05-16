@@ -168,7 +168,7 @@ public class ProfilerObserver implements Observer {
 							+ eventHistory.indexOf(currentEvent) + " ("
 							+ eventType + ")");
 
-					view.graphBuilder.createNotifyWaitGraph(view.model.getCurrentJVM());
+					//view.graphBuilder.createNotifyWaitGraph(view.model.getCurrentJVM());
 				}
 			}
 		});

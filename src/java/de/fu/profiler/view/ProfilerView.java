@@ -180,7 +180,7 @@ public class ProfilerView extends JFrame {
 	 * Displays the current event number.
 	 */
 	JLabel eventLabel;
-	
+
 	/**
 	 * Helper class to create the graphs.
 	 */
@@ -202,6 +202,7 @@ public class ProfilerView extends JFrame {
 		this.table = new JTable(model.getTableModel());
 		this.list = new JList(new DefaultListModel());
 		this.threadTableScrollPane = new JScrollPane(table);
+		this.threadTableScrollPane.setMinimumSize(new Dimension(300, 300));
 
 		this.nextEvent = new JButton(">>");
 		this.previousEvent = new JButton("<<");
@@ -220,12 +221,12 @@ public class ProfilerView extends JFrame {
 		this.tabbedDiagramPane = new JTabbedPane();
 		this.tabbedDiagramPane.add("Overall Thread State",
 				setUpOverallThreadStatePieChart());
-		this.tabbedDiagramPane.add("Thread State Over Time",
-				setUpThreadStateOverTimeBarChart());
+		this.tabbedDiagramPane.add("Thread State Over Time", new JScrollPane(
+				setUpThreadStateOverTimeBarChart()));
 
-		this.overviewPanel = new JPanel(new GridLayout(2, 1));
-		this.overviewPanel.add(threadTableScrollPane);
-		this.overviewPanel.add(tabbedDiagramPane);
+		this.overviewPanel = new JPanel(new GridLayout(1, 1));
+		this.overviewPanel.add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+				threadTableScrollPane, tabbedDiagramPane));
 
 		this.notifyWaitGraph = graphBuilder.getNotifyWaitGraph();
 		this.notifyWaitPanel = new JPanel(new GridLayout(2, 1));
@@ -271,7 +272,7 @@ public class ProfilerView extends JFrame {
 		JFreeChart chart = ChartFactory.createPieChart3D(
 				"Overall Threads State", model.getThreadPieDataset(), true,
 				true, false);
-		
+
 		PiePlot3D plot = (PiePlot3D) chart.getPlot();
 		plot.setStartAngle(290);
 		plot.setDirection(Rotation.CLOCKWISE);
@@ -293,20 +294,23 @@ public class ProfilerView extends JFrame {
 				.getCategoryPlot().getRenderer();
 		renderer.setRenderAsPercentages(true);
 		renderer.setDrawBarOutline(false);
-		
+
 		for (int i = 0; i < 6; ++i) {
 			renderer.setSeriesItemLabelGenerator(
 					i,
 					new StandardCategoryItemLabelGenerator("{3}", NumberFormat
 							.getIntegerInstance(), new DecimalFormat("0.0%")));
 			renderer.setSeriesItemLabelsVisible(i, true);
-			renderer.setSeriesPositiveItemLabelPosition(i, new ItemLabelPosition(
-					ItemLabelAnchor.CENTER, TextAnchor.CENTER));
-			renderer.setSeriesNegativeItemLabelPosition(i, new ItemLabelPosition(
-					ItemLabelAnchor.CENTER, TextAnchor.CENTER));
+			renderer.setSeriesPositiveItemLabelPosition(i,
+					new ItemLabelPosition(ItemLabelAnchor.CENTER,
+							TextAnchor.CENTER));
+			renderer.setSeriesNegativeItemLabelPosition(i,
+					new ItemLabelPosition(ItemLabelAnchor.CENTER,
+							TextAnchor.CENTER));
 		}
 
 		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(300, 200));
 		return chartPanel;
 	}
 
