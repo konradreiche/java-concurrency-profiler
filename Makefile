@@ -17,6 +17,7 @@ JCOMMON_JAR = lib/jcommon-1.0.16.jar
 JFREECHAR_JAR = lib/jfreechart-1.0.13.jar
 PROTOBUF_JAR = lib/protobuf-java-2.4.0.jar
 TOOLS_JAR = lib/tools.jar
+JGRAPHX_JAR = lib/jgraphx.jar
 
 # $(call build-classpath, variable-list)
 define build-classpath
@@ -51,7 +52,8 @@ class_path = OUTPUT_DIR \
 	JCOMMON_JAR \
 	JFREECHAR_JAR \
 	PROTOBUF_JAR \
-	TOOLS_JAR
+	TOOLS_JAR \
+	JGRAPHX_JAR
 
 
 # all_javas - Temp file for holding source file list
