@@ -9,7 +9,7 @@ public class Consumer implements Runnable {
 
     public void run() {
         Random random = new Random();
-        for (String message = drop.take(); ! message.equals("DONE");
+        for (String message = drop.take(); !message.equals("DONE");
                 message = drop.take()) {
             System.out.println("MESSAGE RECEIVED: " + message);
             try {
