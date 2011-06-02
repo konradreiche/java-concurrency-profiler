@@ -126,7 +126,11 @@ public class ProfilerObserver implements Observer {
 
 					((AbstractTableModel) view.model.getTableModel())
 							.fireTableDataChanged();
+					
+					((AbstractTableModel) view.model.getThreadStatsTableModel())
+					.fireTableDataChanged();
 
+					
 					view.monitorSelection.removeAllItems();
 					for (Monitor monitor : view.model.getCurrentJVM()
 							.getMonitors().values()) {
@@ -169,6 +173,7 @@ public class ProfilerObserver implements Observer {
 							+ eventType + ")");
 
 					view.graphBuilder.createNotifyWaitGraph(view.model.getCurrentJVM());
+					view.graphBuilder.createWaitForGraph(view.model.getCurrentJVM());
 				}
 			}
 		});

@@ -24,7 +24,6 @@ public class Main {
 			new ProfilerController(view, model);
 			view.setVisible(true);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

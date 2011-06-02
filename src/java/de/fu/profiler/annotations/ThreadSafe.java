@@ -3,8 +3,6 @@ package de.fu.profiler.annotations;
 import java.lang.annotation.Documented;
 
 @Documented
-public @interface GuardedBy {
-
-	String value();
+public @interface ThreadSafe {
 
 }

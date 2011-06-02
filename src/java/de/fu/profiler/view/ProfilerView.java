@@ -58,7 +58,7 @@ public class ProfilerView extends JFrame {
 	/**
 	 * The table displays the threads of the JVM.
 	 */
-	JTable table;
+	JTable threadTable;
 
 	/**
 	 * The list for displaying the available JVMs.
@@ -191,6 +191,17 @@ public class ProfilerView extends JFrame {
 	 */
 	Component notifyWaitGraph;
 
+	/**
+	 * Table for displaying the statistical numbers about the threads concerned
+	 * with notify and wait
+	 */
+	JTable threadStatsTable;
+
+	/**
+	 * The panel displaying the constructed wait-for graph
+	 */
+	JScrollPane waitForGraphPanel;
+
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
@@ -199,9 +210,10 @@ public class ProfilerView extends JFrame {
 		setLayout(new GridLayout(1, 1));
 
 		this.graphBuilder = new GraphBuilder();
-		this.table = new JTable(model.getTableModel());
+		this.threadTable = new JTable(model.getTableModel());
+		this.threadStatsTable = new JTable(model.getThreadStatsTableModel());
 		this.list = new JList(new DefaultListModel());
-		this.threadTableScrollPane = new JScrollPane(table);
+		this.threadTableScrollPane = new JScrollPane(threadTable);
 		this.threadTableScrollPane.setMinimumSize(new Dimension(300, 300));
 
 		this.nextEvent = new JButton(">>");
@@ -233,7 +245,8 @@ public class ProfilerView extends JFrame {
 		this.notifyWaitLogTextArea = new JTextArea();
 		this.notifyWaitLogScrollPane = new JScrollPane(notifyWaitLogTextArea);
 		this.notifyWaitPanel.add(notifyWaitLogScrollPane);
-		this.notifyWaitPanel.add(notifyWaitGraph);
+		this.notifyWaitPanel.add(new JScrollPane(threadStatsTable));
+		// this.notifyWaitPanel.add(notifyWaitGraph);
 
 		this.monitorSelection = new JComboBox();
 		this.monitorEntryCount = new JLabel("Entry Count: N/A");
@@ -252,11 +265,14 @@ public class ProfilerView extends JFrame {
 				synchronizedLogTextArea);
 		this.synchronizedPanel.add(synchronizedLogScrollPane);
 
+		this.waitForGraphPanel = new JScrollPane(graphBuilder.getWaitForGraph());
+
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);
 		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
 		this.tabbedPane.add("Locks", locksPanel);
 		this.tabbedPane.add("Synchronized", synchronizedPanel);
+		this.tabbedPane.add("Wait-For Graph", waitForGraphPanel);
 
 		this.splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		this.splitPane.add(jvmSelection);

@@ -32,6 +32,12 @@ public class Monitor {
 	 */
 	int notifyWaiterCount;
 
+	/**
+	 * The monitor is allocated, i.e. held to this thread. Null if the monitor
+	 * is not allocated.
+	 */
+	ThreadInfo allocatedToThread;
+
 	public Monitor(long id, String className, int entryCount, int waiterCount,
 			int notifyWaiterCount) {
 		super();
@@ -68,21 +74,27 @@ public class Monitor {
 			throw new IllegalStateException(
 					"The monitors id does not match the monitors id to be updated.");
 		}
-		
+
 		if (className.equals("N/A") && !monitor.getClassName().equals("N/A")) {
 			className = monitor.getClassName();
 		}
-		
+
 		if (entryCount != monitor.getEntryCount()) {
 			entryCount = monitor.getEntryCount();
 		}
-		
+
 		if (waiterCount != monitor.getWaiterCount()) {
 			waiterCount = monitor.getWaiterCount();
 		}
-		
+
 		if (notifyWaiterCount != monitor.getNotifyWaiterCount()) {
 			notifyWaiterCount = monitor.getNotifyWaiterCount();
 		}
 	}
+
+	public ThreadInfo getAllocatedToThread() {
+		return allocatedToThread;
+	}
+	
+	
 }

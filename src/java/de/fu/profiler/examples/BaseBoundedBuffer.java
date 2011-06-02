@@ -1,7 +1,7 @@
 package de.fu.profiler.examples;
 
-import de.fu.profiler.annoations.ThreadSafe;
 import de.fu.profiler.annotations.GuardedBy;
+import de.fu.profiler.annotations.ThreadSafe;
 
 @ThreadSafe
 public abstract class BaseBoundedBuffer<V> {
@@ -11,6 +11,7 @@ public abstract class BaseBoundedBuffer<V> {
 	@GuardedBy("this") private int head;
 	@GuardedBy("this") private int count;
 	
+	@SuppressWarnings("unchecked")
 	protected BaseBoundedBuffer(int capacity) {
 		this.buf = (V[]) new Object[capacity];
 	}

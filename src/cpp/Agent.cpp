@@ -29,7 +29,7 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static AgentSocket agentSocket("127.0.0.1", "50000");
+static AgentSocket agentSocket("192.168.1.101", "50000");
 static int jvmPid;
 static int objectId = 1;
 
@@ -157,10 +157,17 @@ static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 	initializeThreadMessage(threadMessage, thread);
 
 	if (objectId != -1) {
-
 		AgentMessage::Monitor *monitorMessage = monitorEvent->mutable_monitor();
 
+		long ownerId;
+		if (monitorUseage.owner != NULL) {
+			jvmti->GetTag(monitorUseage.owner, &ownerId);
+		} else {
+			ownerId = -1;
+		}
+
 		monitorMessage->set_id(objectId);
+		monitorMessage->set_owningthread(ownerId);
 		monitorMessage->set_entrycount(monitorUseage.entry_count);
 		monitorMessage->set_waitercount(monitorUseage.waiter_count);
 		monitorMessage->set_notifywaitercount(monitorUseage.notify_waiter_count);

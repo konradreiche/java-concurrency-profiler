@@ -120,8 +120,9 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       sizeof(AgentMessage_Thread));
   AgentMessage_Thread_State_descriptor_ = AgentMessage_Thread_descriptor_->enum_type(0);
   AgentMessage_Monitor_descriptor_ = AgentMessage_descriptor_->nested_type(3);
-  static const int AgentMessage_Monitor_offsets_[4] = {
+  static const int AgentMessage_Monitor_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Monitor, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Monitor, owningthread_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Monitor, entrycount_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Monitor, waitercount_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Monitor, notifywaitercount_),
@@ -183,7 +184,7 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022AgentMessage.proto\"\261\007\n\014AgentMessage\022\021\n"
+    "\n\022AgentMessage.proto\"\307\007\n\014AgentMessage\022\021\n"
     "\ttimestamp\030\001 \002(\003\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre"
     "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent"
     "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo"
@@ -204,11 +205,11 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
     "ead.State:\003NEW\022\037\n\027isContextClassLoaderSe"
     "t\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005State\022\007\n\003NEW"
     "\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING"
-    "\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINATED\020\005\032Y\n"
-    "\007Monitor\022\n\n\002id\030\001 \002(\003\022\022\n\nentryCount\030\002 \002(\005"
-    "\022\023\n\013waiterCount\030\003 \002(\005\022\031\n\021notifyWaiterCou"
-    "nt\030\004 \002(\005B*\n\024de.fu.profiler.modelB\022AgentM"
-    "essageProtos", 1012);
+    "\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINATED\020\005\032o\n"
+    "\007Monitor\022\n\n\002id\030\001 \002(\003\022\024\n\014owningThread\030\002 \001"
+    "(\005\022\022\n\nentryCount\030\003 \002(\005\022\023\n\013waiterCount\030\004 "
+    "\002(\005\022\031\n\021notifyWaiterCount\030\005 \002(\005B*\n\024de.fu."
+    "profiler.modelB\022AgentMessageProtos", 1034);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "AgentMessage.proto", &protobuf_RegisterTypes);
   AgentMessage::default_instance_ = new AgentMessage();
@@ -1430,6 +1431,7 @@ void AgentMessage_Thread::Swap(AgentMessage_Thread* other) {
 
 #ifndef _MSC_VER
 const int AgentMessage_Monitor::kIdFieldNumber;
+const int AgentMessage_Monitor::kOwningThreadFieldNumber;
 const int AgentMessage_Monitor::kEntryCountFieldNumber;
 const int AgentMessage_Monitor::kWaiterCountFieldNumber;
 const int AgentMessage_Monitor::kNotifyWaiterCountFieldNumber;
@@ -1452,6 +1454,7 @@ AgentMessage_Monitor::AgentMessage_Monitor(const AgentMessage_Monitor& from)
 void AgentMessage_Monitor::SharedCtor() {
   _cached_size_ = 0;
   id_ = GOOGLE_LONGLONG(0);
+  owningthread_ = 0;
   entrycount_ = 0;
   waitercount_ = 0;
   notifywaitercount_ = 0;
@@ -1490,6 +1493,7 @@ AgentMessage_Monitor* AgentMessage_Monitor::New() const {
 void AgentMessage_Monitor::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     id_ = GOOGLE_LONGLONG(0);
+    owningthread_ = 0;
     entrycount_ = 0;
     waitercount_ = 0;
     notifywaitercount_ = 0;
@@ -1515,12 +1519,28 @@ bool AgentMessage_Monitor::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(16)) goto parse_entryCount;
+        if (input->ExpectTag(16)) goto parse_owningThread;
         break;
       }
       
-      // required int32 entryCount = 2;
+      // optional int32 owningThread = 2;
       case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_owningThread:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &owningthread_)));
+          set_has_owningthread();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_entryCount;
+        break;
+      }
+      
+      // required int32 entryCount = 3;
+      case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_entryCount:
@@ -1531,12 +1551,12 @@ bool AgentMessage_Monitor::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(24)) goto parse_waiterCount;
+        if (input->ExpectTag(32)) goto parse_waiterCount;
         break;
       }
       
-      // required int32 waiterCount = 3;
-      case 3: {
+      // required int32 waiterCount = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_waiterCount:
@@ -1547,12 +1567,12 @@ bool AgentMessage_Monitor::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(32)) goto parse_notifyWaiterCount;
+        if (input->ExpectTag(40)) goto parse_notifyWaiterCount;
         break;
       }
       
-      // required int32 notifyWaiterCount = 4;
-      case 4: {
+      // required int32 notifyWaiterCount = 5;
+      case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_notifyWaiterCount:
@@ -1590,19 +1610,24 @@ void AgentMessage_Monitor::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->id(), output);
   }
   
-  // required int32 entryCount = 2;
+  // optional int32 owningThread = 2;
+  if (has_owningthread()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->owningthread(), output);
+  }
+  
+  // required int32 entryCount = 3;
   if (has_entrycount()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->entrycount(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->entrycount(), output);
   }
   
-  // required int32 waiterCount = 3;
+  // required int32 waiterCount = 4;
   if (has_waitercount()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->waitercount(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->waitercount(), output);
   }
   
-  // required int32 notifyWaiterCount = 4;
+  // required int32 notifyWaiterCount = 5;
   if (has_notifywaitercount()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->notifywaitercount(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->notifywaitercount(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1618,19 +1643,24 @@ void AgentMessage_Monitor::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->id(), target);
   }
   
-  // required int32 entryCount = 2;
+  // optional int32 owningThread = 2;
+  if (has_owningthread()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->owningthread(), target);
+  }
+  
+  // required int32 entryCount = 3;
   if (has_entrycount()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->entrycount(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->entrycount(), target);
   }
   
-  // required int32 waiterCount = 3;
+  // required int32 waiterCount = 4;
   if (has_waitercount()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->waitercount(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->waitercount(), target);
   }
   
-  // required int32 notifyWaiterCount = 4;
+  // required int32 notifyWaiterCount = 5;
   if (has_notifywaitercount()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->notifywaitercount(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->notifywaitercount(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1651,21 +1681,28 @@ int AgentMessage_Monitor::ByteSize() const {
           this->id());
     }
     
-    // required int32 entryCount = 2;
+    // optional int32 owningThread = 2;
+    if (has_owningthread()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->owningthread());
+    }
+    
+    // required int32 entryCount = 3;
     if (has_entrycount()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->entrycount());
     }
     
-    // required int32 waiterCount = 3;
+    // required int32 waiterCount = 4;
     if (has_waitercount()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->waitercount());
     }
     
-    // required int32 notifyWaiterCount = 4;
+    // required int32 notifyWaiterCount = 5;
     if (has_notifywaitercount()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -1702,6 +1739,9 @@ void AgentMessage_Monitor::MergeFrom(const AgentMessage_Monitor& from) {
     if (from.has_id()) {
       set_id(from.id());
     }
+    if (from.has_owningthread()) {
+      set_owningthread(from.owningthread());
+    }
     if (from.has_entrycount()) {
       set_entrycount(from.entrycount());
     }
@@ -1728,7 +1768,7 @@ void AgentMessage_Monitor::CopyFrom(const AgentMessage_Monitor& from) {
 }
 
 bool AgentMessage_Monitor::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  if ((_has_bits_[0] & 0x0000001d) != 0x0000001d) return false;
   
   return true;
 }
@@ -1736,6 +1776,7 @@ bool AgentMessage_Monitor::IsInitialized() const {
 void AgentMessage_Monitor::Swap(AgentMessage_Monitor* other) {
   if (other != this) {
     std::swap(id_, other->id_);
+    std::swap(owningthread_, other->owningthread_);
     std::swap(entrycount_, other->entrycount_);
     std::swap(waitercount_, other->waitercount_);
     std::swap(notifywaitercount_, other->notifywaitercount_);

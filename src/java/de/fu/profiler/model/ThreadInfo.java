@@ -43,6 +43,36 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	int waitCount;
 
 	/**
+	 * The number how often the thread has invoked notify.
+	 */
+	int notifyCount;
+
+	/**
+	 * The number how often thread has invoked notify all.
+	 */
+	int notifyAllCount;
+
+	/**
+	 * The number of times a thread switched to blocked state
+	 */
+	int blockedCount;
+
+	/**
+	 * The number of times a thread switched to the waiting state
+	 */
+	int waitingCout;
+
+	/**
+	 * The number of times a thread entered a synchronized block.
+	 */
+	int monitorEnteredCount;
+
+	/**
+	 * The number of times a thread contended when trying to acquire a lock.
+	 */
+	int monitorContendedCount;
+
+	/**
 	 * After thread termination this value represents the time the CPU has spent
 	 * for this thread.
 	 */
@@ -58,6 +88,12 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	 * The system time since the last state update was done.
 	 */
 	long timeSinceLastUpdate;
+
+	/**
+	 * The monitor which is requested, i.e. trying to be acquired by this thread.
+	 * Null if the thread does not currently try to acquire a monitor.
+	 */
+	Monitor requestedResource;
 
 	/**
 	 * Standard constructor.
@@ -92,7 +128,7 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 		for (String possibleState : possibleStates) {
 			stateToDuration.put(possibleState, 0l);
 		}
-		
+
 	}
 
 	public int getId() {
@@ -166,12 +202,30 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 			this.priority = priority;
 		}
 
-		long timeSpentInState = timestamp - timeSinceLastUpdate;
-		long oldTimeSpentInState = stateToDuration.get(this.state);
-		stateToDuration.put(this.state, oldTimeSpentInState + timeSpentInState);
-		timeSinceLastUpdate = timestamp;
+		if (timeSinceLastUpdate > timestamp) {
+
+		}
+
+		if (timestamp < timeSinceLastUpdate) {
+			System.out.println(timestamp);
+			System.out.println(timeSinceLastUpdate);
+			System.out.println("Error, old timestamp arrived at state upadte");
+		} else {
+			long timeSpentInState = timestamp - timeSinceLastUpdate;
+			long oldTimeSpentInState = stateToDuration.get(this.state);
+			stateToDuration.put(this.state, oldTimeSpentInState
+					+ timeSpentInState);
+			timeSinceLastUpdate = timestamp;
+		}
 
 		if (!this.state.equals(state)) {
+
+			if (state.equals("BLOCKED")) {
+				++blockedCount;
+			} else if (state.equals("WAITING")) {
+				++waitCount;
+			}
+
 			this.state = state;
 		}
 
@@ -183,4 +237,36 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	public Map<String, Long> getStateToDuration() {
 		return stateToDuration;
 	}
+
+	public int getWaitCount() {
+		return waitCount;
+	}
+
+	public int getNotifyCount() {
+		return notifyCount;
+	}
+
+	public int getNotifyAllCount() {
+		return notifyAllCount;
+	}
+
+	public int getBlockedCount() {
+		return blockedCount;
+	}
+
+	public int getWaitingCout() {
+		return waitingCout;
+	}
+
+	public int getMonitorEnteredCount() {
+		return monitorEnteredCount;
+	}
+
+	public int getMonitorContendedCount() {
+		return monitorContendedCount;
+	}
+
+	public Monitor getRequestedResource() {
+		return requestedResource;
+	}	
 }

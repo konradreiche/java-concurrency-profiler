@@ -611,24 +611,31 @@ class AgentMessage_Monitor : public ::google::protobuf::Message {
   inline ::google::protobuf::int64 id() const;
   inline void set_id(::google::protobuf::int64 value);
   
-  // required int32 entryCount = 2;
+  // optional int32 owningThread = 2;
+  inline bool has_owningthread() const;
+  inline void clear_owningthread();
+  static const int kOwningThreadFieldNumber = 2;
+  inline ::google::protobuf::int32 owningthread() const;
+  inline void set_owningthread(::google::protobuf::int32 value);
+  
+  // required int32 entryCount = 3;
   inline bool has_entrycount() const;
   inline void clear_entrycount();
-  static const int kEntryCountFieldNumber = 2;
+  static const int kEntryCountFieldNumber = 3;
   inline ::google::protobuf::int32 entrycount() const;
   inline void set_entrycount(::google::protobuf::int32 value);
   
-  // required int32 waiterCount = 3;
+  // required int32 waiterCount = 4;
   inline bool has_waitercount() const;
   inline void clear_waitercount();
-  static const int kWaiterCountFieldNumber = 3;
+  static const int kWaiterCountFieldNumber = 4;
   inline ::google::protobuf::int32 waitercount() const;
   inline void set_waitercount(::google::protobuf::int32 value);
   
-  // required int32 notifyWaiterCount = 4;
+  // required int32 notifyWaiterCount = 5;
   inline bool has_notifywaitercount() const;
   inline void clear_notifywaitercount();
-  static const int kNotifyWaiterCountFieldNumber = 4;
+  static const int kNotifyWaiterCountFieldNumber = 5;
   inline ::google::protobuf::int32 notifywaitercount() const;
   inline void set_notifywaitercount(::google::protobuf::int32 value);
   
@@ -636,6 +643,8 @@ class AgentMessage_Monitor : public ::google::protobuf::Message {
  private:
   inline void set_has_id();
   inline void clear_has_id();
+  inline void set_has_owningthread();
+  inline void clear_has_owningthread();
   inline void set_has_entrycount();
   inline void clear_has_entrycount();
   inline void set_has_waitercount();
@@ -646,12 +655,13 @@ class AgentMessage_Monitor : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::int64 id_;
+  ::google::protobuf::int32 owningthread_;
   ::google::protobuf::int32 entrycount_;
   ::google::protobuf::int32 waitercount_;
   ::google::protobuf::int32 notifywaitercount_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -1234,15 +1244,37 @@ inline void AgentMessage_Monitor::set_id(::google::protobuf::int64 value) {
   id_ = value;
 }
 
-// required int32 entryCount = 2;
-inline bool AgentMessage_Monitor::has_entrycount() const {
+// optional int32 owningThread = 2;
+inline bool AgentMessage_Monitor::has_owningthread() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void AgentMessage_Monitor::set_has_entrycount() {
+inline void AgentMessage_Monitor::set_has_owningthread() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void AgentMessage_Monitor::clear_has_entrycount() {
+inline void AgentMessage_Monitor::clear_has_owningthread() {
   _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage_Monitor::clear_owningthread() {
+  owningthread_ = 0;
+  clear_has_owningthread();
+}
+inline ::google::protobuf::int32 AgentMessage_Monitor::owningthread() const {
+  return owningthread_;
+}
+inline void AgentMessage_Monitor::set_owningthread(::google::protobuf::int32 value) {
+  set_has_owningthread();
+  owningthread_ = value;
+}
+
+// required int32 entryCount = 3;
+inline bool AgentMessage_Monitor::has_entrycount() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void AgentMessage_Monitor::set_has_entrycount() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void AgentMessage_Monitor::clear_has_entrycount() {
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void AgentMessage_Monitor::clear_entrycount() {
   entrycount_ = 0;
@@ -1256,15 +1288,15 @@ inline void AgentMessage_Monitor::set_entrycount(::google::protobuf::int32 value
   entrycount_ = value;
 }
 
-// required int32 waiterCount = 3;
+// required int32 waiterCount = 4;
 inline bool AgentMessage_Monitor::has_waitercount() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void AgentMessage_Monitor::set_has_waitercount() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void AgentMessage_Monitor::clear_has_waitercount() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void AgentMessage_Monitor::clear_waitercount() {
   waitercount_ = 0;
@@ -1278,15 +1310,15 @@ inline void AgentMessage_Monitor::set_waitercount(::google::protobuf::int32 valu
   waitercount_ = value;
 }
 
-// required int32 notifyWaiterCount = 4;
+// required int32 notifyWaiterCount = 5;
 inline bool AgentMessage_Monitor::has_notifywaitercount() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void AgentMessage_Monitor::set_has_notifywaitercount() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void AgentMessage_Monitor::clear_has_notifywaitercount() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void AgentMessage_Monitor::clear_notifywaitercount() {
   notifywaitercount_ = 0;

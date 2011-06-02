@@ -2517,15 +2517,19 @@ public final class AgentMessageProtos {
       boolean hasId();
       long getId();
       
-      // required int32 entryCount = 2;
+      // optional int32 owningThread = 2;
+      boolean hasOwningThread();
+      int getOwningThread();
+      
+      // required int32 entryCount = 3;
       boolean hasEntryCount();
       int getEntryCount();
       
-      // required int32 waiterCount = 3;
+      // required int32 waiterCount = 4;
       boolean hasWaiterCount();
       int getWaiterCount();
       
-      // required int32 notifyWaiterCount = 4;
+      // required int32 notifyWaiterCount = 5;
       boolean hasNotifyWaiterCount();
       int getNotifyWaiterCount();
     }
@@ -2568,31 +2572,41 @@ public final class AgentMessageProtos {
         return id_;
       }
       
-      // required int32 entryCount = 2;
-      public static final int ENTRYCOUNT_FIELD_NUMBER = 2;
+      // optional int32 owningThread = 2;
+      public static final int OWNINGTHREAD_FIELD_NUMBER = 2;
+      private int owningThread_;
+      public boolean hasOwningThread() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public int getOwningThread() {
+        return owningThread_;
+      }
+      
+      // required int32 entryCount = 3;
+      public static final int ENTRYCOUNT_FIELD_NUMBER = 3;
       private int entryCount_;
       public boolean hasEntryCount() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
+        return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       public int getEntryCount() {
         return entryCount_;
       }
       
-      // required int32 waiterCount = 3;
-      public static final int WAITERCOUNT_FIELD_NUMBER = 3;
+      // required int32 waiterCount = 4;
+      public static final int WAITERCOUNT_FIELD_NUMBER = 4;
       private int waiterCount_;
       public boolean hasWaiterCount() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+        return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       public int getWaiterCount() {
         return waiterCount_;
       }
       
-      // required int32 notifyWaiterCount = 4;
-      public static final int NOTIFYWAITERCOUNT_FIELD_NUMBER = 4;
+      // required int32 notifyWaiterCount = 5;
+      public static final int NOTIFYWAITERCOUNT_FIELD_NUMBER = 5;
       private int notifyWaiterCount_;
       public boolean hasNotifyWaiterCount() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
+        return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       public int getNotifyWaiterCount() {
         return notifyWaiterCount_;
@@ -2600,6 +2614,7 @@ public final class AgentMessageProtos {
       
       private void initFields() {
         id_ = 0L;
+        owningThread_ = 0;
         entryCount_ = 0;
         waiterCount_ = 0;
         notifyWaiterCount_ = 0;
@@ -2636,13 +2651,16 @@ public final class AgentMessageProtos {
           output.writeInt64(1, id_);
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          output.writeInt32(2, entryCount_);
+          output.writeInt32(2, owningThread_);
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          output.writeInt32(3, waiterCount_);
+          output.writeInt32(3, entryCount_);
         }
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          output.writeInt32(4, notifyWaiterCount_);
+          output.writeInt32(4, waiterCount_);
+        }
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          output.writeInt32(5, notifyWaiterCount_);
         }
         getUnknownFields().writeTo(output);
       }
@@ -2659,15 +2677,19 @@ public final class AgentMessageProtos {
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(2, entryCount_);
+            .computeInt32Size(2, owningThread_);
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(3, waiterCount_);
+            .computeInt32Size(3, entryCount_);
         }
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(4, notifyWaiterCount_);
+            .computeInt32Size(4, waiterCount_);
+        }
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(5, notifyWaiterCount_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -2793,12 +2815,14 @@ public final class AgentMessageProtos {
           super.clear();
           id_ = 0L;
           bitField0_ = (bitField0_ & ~0x00000001);
-          entryCount_ = 0;
+          owningThread_ = 0;
           bitField0_ = (bitField0_ & ~0x00000002);
-          waiterCount_ = 0;
+          entryCount_ = 0;
           bitField0_ = (bitField0_ & ~0x00000004);
-          notifyWaiterCount_ = 0;
+          waiterCount_ = 0;
           bitField0_ = (bitField0_ & ~0x00000008);
+          notifyWaiterCount_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000010);
           return this;
         }
         
@@ -2844,13 +2868,17 @@ public final class AgentMessageProtos {
           if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
             to_bitField0_ |= 0x00000002;
           }
-          result.entryCount_ = entryCount_;
+          result.owningThread_ = owningThread_;
           if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
             to_bitField0_ |= 0x00000004;
           }
-          result.waiterCount_ = waiterCount_;
+          result.entryCount_ = entryCount_;
           if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
             to_bitField0_ |= 0x00000008;
+          }
+          result.waiterCount_ = waiterCount_;
+          if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+            to_bitField0_ |= 0x00000010;
           }
           result.notifyWaiterCount_ = notifyWaiterCount_;
           result.bitField0_ = to_bitField0_;
@@ -2871,6 +2899,9 @@ public final class AgentMessageProtos {
           if (other == de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.getDefaultInstance()) return this;
           if (other.hasId()) {
             setId(other.getId());
+          }
+          if (other.hasOwningThread()) {
+            setOwningThread(other.getOwningThread());
           }
           if (other.hasEntryCount()) {
             setEntryCount(other.getEntryCount());
@@ -2935,16 +2966,21 @@ public final class AgentMessageProtos {
               }
               case 16: {
                 bitField0_ |= 0x00000002;
-                entryCount_ = input.readInt32();
+                owningThread_ = input.readInt32();
                 break;
               }
               case 24: {
                 bitField0_ |= 0x00000004;
-                waiterCount_ = input.readInt32();
+                entryCount_ = input.readInt32();
                 break;
               }
               case 32: {
                 bitField0_ |= 0x00000008;
+                waiterCount_ = input.readInt32();
+                break;
+              }
+              case 40: {
+                bitField0_ |= 0x00000010;
                 notifyWaiterCount_ = input.readInt32();
                 break;
               }
@@ -2975,64 +3011,85 @@ public final class AgentMessageProtos {
           return this;
         }
         
-        // required int32 entryCount = 2;
+        // optional int32 owningThread = 2;
+        private int owningThread_ ;
+        public boolean hasOwningThread() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        public int getOwningThread() {
+          return owningThread_;
+        }
+        public Builder setOwningThread(int value) {
+          bitField0_ |= 0x00000002;
+          owningThread_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearOwningThread() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          owningThread_ = 0;
+          onChanged();
+          return this;
+        }
+        
+        // required int32 entryCount = 3;
         private int entryCount_ ;
         public boolean hasEntryCount() {
-          return ((bitField0_ & 0x00000002) == 0x00000002);
+          return ((bitField0_ & 0x00000004) == 0x00000004);
         }
         public int getEntryCount() {
           return entryCount_;
         }
         public Builder setEntryCount(int value) {
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000004;
           entryCount_ = value;
           onChanged();
           return this;
         }
         public Builder clearEntryCount() {
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000004);
           entryCount_ = 0;
           onChanged();
           return this;
         }
         
-        // required int32 waiterCount = 3;
+        // required int32 waiterCount = 4;
         private int waiterCount_ ;
         public boolean hasWaiterCount() {
-          return ((bitField0_ & 0x00000004) == 0x00000004);
+          return ((bitField0_ & 0x00000008) == 0x00000008);
         }
         public int getWaiterCount() {
           return waiterCount_;
         }
         public Builder setWaiterCount(int value) {
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000008;
           waiterCount_ = value;
           onChanged();
           return this;
         }
         public Builder clearWaiterCount() {
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
           waiterCount_ = 0;
           onChanged();
           return this;
         }
         
-        // required int32 notifyWaiterCount = 4;
+        // required int32 notifyWaiterCount = 5;
         private int notifyWaiterCount_ ;
         public boolean hasNotifyWaiterCount() {
-          return ((bitField0_ & 0x00000008) == 0x00000008);
+          return ((bitField0_ & 0x00000010) == 0x00000010);
         }
         public int getNotifyWaiterCount() {
           return notifyWaiterCount_;
         }
         public Builder setNotifyWaiterCount(int value) {
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000010;
           notifyWaiterCount_ = value;
           onChanged();
           return this;
         }
         public Builder clearNotifyWaiterCount() {
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000010);
           notifyWaiterCount_ = 0;
           onChanged();
           return this;
@@ -3753,7 +3810,7 @@ public final class AgentMessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022AgentMessage.proto\"\261\007\n\014AgentMessage\022\021\n" +
+      "\n\022AgentMessage.proto\"\307\007\n\014AgentMessage\022\021\n" +
       "\ttimestamp\030\001 \002(\003\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre" +
       "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent" +
       "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo" +
@@ -3774,11 +3831,11 @@ public final class AgentMessageProtos {
       "ead.State:\003NEW\022\037\n\027isContextClassLoaderSe" +
       "t\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005State\022\007\n\003NEW",
       "\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING" +
-      "\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINATED\020\005\032Y\n" +
-      "\007Monitor\022\n\n\002id\030\001 \002(\003\022\022\n\nentryCount\030\002 \002(\005" +
-      "\022\023\n\013waiterCount\030\003 \002(\005\022\031\n\021notifyWaiterCou" +
-      "nt\030\004 \002(\005B*\n\024de.fu.profiler.modelB\022AgentM" +
-      "essageProtos"
+      "\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINATED\020\005\032o\n" +
+      "\007Monitor\022\n\n\002id\030\001 \002(\003\022\024\n\014owningThread\030\002 \001" +
+      "(\005\022\022\n\nentryCount\030\003 \002(\005\022\023\n\013waiterCount\030\004 " +
+      "\002(\005\022\031\n\021notifyWaiterCount\030\005 \002(\005B*\n\024de.fu." +
+      "profiler.modelB\022AgentMessageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3822,7 +3879,7 @@ public final class AgentMessageProtos {
           internal_static_AgentMessage_Monitor_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_Monitor_descriptor,
-              new java.lang.String[] { "Id", "EntryCount", "WaiterCount", "NotifyWaiterCount", },
+              new java.lang.String[] { "Id", "OwningThread", "EntryCount", "WaiterCount", "NotifyWaiterCount", },
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.class,
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Monitor.Builder.class);
           return null;

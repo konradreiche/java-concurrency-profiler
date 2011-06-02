@@ -1,6 +1,5 @@
 package de.fu.profiler.examples;
 
-import java.util.Random;
 
 
 public class Producer implements Runnable {
@@ -17,12 +16,10 @@ public class Producer implements Runnable {
 		String importantInfo[] = { "Mares eat oats", "Does eat oats",
 				"Little lambs eat ivy", "A kid will eat ivy too" };
 		
-		Random random = new Random();
-		
 		try {
 			for (int i = 0; i < importantInfo.length; i++) {
 				boundedBuffer.put(importantInfo[i]);
-				Thread.sleep(random.nextInt(3000) + 2000);
+				Thread.sleep(5000);
 			}
 	
 			for (int i = 0; i < consumerCount; ++i) {

@@ -63,9 +63,10 @@ message AgentMessage {
 	message Monitor {
 
 		required int64 id = 1;
-		required int32 entryCount = 2;
-		required int32 waiterCount = 3;
-		required int32 notifyWaiterCount = 4;
+		optional int32 owningThread = 2;
+		required int32 entryCount = 3;
+		required int32 waiterCount = 4;
+		required int32 notifyWaiterCount = 5;
 	}
 
 	optional ThreadEvent threadEvent = 3;
