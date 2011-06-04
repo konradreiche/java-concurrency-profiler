@@ -50,7 +50,6 @@ public class ConnectionHandler implements Runnable {
 	@Override
 	public void run() {
 
-		try {
 			
 			new Thread(new Runnable() {
 				
@@ -71,15 +70,19 @@ public class ConnectionHandler implements Runnable {
 			}).start();
 			
 			while (true) {
-				AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
-				.parseDelimitedFrom(socket.getInputStream());
-				profilerModel.applyData(agentMessage,true);
+				
+				try {
+					AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
+					.parseDelimitedFrom(socket.getInputStream());
+					
+					profilerModel.applyData(agentMessage,true);					
+				} catch (IOException e) {
+					// swallow
+				}
+				
 			}
 
-		} catch (IOException e) {
-			System.err.println("IOException: " + e.getMessage());
-			e.printStackTrace();
-		}
+		
 	}
 
 	

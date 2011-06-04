@@ -174,8 +174,7 @@ public class ProfilerModel extends Observable {
 
 	public void applyData(AgentMessage agentMessage, boolean isLogging) {
 
-		if (!agentMessage.isInitialized()) {
-			System.out.println("empty");
+		if (agentMessage == null) {
 			return;
 		}
 
