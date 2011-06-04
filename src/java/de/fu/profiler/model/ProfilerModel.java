@@ -173,6 +173,12 @@ public class ProfilerModel extends Observable {
 	}
 
 	public void applyData(AgentMessage agentMessage, boolean isLogging) {
+
+		if (!agentMessage.isInitialized()) {
+			System.out.println("empty");
+			return;
+		}
+
 		int jvm_id = agentMessage.getJvmId();
 		JVM jvm = null;
 
@@ -338,20 +344,32 @@ public class ProfilerModel extends Observable {
 				break;
 			case CONTENDED:
 
-				ThreadInfo locker = jvm.getThread(agentMessage
-						.getMonitorEvent().getMonitor().getOwningThread());
-				
-				monitor.allocatedToThread = locker;
-				
+				int owningThreadId = agentMessage.getMonitorEvent()
+						.getMonitor().getOwningThread();
+				ThreadInfo owningThread = jvm.getThread(owningThreadId);
+				monitor.allocatedToThread = owningThread;
+
+				String message;
+				if (owningThread == null) {
+					message = threadInfo.getName()
+							+ " is trying to acquire a monitor which is not held by another thread"
+							+ " in "
+							+ agentMessage.getMonitorEvent().getClassName()
+							+ "."
+							+ agentMessage.getMonitorEvent().getMethodName()
+							+ "\n";
+				} else {
+					message = threadInfo.getName()
+							+ " is trying to acquire a monitor held by "
+							+ owningThread.getName() + " in "
+							+ agentMessage.getMonitorEvent().getClassName()
+							+ "."
+							+ agentMessage.getMonitorEvent().getMethodName()
+							+ "\n";
+				}
+
 				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), threadInfo.getName()
-								+ " is trying to acquire a monitor held by "
-								+ locker.getName()
-								+ " in "
-								+ agentMessage.getMonitorEvent().getClassName()
-								+ "."
-								+ agentMessage.getMonitorEvent()
-										.getMethodName() + "\n", true, null);
+						agentMessage.getTimestamp(), message, true, null);
 
 				threadInfo.requestedResource = monitor;
 				++threadInfo.monitorContendedCount;

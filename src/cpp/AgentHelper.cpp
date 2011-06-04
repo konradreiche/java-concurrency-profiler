@@ -21,6 +21,10 @@ __inline__ uint64_t rdtsc() {
 }
 }
 
+uint64_t Agent::Helper::getCurrentClockCycle() {
+	return rdtsc();
+}
+
 /** Every JVMTI interface returns an error code, which should be checked
  *   to avoid any cascading errors down the line.
  *   The interface GetErrorName() returns the actual enumeration constant
@@ -43,27 +47,6 @@ void Agent::Helper::checkError(jvmtiEnv *jvmti, jvmtiError errnum,
 			exit(0);
 		}
 	}
-}
-
-void Agent::Helper::commitAgentMessage(AgentMessage agentMessage,
-		AgentSocket agentSocket, int JVM_ID) {
-
-	agentMessage.set_timestamp(rdtsc());
-	agentMessage.set_jvm_id(JVM_ID);
-
-	boost::asio::streambuf b;
-	std::ostream os(&b);
-
-	ZeroCopyOutputStream *raw_output = new OstreamOutputStream(&os);
-	CodedOutputStream *coded_output = new CodedOutputStream(raw_output);
-
-	coded_output->WriteVarint32(agentMessage.ByteSize());
-	agentMessage.SerializeToCodedStream(coded_output);
-
-	delete coded_output;
-	delete raw_output;
-
-	agentSocket.send(b);
 }
 
 /**

@@ -14,11 +14,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-
 #include <stdint.h>
-#include "AgentSocket.h"
 #include "AgentMessage.pb.h"
 
 namespace Agent {
@@ -41,8 +37,6 @@ struct StrackTraceElement {
 	bool isNativeMethod;
 };
 
-void commitAgentMessage(AgentMessage agentMessage, AgentSocket agentSocket,
-		int JVM_ID);
 
 /** Every JVMTI interface returns an error code, which should be checked
  *   to avoid any cascading errors down the line.
@@ -56,6 +50,8 @@ void checkError(jvmtiEnv *jvmti, jvmtiError errnum, const char *str);
  */
 StrackTraceElement getStackTraceElement(jvmtiEnv *jvmti, jthread thread,
 		int index);
+
+uint64_t getCurrentClockCycle();
 
 }
 }

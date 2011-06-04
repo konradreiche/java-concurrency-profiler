@@ -51,10 +51,30 @@ public class ConnectionHandler implements Runnable {
 	public void run() {
 
 		try {
-			AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
-					.parseDelimitedFrom(socket.getInputStream());
-			profilerModel.applyData(agentMessage,true);
-			profilerModel.notifyGUI();
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+					while (true) {
+						profilerModel.notifyGUI();
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+				}
+			}).start();
+			
+			while (true) {
+				AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
+				.parseDelimitedFrom(socket.getInputStream());
+				profilerModel.applyData(agentMessage,true);
+			}
 
 		} catch (IOException e) {
 			System.err.println("IOException: " + e.getMessage());

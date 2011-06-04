@@ -14,7 +14,7 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <boost/lexical_cast.hpp>
-#include "AgentSocket.h"
+#include "MessageService.h"
 #include "AgentMessage.pb.h"
 #include "Agent.h"
 #include "AgentHelper.h"
@@ -29,7 +29,7 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static AgentSocket agentSocket("192.168.1.101", "50000");
+static MessageService messageService("192.168.1.101", "50000");
 static int jvmPid;
 static int objectId = 1;
 
@@ -238,7 +238,7 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
 
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+		messageService.write(agentMessage,jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -273,7 +273,7 @@ static void JNICALL callbackMonitorContendedEntered(jvmtiEnv *jvmti_env,
 				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
 
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+		messageService.write(agentMessage,jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -305,7 +305,8 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
 				AgentMessage::MonitorEvent::WAIT, stackTraceElement.methodName,
 				stackTraceElement.className, currentObjectId, monitorUseage);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+
+		messageService.write(agentMessage,jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -338,7 +339,8 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				AgentMessage::MonitorEvent::WAITED,
 				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+
+		messageService.write(agentMessage,jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -352,7 +354,7 @@ static void JNICALL callbackThreadStart(jvmtiEnv *jvmti_env, JNIEnv* env,
 		AgentMessage agentMessage;
 		agentMessage = createThreadEventMessage(agentMessage, thread,
 				AgentMessage::ThreadEvent::STARTED);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+		messageService.write(agentMessage,jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -366,7 +368,7 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 		AgentMessage agentMessage;
 		agentMessage = createThreadEventMessage(agentMessage, thread,
 				AgentMessage::ThreadEvent::ENDED);
-		Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+		messageService.write(agentMessage,jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -400,7 +402,7 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 			agentMessage = createMonitorEventMessage(agentMessage, thread,
 					eventType, stackTraceElement.methodName,
 					stackTraceElement.className, -1, monitorUseage);
-			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+			messageService.write(agentMessage,jvmPid);
 		}
 	}
 	exit_critical_section(jvmti);
@@ -439,7 +441,7 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 				agentMessage = createThreadEventMessage(agentMessage,
 						threads[i], AgentMessage::ThreadEvent::ENDED);
 			}
-			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+			messageService.write(agentMessage,jvmPid);
 		}
 		exit_critical_section(jvmti);
 	}
@@ -546,7 +548,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				agentMessage = createThreadEventMessage(agentMessage,
 						threads[i], AgentMessage::ThreadEvent::STARTED);
 			}
-			Agent::Helper::commitAgentMessage(agentMessage, agentSocket, jvmPid);
+			messageService.write(agentMessage,jvmPid);
 		}
 	}
 	exit_critical_section(jvmti);

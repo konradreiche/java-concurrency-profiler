@@ -81,7 +81,7 @@ CCFLAGS = -fPIC
 OUT = bin/cpp
 LIBS = -lboost_system -lboost_regex -lboost_thread -lprotobuf
 
-FILES = Agent.cpp AgentHelper.cpp AgentMessage.pb.cc AgentSocket.cpp
+FILES = Agent.cpp AgentHelper.cpp AgentMessage.pb.cc MessageService.cpp
 SOURCE = $(addprefix src/cpp/, $(FILES))
 OBJECTS = $(patsubst %.cc,%.o,$(patsubst %.cpp, %.o, $(addprefix bin/cpp/, $(FILES))))
 HEADERS = $(patsubst %.cc,%.h,$(patsubst %.cpp, %.h, $(addprefix src/cpp/, $(FILES))))
