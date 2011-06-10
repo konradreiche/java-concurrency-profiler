@@ -129,6 +129,9 @@ public class ProfilerObserver implements Observer {
 					
 					((AbstractTableModel) view.model.getThreadStatsTableModel())
 					.fireTableDataChanged();
+					
+					((AbstractTableModel) view.model.getTimeTableModel())
+					.fireTableDataChanged();
 
 					
 					view.monitorSelection.removeAllItems();

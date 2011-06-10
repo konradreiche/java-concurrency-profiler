@@ -38,7 +38,6 @@ void Agent::Helper::checkError(jvmtiEnv *jvmti, jvmtiError errnum,
 		errnum_str = NULL;
 		jvmti->GetErrorName(errnum, &errnum_str);
 
-
 		printf("ERROR: JVMTI: %d(%s): %s\n", errnum,
 				(errnum_str == NULL ? "Unknown" : errnum_str),
 				(str == NULL ? "" : str));
@@ -75,20 +74,21 @@ Agent::Helper::StrackTraceElement Agent::Helper::getStackTraceElement(
 	jboolean isNative;
 
 	std::string className;
-	error = jvmti->GetStackTrace(thread, 0, index+1, stackTraceFrames, &count);
+	error
+			= jvmti->GetStackTrace(thread, 0, index + 1, stackTraceFrames,
+					&count);
 	checkError(jvmti, error, "GetStackTrace");
-
 
 	if (index > count - 1) {
 		index = count - 1;
 	}
 
-	error = jvmti->GetMethodName(stackTraceFrames[index].method, &methodName, NULL,
-			NULL);
+	error = jvmti->GetMethodName(stackTraceFrames[index].method, &methodName,
+			NULL, NULL);
 	checkError(jvmti, error, "GetMethodName");
 
-	error = jvmti->GetMethodDeclaringClass(
-			stackTraceFrames[index].method, &declaringClass);
+	error = jvmti->GetMethodDeclaringClass(stackTraceFrames[index].method,
+			&declaringClass);
 	checkError(jvmti, error, "GetMethodDeclaringClass");
 
 	error = jvmti->GetClassSignature(declaringClass, &classSignature, NULL);

@@ -50,6 +50,11 @@ public class JVM {
 	 * A list of monitors mapped by their ids.
 	 */
 	final Map<Long, Monitor> monitors;
+	
+	/**
+	 * A list of invoked methods mapped by their class name + method name.
+	 */
+	final Map<String, MethodInfo> methods;
 
 	/**
 	 * Standard constructor.
@@ -68,6 +73,7 @@ public class JVM {
 		this.notifyWaitLog = new ConcurrentHashMap<Long, NotifyWaitLogEntry>();
 		this.synchronizedLog = new ConcurrentHashMap<Long, String>();
 		this.monitors = new ConcurrentHashMap<Long, Monitor>();
+		this.methods = new ConcurrentHashMap<String, MethodInfo>();
 	}
 
 	public int getId() {
@@ -139,6 +145,8 @@ public class JVM {
 	public Monitor getMonitor(long id) {
 		return monitors.get(id);
 	}
-	
-	
+
+	public Map<String, MethodInfo> getMethods() {
+		return methods;
+	}	
 }

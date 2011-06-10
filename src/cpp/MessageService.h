@@ -36,7 +36,6 @@ private:
 	tcp::resolver resolver;
 	tcp::resolver::iterator endpoint_iterator;
 	tcp::socket socket;
-
 	std::deque<AgentMessage> *messageQueue;
 
 	void do_write(AgentMessage agentMessage);

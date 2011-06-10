@@ -17,7 +17,7 @@ public class Test {
 	}
 
 	private static Map createMap(){
-		TreeMap treemap = new TreeMap();
+		TreeMap<Integer,Integer> treemap = new TreeMap<Integer,Integer>();
 		Random r = new Random(17);
 		for (int i=0; i < INITIAL_SIZE; i++){
 			treemap.put(i, r.nextInt() % 10);

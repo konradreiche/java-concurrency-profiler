@@ -40,6 +40,15 @@ message AgentMessage {
 		required string methodName = 5;
 	}
 
+	message MethodEvent {
+
+		required string className = 1;
+		required string methodName = 2;
+		required int64 clockCycles = 3;
+		required int64 timeTaken = 4;
+		required Thread thread = 5;
+	}
+
 	message Thread {
 
 		required int32 id = 1;
@@ -71,4 +80,5 @@ message AgentMessage {
 
 	optional ThreadEvent threadEvent = 3;
 	optional MonitorEvent monitorEvent = 4;
+	optional MethodEvent methodEvent = 5;
 }

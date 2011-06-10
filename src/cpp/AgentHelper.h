@@ -37,6 +37,7 @@ struct StrackTraceElement {
 	bool isNativeMethod;
 };
 
+//AgentMessage generateMethodEvent()
 
 /** Every JVMTI interface returns an error code, which should be checked
  *   to avoid any cascading errors down the line.

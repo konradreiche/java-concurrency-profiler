@@ -28,6 +28,11 @@ public final class AgentMessageProtos {
     boolean hasMonitorEvent();
     de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent getMonitorEvent();
     de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEventOrBuilder getMonitorEventOrBuilder();
+    
+    // optional .AgentMessage.MethodEvent methodEvent = 5;
+    boolean hasMethodEvent();
+    de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent getMethodEvent();
+    de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEventOrBuilder getMethodEventOrBuilder();
   }
   public static final class AgentMessage extends
       com.google.protobuf.GeneratedMessage
@@ -1722,6 +1727,778 @@ public final class AgentMessageProtos {
       // @@protoc_insertion_point(class_scope:AgentMessage.MonitorEvent)
     }
     
+    public interface MethodEventOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+      
+      // required string className = 1;
+      boolean hasClassName();
+      String getClassName();
+      
+      // required string methodName = 2;
+      boolean hasMethodName();
+      String getMethodName();
+      
+      // required int64 clockCycles = 3;
+      boolean hasClockCycles();
+      long getClockCycles();
+      
+      // required int64 timeTaken = 4;
+      boolean hasTimeTaken();
+      long getTimeTaken();
+      
+      // required .AgentMessage.Thread thread = 5;
+      boolean hasThread();
+      de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread getThread();
+      de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadOrBuilder getThreadOrBuilder();
+    }
+    public static final class MethodEvent extends
+        com.google.protobuf.GeneratedMessage
+        implements MethodEventOrBuilder {
+      // Use MethodEvent.newBuilder() to construct.
+      private MethodEvent(Builder builder) {
+        super(builder);
+      }
+      private MethodEvent(boolean noInit) {}
+      
+      private static final MethodEvent defaultInstance;
+      public static MethodEvent getDefaultInstance() {
+        return defaultInstance;
+      }
+      
+      public MethodEvent getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+      
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_MethodEvent_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_MethodEvent_fieldAccessorTable;
+      }
+      
+      private int bitField0_;
+      // required string className = 1;
+      public static final int CLASSNAME_FIELD_NUMBER = 1;
+      private Object className_;
+      public boolean hasClassName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public String getClassName() {
+        Object ref = className_;
+        if (ref instanceof String) {
+          return (String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+            className_ = s;
+          }
+          return s;
+        }
+      }
+      private com.google.protobuf.ByteString getClassNameBytes() {
+        Object ref = className_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+          className_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      
+      // required string methodName = 2;
+      public static final int METHODNAME_FIELD_NUMBER = 2;
+      private Object methodName_;
+      public boolean hasMethodName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public String getMethodName() {
+        Object ref = methodName_;
+        if (ref instanceof String) {
+          return (String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+            methodName_ = s;
+          }
+          return s;
+        }
+      }
+      private com.google.protobuf.ByteString getMethodNameBytes() {
+        Object ref = methodName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+          methodName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      
+      // required int64 clockCycles = 3;
+      public static final int CLOCKCYCLES_FIELD_NUMBER = 3;
+      private long clockCycles_;
+      public boolean hasClockCycles() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public long getClockCycles() {
+        return clockCycles_;
+      }
+      
+      // required int64 timeTaken = 4;
+      public static final int TIMETAKEN_FIELD_NUMBER = 4;
+      private long timeTaken_;
+      public boolean hasTimeTaken() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public long getTimeTaken() {
+        return timeTaken_;
+      }
+      
+      // required .AgentMessage.Thread thread = 5;
+      public static final int THREAD_FIELD_NUMBER = 5;
+      private de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread_;
+      public boolean hasThread() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread getThread() {
+        return thread_;
+      }
+      public de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadOrBuilder getThreadOrBuilder() {
+        return thread_;
+      }
+      
+      private void initFields() {
+        className_ = "";
+        methodName_ = "";
+        clockCycles_ = 0L;
+        timeTaken_ = 0L;
+        thread_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.getDefaultInstance();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+        
+        if (!hasClassName()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasMethodName()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasClockCycles()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasTimeTaken()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasThread()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!getThread().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+      
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeBytes(1, getClassNameBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeBytes(2, getMethodNameBytes());
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          output.writeInt64(3, clockCycles_);
+        }
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          output.writeInt64(4, timeTaken_);
+        }
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          output.writeMessage(5, thread_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+      
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+      
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(1, getClassNameBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(2, getMethodNameBytes());
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt64Size(3, clockCycles_);
+        }
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt64Size(4, timeTaken_);
+        }
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(5, thread_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+      
+      @java.lang.Override
+      protected Object writeReplace() throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+      
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+      
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEventOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_MethodEvent_descriptor;
+        }
+        
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return de.fu.profiler.model.AgentMessageProtos.internal_static_AgentMessage_MethodEvent_fieldAccessorTable;
+        }
+        
+        // Construct using de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+        
+        private Builder(BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getThreadFieldBuilder();
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+        
+        public Builder clear() {
+          super.clear();
+          className_ = "";
+          bitField0_ = (bitField0_ & ~0x00000001);
+          methodName_ = "";
+          bitField0_ = (bitField0_ & ~0x00000002);
+          clockCycles_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000004);
+          timeTaken_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000008);
+          if (threadBuilder_ == null) {
+            thread_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.getDefaultInstance();
+          } else {
+            threadBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000010);
+          return this;
+        }
+        
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+        
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDescriptor();
+        }
+        
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent getDefaultInstanceForType() {
+          return de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDefaultInstance();
+        }
+        
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent build() {
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+        
+        private de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent buildParsed()
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(
+              result).asInvalidProtocolBufferException();
+          }
+          return result;
+        }
+        
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent buildPartial() {
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent result = new de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.className_ = className_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.methodName_ = methodName_;
+          if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+            to_bitField0_ |= 0x00000004;
+          }
+          result.clockCycles_ = clockCycles_;
+          if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+            to_bitField0_ |= 0x00000008;
+          }
+          result.timeTaken_ = timeTaken_;
+          if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+            to_bitField0_ |= 0x00000010;
+          }
+          if (threadBuilder_ == null) {
+            result.thread_ = thread_;
+          } else {
+            result.thread_ = threadBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+        
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent) {
+            return mergeFrom((de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+        
+        public Builder mergeFrom(de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent other) {
+          if (other == de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDefaultInstance()) return this;
+          if (other.hasClassName()) {
+            setClassName(other.getClassName());
+          }
+          if (other.hasMethodName()) {
+            setMethodName(other.getMethodName());
+          }
+          if (other.hasClockCycles()) {
+            setClockCycles(other.getClockCycles());
+          }
+          if (other.hasTimeTaken()) {
+            setTimeTaken(other.getTimeTaken());
+          }
+          if (other.hasThread()) {
+            mergeThread(other.getThread());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+        
+        public final boolean isInitialized() {
+          if (!hasClassName()) {
+            
+            return false;
+          }
+          if (!hasMethodName()) {
+            
+            return false;
+          }
+          if (!hasClockCycles()) {
+            
+            return false;
+          }
+          if (!hasTimeTaken()) {
+            
+            return false;
+          }
+          if (!hasThread()) {
+            
+            return false;
+          }
+          if (!getThread().isInitialized()) {
+            
+            return false;
+          }
+          return true;
+        }
+        
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder(
+              this.getUnknownFields());
+          while (true) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  this.setUnknownFields(unknownFields.build());
+                  onChanged();
+                  return this;
+                }
+                break;
+              }
+              case 10: {
+                bitField0_ |= 0x00000001;
+                className_ = input.readBytes();
+                break;
+              }
+              case 18: {
+                bitField0_ |= 0x00000002;
+                methodName_ = input.readBytes();
+                break;
+              }
+              case 24: {
+                bitField0_ |= 0x00000004;
+                clockCycles_ = input.readInt64();
+                break;
+              }
+              case 32: {
+                bitField0_ |= 0x00000008;
+                timeTaken_ = input.readInt64();
+                break;
+              }
+              case 42: {
+                de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder subBuilder = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.newBuilder();
+                if (hasThread()) {
+                  subBuilder.mergeFrom(getThread());
+                }
+                input.readMessage(subBuilder, extensionRegistry);
+                setThread(subBuilder.buildPartial());
+                break;
+              }
+            }
+          }
+        }
+        
+        private int bitField0_;
+        
+        // required string className = 1;
+        private Object className_ = "";
+        public boolean hasClassName() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        public String getClassName() {
+          Object ref = className_;
+          if (!(ref instanceof String)) {
+            String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+            className_ = s;
+            return s;
+          } else {
+            return (String) ref;
+          }
+        }
+        public Builder setClassName(String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          className_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearClassName() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          className_ = getDefaultInstance().getClassName();
+          onChanged();
+          return this;
+        }
+        void setClassName(com.google.protobuf.ByteString value) {
+          bitField0_ |= 0x00000001;
+          className_ = value;
+          onChanged();
+        }
+        
+        // required string methodName = 2;
+        private Object methodName_ = "";
+        public boolean hasMethodName() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        public String getMethodName() {
+          Object ref = methodName_;
+          if (!(ref instanceof String)) {
+            String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+            methodName_ = s;
+            return s;
+          } else {
+            return (String) ref;
+          }
+        }
+        public Builder setMethodName(String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+          methodName_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearMethodName() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          methodName_ = getDefaultInstance().getMethodName();
+          onChanged();
+          return this;
+        }
+        void setMethodName(com.google.protobuf.ByteString value) {
+          bitField0_ |= 0x00000002;
+          methodName_ = value;
+          onChanged();
+        }
+        
+        // required int64 clockCycles = 3;
+        private long clockCycles_ ;
+        public boolean hasClockCycles() {
+          return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+        public long getClockCycles() {
+          return clockCycles_;
+        }
+        public Builder setClockCycles(long value) {
+          bitField0_ |= 0x00000004;
+          clockCycles_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearClockCycles() {
+          bitField0_ = (bitField0_ & ~0x00000004);
+          clockCycles_ = 0L;
+          onChanged();
+          return this;
+        }
+        
+        // required int64 timeTaken = 4;
+        private long timeTaken_ ;
+        public boolean hasTimeTaken() {
+          return ((bitField0_ & 0x00000008) == 0x00000008);
+        }
+        public long getTimeTaken() {
+          return timeTaken_;
+        }
+        public Builder setTimeTaken(long value) {
+          bitField0_ |= 0x00000008;
+          timeTaken_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearTimeTaken() {
+          bitField0_ = (bitField0_ & ~0x00000008);
+          timeTaken_ = 0L;
+          onChanged();
+          return this;
+        }
+        
+        // required .AgentMessage.Thread thread = 5;
+        private de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.getDefaultInstance();
+        private com.google.protobuf.SingleFieldBuilder<
+            de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread, de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadOrBuilder> threadBuilder_;
+        public boolean hasThread() {
+          return ((bitField0_ & 0x00000010) == 0x00000010);
+        }
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread getThread() {
+          if (threadBuilder_ == null) {
+            return thread_;
+          } else {
+            return threadBuilder_.getMessage();
+          }
+        }
+        public Builder setThread(de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread value) {
+          if (threadBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            thread_ = value;
+            onChanged();
+          } else {
+            threadBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000010;
+          return this;
+        }
+        public Builder setThread(
+            de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder builderForValue) {
+          if (threadBuilder_ == null) {
+            thread_ = builderForValue.build();
+            onChanged();
+          } else {
+            threadBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000010;
+          return this;
+        }
+        public Builder mergeThread(de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread value) {
+          if (threadBuilder_ == null) {
+            if (((bitField0_ & 0x00000010) == 0x00000010) &&
+                thread_ != de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.getDefaultInstance()) {
+              thread_ =
+                de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.newBuilder(thread_).mergeFrom(value).buildPartial();
+            } else {
+              thread_ = value;
+            }
+            onChanged();
+          } else {
+            threadBuilder_.mergeFrom(value);
+          }
+          bitField0_ |= 0x00000010;
+          return this;
+        }
+        public Builder clearThread() {
+          if (threadBuilder_ == null) {
+            thread_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.getDefaultInstance();
+            onChanged();
+          } else {
+            threadBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000010);
+          return this;
+        }
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder getThreadBuilder() {
+          bitField0_ |= 0x00000010;
+          onChanged();
+          return getThreadFieldBuilder().getBuilder();
+        }
+        public de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadOrBuilder getThreadOrBuilder() {
+          if (threadBuilder_ != null) {
+            return threadBuilder_.getMessageOrBuilder();
+          } else {
+            return thread_;
+          }
+        }
+        private com.google.protobuf.SingleFieldBuilder<
+            de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread, de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadOrBuilder> 
+            getThreadFieldBuilder() {
+          if (threadBuilder_ == null) {
+            threadBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+                de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread, de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadOrBuilder>(
+                    thread_,
+                    getParentForChildren(),
+                    isClean());
+            thread_ = null;
+          }
+          return threadBuilder_;
+        }
+        
+        // @@protoc_insertion_point(builder_scope:AgentMessage.MethodEvent)
+      }
+      
+      static {
+        defaultInstance = new MethodEvent(true);
+        defaultInstance.initFields();
+      }
+      
+      // @@protoc_insertion_point(class_scope:AgentMessage.MethodEvent)
+    }
+    
     public interface ThreadOrBuilder
         extends com.google.protobuf.MessageOrBuilder {
       
@@ -3153,11 +3930,25 @@ public final class AgentMessageProtos {
       return monitorEvent_;
     }
     
+    // optional .AgentMessage.MethodEvent methodEvent = 5;
+    public static final int METHODEVENT_FIELD_NUMBER = 5;
+    private de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent methodEvent_;
+    public boolean hasMethodEvent() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent getMethodEvent() {
+      return methodEvent_;
+    }
+    public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEventOrBuilder getMethodEventOrBuilder() {
+      return methodEvent_;
+    }
+    
     private void initFields() {
       timestamp_ = 0L;
       jvmId_ = 0;
       threadEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.ThreadEvent.getDefaultInstance();
       monitorEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.getDefaultInstance();
+      methodEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3184,6 +3975,12 @@ public final class AgentMessageProtos {
           return false;
         }
       }
+      if (hasMethodEvent()) {
+        if (!getMethodEvent().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -3202,6 +3999,9 @@ public final class AgentMessageProtos {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(4, monitorEvent_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(5, methodEvent_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3227,6 +4027,10 @@ public final class AgentMessageProtos {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, monitorEvent_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, methodEvent_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3344,6 +4148,7 @@ public final class AgentMessageProtos {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getThreadEventFieldBuilder();
           getMonitorEventFieldBuilder();
+          getMethodEventFieldBuilder();
         }
       }
       private static Builder create() {
@@ -3368,6 +4173,12 @@ public final class AgentMessageProtos {
           monitorEventBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000008);
+        if (methodEventBuilder_ == null) {
+          methodEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDefaultInstance();
+        } else {
+          methodEventBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
       
@@ -3430,6 +4241,14 @@ public final class AgentMessageProtos {
         } else {
           result.monitorEvent_ = monitorEventBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        if (methodEventBuilder_ == null) {
+          result.methodEvent_ = methodEvent_;
+        } else {
+          result.methodEvent_ = methodEventBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3458,6 +4277,9 @@ public final class AgentMessageProtos {
         if (other.hasMonitorEvent()) {
           mergeMonitorEvent(other.getMonitorEvent());
         }
+        if (other.hasMethodEvent()) {
+          mergeMethodEvent(other.getMethodEvent());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -3479,6 +4301,12 @@ public final class AgentMessageProtos {
         }
         if (hasMonitorEvent()) {
           if (!getMonitorEvent().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasMethodEvent()) {
+          if (!getMethodEvent().isInitialized()) {
             
             return false;
           }
@@ -3535,6 +4363,15 @@ public final class AgentMessageProtos {
               }
               input.readMessage(subBuilder, extensionRegistry);
               setMonitorEvent(subBuilder.buildPartial());
+              break;
+            }
+            case 42: {
+              de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.Builder subBuilder = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.newBuilder();
+              if (hasMethodEvent()) {
+                subBuilder.mergeFrom(getMethodEvent());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setMethodEvent(subBuilder.buildPartial());
               break;
             }
           }
@@ -3765,6 +4602,96 @@ public final class AgentMessageProtos {
         return monitorEventBuilder_;
       }
       
+      // optional .AgentMessage.MethodEvent methodEvent = 5;
+      private de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent methodEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEventOrBuilder> methodEventBuilder_;
+      public boolean hasMethodEvent() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent getMethodEvent() {
+        if (methodEventBuilder_ == null) {
+          return methodEvent_;
+        } else {
+          return methodEventBuilder_.getMessage();
+        }
+      }
+      public Builder setMethodEvent(de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent value) {
+        if (methodEventBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          methodEvent_ = value;
+          onChanged();
+        } else {
+          methodEventBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      public Builder setMethodEvent(
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.Builder builderForValue) {
+        if (methodEventBuilder_ == null) {
+          methodEvent_ = builderForValue.build();
+          onChanged();
+        } else {
+          methodEventBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      public Builder mergeMethodEvent(de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent value) {
+        if (methodEventBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) == 0x00000010) &&
+              methodEvent_ != de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDefaultInstance()) {
+            methodEvent_ =
+              de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.newBuilder(methodEvent_).mergeFrom(value).buildPartial();
+          } else {
+            methodEvent_ = value;
+          }
+          onChanged();
+        } else {
+          methodEventBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      public Builder clearMethodEvent() {
+        if (methodEventBuilder_ == null) {
+          methodEvent_ = de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.getDefaultInstance();
+          onChanged();
+        } else {
+          methodEventBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.Builder getMethodEventBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getMethodEventFieldBuilder().getBuilder();
+      }
+      public de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEventOrBuilder getMethodEventOrBuilder() {
+        if (methodEventBuilder_ != null) {
+          return methodEventBuilder_.getMessageOrBuilder();
+        } else {
+          return methodEvent_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEventOrBuilder> 
+          getMethodEventFieldBuilder() {
+        if (methodEventBuilder_ == null) {
+          methodEventBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.Builder, de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEventOrBuilder>(
+                  methodEvent_,
+                  getParentForChildren(),
+                  isClean());
+          methodEvent_ = null;
+        }
+        return methodEventBuilder_;
+      }
+      
       // @@protoc_insertion_point(builder_scope:AgentMessage)
     }
     
@@ -3792,6 +4719,11 @@ public final class AgentMessageProtos {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_AgentMessage_MonitorEvent_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_AgentMessage_MethodEvent_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_AgentMessage_MethodEvent_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_AgentMessage_Thread_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -3810,32 +4742,37 @@ public final class AgentMessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022AgentMessage.proto\"\307\007\n\014AgentMessage\022\021\n" +
+      "\n\022AgentMessage.proto\"\374\010\n\014AgentMessage\022\021\n" +
       "\ttimestamp\030\001 \002(\003\022\016\n\006jvm_id\030\002 \002(\005\022.\n\013thre" +
       "adEvent\030\003 \001(\0132\031.AgentMessage.ThreadEvent" +
       "\0220\n\014monitorEvent\030\004 \001(\0132\032.AgentMessage.Mo" +
-      "nitorEvent\032\240\001\n\013ThreadEvent\022$\n\006thread\030\001 \003" +
-      "(\0132\024.AgentMessage.Thread\022<\n\teventType\030\002 " +
-      "\002(\0162#.AgentMessage.ThreadEvent.EventType" +
-      ":\004NONE\"-\n\tEventType\022\013\n\007STARTED\020\000\022\t\n\005ENDE" +
-      "D\020\001\022\010\n\004NONE\020\002\032\247\002\n\014MonitorEvent\022$\n\006thread" +
-      "\030\001 \002(\0132\024.AgentMessage.Thread\022=\n\teventTyp",
-      "e\030\002 \002(\0162$.AgentMessage.MonitorEvent.Even" +
-      "tType:\004NONE\022&\n\007monitor\030\003 \001(\0132\025.AgentMess" +
-      "age.Monitor\022\021\n\tclassName\030\004 \002(\t\022\022\n\nmethod" +
-      "Name\030\005 \002(\t\"c\n\tEventType\022\010\n\004WAIT\020\000\022\n\n\006WAI" +
-      "TED\020\001\022\n\n\006NOTIFY\020\002\022\016\n\nNOTIFY_ALL\020\003\022\r\n\tCON" +
-      "TENDED\020\004\022\013\n\007ENTERED\020\005\022\010\n\004NONE\020\006\032\363\001\n\006Thre" +
-      "ad\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\020\n\010priority" +
-      "\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.AgentMessage.Thr" +
-      "ead.State:\003NEW\022\037\n\027isContextClassLoaderSe" +
-      "t\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005State\022\007\n\003NEW",
-      "\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING" +
-      "\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTERMINATED\020\005\032o\n" +
-      "\007Monitor\022\n\n\002id\030\001 \002(\003\022\024\n\014owningThread\030\002 \001" +
-      "(\005\022\022\n\nentryCount\030\003 \002(\005\022\023\n\013waiterCount\030\004 " +
-      "\002(\005\022\031\n\021notifyWaiterCount\030\005 \002(\005B*\n\024de.fu." +
-      "profiler.modelB\022AgentMessageProtos"
+      "nitorEvent\022.\n\013methodEvent\030\005 \001(\0132\031.AgentM" +
+      "essage.MethodEvent\032\240\001\n\013ThreadEvent\022$\n\006th" +
+      "read\030\001 \003(\0132\024.AgentMessage.Thread\022<\n\teven" +
+      "tType\030\002 \002(\0162#.AgentMessage.ThreadEvent.E" +
+      "ventType:\004NONE\"-\n\tEventType\022\013\n\007STARTED\020\000" +
+      "\022\t\n\005ENDED\020\001\022\010\n\004NONE\020\002\032\247\002\n\014MonitorEvent\022$",
+      "\n\006thread\030\001 \002(\0132\024.AgentMessage.Thread\022=\n\t" +
+      "eventType\030\002 \002(\0162$.AgentMessage.MonitorEv" +
+      "ent.EventType:\004NONE\022&\n\007monitor\030\003 \001(\0132\025.A" +
+      "gentMessage.Monitor\022\021\n\tclassName\030\004 \002(\t\022\022" +
+      "\n\nmethodName\030\005 \002(\t\"c\n\tEventType\022\010\n\004WAIT\020" +
+      "\000\022\n\n\006WAITED\020\001\022\n\n\006NOTIFY\020\002\022\016\n\nNOTIFY_ALL\020" +
+      "\003\022\r\n\tCONTENDED\020\004\022\013\n\007ENTERED\020\005\022\010\n\004NONE\020\006\032" +
+      "\202\001\n\013MethodEvent\022\021\n\tclassName\030\001 \002(\t\022\022\n\nme" +
+      "thodName\030\002 \002(\t\022\023\n\013clockCycles\030\003 \002(\003\022\021\n\tt" +
+      "imeTaken\030\004 \002(\003\022$\n\006thread\030\005 \002(\0132\024.AgentMe",
+      "ssage.Thread\032\363\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004n" +
+      "ame\030\002 \002(\t\022\020\n\010priority\030\003 \002(\005\022.\n\005state\030\004 \002" +
+      "(\0162\032.AgentMessage.Thread.State:\003NEW\022\037\n\027i" +
+      "sContextClassLoaderSet\030\005 \002(\010\022\017\n\007cpuTime\030" +
+      "\006 \001(\003\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001\022\013\n" +
+      "\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIMED_WAITING" +
+      "\020\004\022\016\n\nTERMINATED\020\005\032o\n\007Monitor\022\n\n\002id\030\001 \002(" +
+      "\003\022\024\n\014owningThread\030\002 \001(\005\022\022\n\nentryCount\030\003 " +
+      "\002(\005\022\023\n\013waiterCount\030\004 \002(\005\022\031\n\021notifyWaiter" +
+      "Count\030\005 \002(\005B*\n\024de.fu.profiler.modelB\022Age",
+      "ntMessageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3847,7 +4784,7 @@ public final class AgentMessageProtos {
           internal_static_AgentMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_descriptor,
-              new java.lang.String[] { "Timestamp", "JvmId", "ThreadEvent", "MonitorEvent", },
+              new java.lang.String[] { "Timestamp", "JvmId", "ThreadEvent", "MonitorEvent", "MethodEvent", },
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.class,
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Builder.class);
           internal_static_AgentMessage_ThreadEvent_descriptor =
@@ -3866,8 +4803,16 @@ public final class AgentMessageProtos {
               new java.lang.String[] { "Thread", "EventType", "Monitor", "ClassName", "MethodName", },
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.class,
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.MonitorEvent.Builder.class);
-          internal_static_AgentMessage_Thread_descriptor =
+          internal_static_AgentMessage_MethodEvent_descriptor =
             internal_static_AgentMessage_descriptor.getNestedTypes().get(2);
+          internal_static_AgentMessage_MethodEvent_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_AgentMessage_MethodEvent_descriptor,
+              new java.lang.String[] { "ClassName", "MethodName", "ClockCycles", "TimeTaken", "Thread", },
+              de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.class,
+              de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent.Builder.class);
+          internal_static_AgentMessage_Thread_descriptor =
+            internal_static_AgentMessage_descriptor.getNestedTypes().get(3);
           internal_static_AgentMessage_Thread_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_Thread_descriptor,
@@ -3875,7 +4820,7 @@ public final class AgentMessageProtos {
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.class,
               de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread.Builder.class);
           internal_static_AgentMessage_Monitor_descriptor =
-            internal_static_AgentMessage_descriptor.getNestedTypes().get(3);
+            internal_static_AgentMessage_descriptor.getNestedTypes().get(4);
           internal_static_AgentMessage_Monitor_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_AgentMessage_Monitor_descriptor,

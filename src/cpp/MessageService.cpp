@@ -2,7 +2,7 @@
  * MessageService.cpp
  *
  *  Created on: 04.06.2011
- *      Author: konrad
+ *      Author: Konrad Johannes Reiche
  */
 
 #include "MessageService.h"

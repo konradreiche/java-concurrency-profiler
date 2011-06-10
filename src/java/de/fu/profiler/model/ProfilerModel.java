@@ -18,6 +18,7 @@ import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
+import de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent;
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread;
 
 /**
@@ -38,6 +39,9 @@ public class ProfilerModel extends Observable {
 	 */
 	TableModel tableModel;
 
+	/**
+	 * The table model for displaying the statistical data of each thread.
+	 */
 	TableModel threadStatsTableModel;
 
 	/**
@@ -67,6 +71,12 @@ public class ProfilerModel extends Observable {
 	AgentMessage currentEvent;
 
 	/**
+	 * The table model for displaying the measured time and equivalent data of
+	 * each method
+	 */
+	TimeTableModel timeTableModel;
+
+	/**
 	 * At the start of the profiler all available JVMs are read and listed.
 	 * 
 	 * @throws IOException
@@ -77,6 +87,7 @@ public class ProfilerModel extends Observable {
 		this.IDsToJVMs = new ConcurrentHashMap<Integer, JVM>();
 		this.tableModel = new ThreadTableModel(threadPieDataSet);
 		this.threadStatsTableModel = new ThreadStatsTableModel();
+		this.timeTableModel = new TimeTableModel();
 		this.messageHistory = new ConcurrentHashMap<Integer, List<AgentMessage>>();
 		initializeThreadStatePieDataset();
 		initializeThreadStateOverTimeBarDataSet();
@@ -186,10 +197,14 @@ public class ProfilerModel extends Observable {
 			if (jvm == null) {
 				jvm = new JVM(jvm_id, "default");
 				IDsToJVMs.put(jvm_id, jvm);
+
 				((ThreadTableModel) getTableModel()).setCurrentJVM(jvm);
+
 				((ThreadStatsTableModel) threadStatsTableModel)
 						.setCurrentJVM(jvm);
 				setCurrentJVM(jvm);
+
+				timeTableModel.setCurrentJVM(jvm);
 			}
 		}
 
@@ -203,6 +218,35 @@ public class ProfilerModel extends Observable {
 
 				updateThreadInfo(jvm, agentMessage, thread);
 			}
+		}
+
+		if (agentMessage.hasMethodEvent()) {
+
+			MethodEvent methodEvent = agentMessage.getMethodEvent();
+						
+			String methodIdentifier = methodEvent.getClassName() + "."
+					+ methodEvent.getMethodName();
+
+			MethodInfo method = jvm.methods.get(methodIdentifier);
+
+			if (method == null) {
+				method = new MethodInfo(methodEvent.getClassName(),
+						methodEvent.getMethodName(),
+						methodEvent.getClockCycles(),
+						methodEvent.getTimeTaken(), jvm.getThread(methodEvent
+								.getThread().getId()));
+				jvm.methods.put(methodIdentifier, method);
+			} else {
+				method.wasInvoked(methodEvent.getClockCycles(),
+						methodEvent.getTimeTaken(),
+						jvm.getThread(methodEvent.getThread().getId()));
+			}
+			
+			if (methodIdentifier.equals("de.fu.profiler.examples.Consumer.run")) {
+				System.out.println(methodEvent.isInitialized());
+			}
+			
+			MethodInfo.updateRelativeTime(jvm);
 		}
 
 		if (agentMessage.hasMonitorEvent()) {
@@ -455,4 +499,9 @@ public class ProfilerModel extends Observable {
 	public DefaultCategoryDataset getCategoryDataset() {
 		return threadOverTimeDataSet;
 	}
+
+	public TimeTableModel getTimeTableModel() {
+		return timeTableModel;
+	}
+
 }

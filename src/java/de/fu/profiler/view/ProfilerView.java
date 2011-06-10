@@ -202,6 +202,12 @@ public class ProfilerView extends JFrame {
 	 */
 	JScrollPane waitForGraphPanel;
 
+	/**
+	 * The panel containing the table with all the information about the methods
+	 * which were profiled.
+	 */
+	JScrollPane timePanel;
+
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
@@ -267,12 +273,19 @@ public class ProfilerView extends JFrame {
 
 		this.waitForGraphPanel = new JScrollPane(graphBuilder.getWaitForGraph());
 
+		JTable timeTable = new JTable(model.getTimeTableModel());
+		timeTable.getTableHeader().setReorderingAllowed(false);
+		timeTable.setAutoCreateRowSorter(true);
+		
+		this.timePanel = new JScrollPane(timeTable);
+
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);
 		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
 		this.tabbedPane.add("Locks", locksPanel);
 		this.tabbedPane.add("Synchronized", synchronizedPanel);
 		this.tabbedPane.add("Wait-For Graph", waitForGraphPanel);
+		this.tabbedPane.add("Time", timePanel);
 
 		this.splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		this.splitPane.add(jvmSelection);

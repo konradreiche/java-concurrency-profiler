@@ -33,6 +33,7 @@ void protobuf_ShutdownFile_AgentMessage_2eproto();
 class AgentMessage;
 class AgentMessage_ThreadEvent;
 class AgentMessage_MonitorEvent;
+class AgentMessage_MethodEvent;
 class AgentMessage_Thread;
 class AgentMessage_Monitor;
 
@@ -386,6 +387,137 @@ class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class AgentMessage_MethodEvent : public ::google::protobuf::Message {
+ public:
+  AgentMessage_MethodEvent();
+  virtual ~AgentMessage_MethodEvent();
+  
+  AgentMessage_MethodEvent(const AgentMessage_MethodEvent& from);
+  
+  inline AgentMessage_MethodEvent& operator=(const AgentMessage_MethodEvent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentMessage_MethodEvent& default_instance();
+  
+  void Swap(AgentMessage_MethodEvent* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AgentMessage_MethodEvent* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentMessage_MethodEvent& from);
+  void MergeFrom(const AgentMessage_MethodEvent& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string className = 1;
+  inline bool has_classname() const;
+  inline void clear_classname();
+  static const int kClassNameFieldNumber = 1;
+  inline const ::std::string& classname() const;
+  inline void set_classname(const ::std::string& value);
+  inline void set_classname(const char* value);
+  inline void set_classname(const char* value, size_t size);
+  inline ::std::string* mutable_classname();
+  inline ::std::string* release_classname();
+  
+  // required string methodName = 2;
+  inline bool has_methodname() const;
+  inline void clear_methodname();
+  static const int kMethodNameFieldNumber = 2;
+  inline const ::std::string& methodname() const;
+  inline void set_methodname(const ::std::string& value);
+  inline void set_methodname(const char* value);
+  inline void set_methodname(const char* value, size_t size);
+  inline ::std::string* mutable_methodname();
+  inline ::std::string* release_methodname();
+  
+  // required int64 clockCycles = 3;
+  inline bool has_clockcycles() const;
+  inline void clear_clockcycles();
+  static const int kClockCyclesFieldNumber = 3;
+  inline ::google::protobuf::int64 clockcycles() const;
+  inline void set_clockcycles(::google::protobuf::int64 value);
+  
+  // required int64 timeTaken = 4;
+  inline bool has_timetaken() const;
+  inline void clear_timetaken();
+  static const int kTimeTakenFieldNumber = 4;
+  inline ::google::protobuf::int64 timetaken() const;
+  inline void set_timetaken(::google::protobuf::int64 value);
+  
+  // required .AgentMessage.Thread thread = 5;
+  inline bool has_thread() const;
+  inline void clear_thread();
+  static const int kThreadFieldNumber = 5;
+  inline const ::AgentMessage_Thread& thread() const;
+  inline ::AgentMessage_Thread* mutable_thread();
+  inline ::AgentMessage_Thread* release_thread();
+  
+  // @@protoc_insertion_point(class_scope:AgentMessage.MethodEvent)
+ private:
+  inline void set_has_classname();
+  inline void clear_has_classname();
+  inline void set_has_methodname();
+  inline void clear_has_methodname();
+  inline void set_has_clockcycles();
+  inline void clear_has_clockcycles();
+  inline void set_has_timetaken();
+  inline void clear_has_timetaken();
+  inline void set_has_thread();
+  inline void clear_has_thread();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* classname_;
+  ::std::string* methodname_;
+  ::google::protobuf::int64 clockcycles_;
+  ::google::protobuf::int64 timetaken_;
+  ::AgentMessage_Thread* thread_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_AgentMessage_2eproto();
+  friend void protobuf_AssignDesc_AgentMessage_2eproto();
+  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AgentMessage_MethodEvent* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class AgentMessage_Thread : public ::google::protobuf::Message {
  public:
   AgentMessage_Thread();
@@ -726,6 +858,7 @@ class AgentMessage : public ::google::protobuf::Message {
   
   typedef AgentMessage_ThreadEvent ThreadEvent;
   typedef AgentMessage_MonitorEvent MonitorEvent;
+  typedef AgentMessage_MethodEvent MethodEvent;
   typedef AgentMessage_Thread Thread;
   typedef AgentMessage_Monitor Monitor;
   
@@ -761,6 +894,14 @@ class AgentMessage : public ::google::protobuf::Message {
   inline ::AgentMessage_MonitorEvent* mutable_monitorevent();
   inline ::AgentMessage_MonitorEvent* release_monitorevent();
   
+  // optional .AgentMessage.MethodEvent methodEvent = 5;
+  inline bool has_methodevent() const;
+  inline void clear_methodevent();
+  static const int kMethodEventFieldNumber = 5;
+  inline const ::AgentMessage_MethodEvent& methodevent() const;
+  inline ::AgentMessage_MethodEvent* mutable_methodevent();
+  inline ::AgentMessage_MethodEvent* release_methodevent();
+  
   // @@protoc_insertion_point(class_scope:AgentMessage)
  private:
   inline void set_has_timestamp();
@@ -771,16 +912,19 @@ class AgentMessage : public ::google::protobuf::Message {
   inline void clear_has_threadevent();
   inline void set_has_monitorevent();
   inline void clear_has_monitorevent();
+  inline void set_has_methodevent();
+  inline void clear_has_methodevent();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::int64 timestamp_;
   ::AgentMessage_ThreadEvent* threadevent_;
   ::AgentMessage_MonitorEvent* monitorevent_;
+  ::AgentMessage_MethodEvent* methodevent_;
   ::google::protobuf::int32 jvm_id_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -1043,6 +1187,199 @@ inline ::std::string* AgentMessage_MonitorEvent::release_methodname() {
     methodname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
+}
+
+// -------------------------------------------------------------------
+
+// AgentMessage_MethodEvent
+
+// required string className = 1;
+inline bool AgentMessage_MethodEvent::has_classname() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AgentMessage_MethodEvent::set_has_classname() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AgentMessage_MethodEvent::clear_has_classname() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AgentMessage_MethodEvent::clear_classname() {
+  if (classname_ != &::google::protobuf::internal::kEmptyString) {
+    classname_->clear();
+  }
+  clear_has_classname();
+}
+inline const ::std::string& AgentMessage_MethodEvent::classname() const {
+  return *classname_;
+}
+inline void AgentMessage_MethodEvent::set_classname(const ::std::string& value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(value);
+}
+inline void AgentMessage_MethodEvent::set_classname(const char* value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(value);
+}
+inline void AgentMessage_MethodEvent::set_classname(const char* value, size_t size) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_MethodEvent::mutable_classname() {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  return classname_;
+}
+inline ::std::string* AgentMessage_MethodEvent::release_classname() {
+  clear_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = classname_;
+    classname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string methodName = 2;
+inline bool AgentMessage_MethodEvent::has_methodname() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AgentMessage_MethodEvent::set_has_methodname() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AgentMessage_MethodEvent::clear_has_methodname() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage_MethodEvent::clear_methodname() {
+  if (methodname_ != &::google::protobuf::internal::kEmptyString) {
+    methodname_->clear();
+  }
+  clear_has_methodname();
+}
+inline const ::std::string& AgentMessage_MethodEvent::methodname() const {
+  return *methodname_;
+}
+inline void AgentMessage_MethodEvent::set_methodname(const ::std::string& value) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(value);
+}
+inline void AgentMessage_MethodEvent::set_methodname(const char* value) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(value);
+}
+inline void AgentMessage_MethodEvent::set_methodname(const char* value, size_t size) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_MethodEvent::mutable_methodname() {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  return methodname_;
+}
+inline ::std::string* AgentMessage_MethodEvent::release_methodname() {
+  clear_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = methodname_;
+    methodname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required int64 clockCycles = 3;
+inline bool AgentMessage_MethodEvent::has_clockcycles() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void AgentMessage_MethodEvent::set_has_clockcycles() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void AgentMessage_MethodEvent::clear_has_clockcycles() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void AgentMessage_MethodEvent::clear_clockcycles() {
+  clockcycles_ = GOOGLE_LONGLONG(0);
+  clear_has_clockcycles();
+}
+inline ::google::protobuf::int64 AgentMessage_MethodEvent::clockcycles() const {
+  return clockcycles_;
+}
+inline void AgentMessage_MethodEvent::set_clockcycles(::google::protobuf::int64 value) {
+  set_has_clockcycles();
+  clockcycles_ = value;
+}
+
+// required int64 timeTaken = 4;
+inline bool AgentMessage_MethodEvent::has_timetaken() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void AgentMessage_MethodEvent::set_has_timetaken() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void AgentMessage_MethodEvent::clear_has_timetaken() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void AgentMessage_MethodEvent::clear_timetaken() {
+  timetaken_ = GOOGLE_LONGLONG(0);
+  clear_has_timetaken();
+}
+inline ::google::protobuf::int64 AgentMessage_MethodEvent::timetaken() const {
+  return timetaken_;
+}
+inline void AgentMessage_MethodEvent::set_timetaken(::google::protobuf::int64 value) {
+  set_has_timetaken();
+  timetaken_ = value;
+}
+
+// required .AgentMessage.Thread thread = 5;
+inline bool AgentMessage_MethodEvent::has_thread() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void AgentMessage_MethodEvent::set_has_thread() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void AgentMessage_MethodEvent::clear_has_thread() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void AgentMessage_MethodEvent::clear_thread() {
+  if (thread_ != NULL) thread_->::AgentMessage_Thread::Clear();
+  clear_has_thread();
+}
+inline const ::AgentMessage_Thread& AgentMessage_MethodEvent::thread() const {
+  return thread_ != NULL ? *thread_ : *default_instance_->thread_;
+}
+inline ::AgentMessage_Thread* AgentMessage_MethodEvent::mutable_thread() {
+  set_has_thread();
+  if (thread_ == NULL) thread_ = new ::AgentMessage_Thread;
+  return thread_;
+}
+inline ::AgentMessage_Thread* AgentMessage_MethodEvent::release_thread() {
+  clear_has_thread();
+  ::AgentMessage_Thread* temp = thread_;
+  thread_ = NULL;
+  return temp;
 }
 
 // -------------------------------------------------------------------
@@ -1435,6 +1772,35 @@ inline ::AgentMessage_MonitorEvent* AgentMessage::release_monitorevent() {
   clear_has_monitorevent();
   ::AgentMessage_MonitorEvent* temp = monitorevent_;
   monitorevent_ = NULL;
+  return temp;
+}
+
+// optional .AgentMessage.MethodEvent methodEvent = 5;
+inline bool AgentMessage::has_methodevent() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void AgentMessage::set_has_methodevent() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void AgentMessage::clear_has_methodevent() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void AgentMessage::clear_methodevent() {
+  if (methodevent_ != NULL) methodevent_->::AgentMessage_MethodEvent::Clear();
+  clear_has_methodevent();
+}
+inline const ::AgentMessage_MethodEvent& AgentMessage::methodevent() const {
+  return methodevent_ != NULL ? *methodevent_ : *default_instance_->methodevent_;
+}
+inline ::AgentMessage_MethodEvent* AgentMessage::mutable_methodevent() {
+  set_has_methodevent();
+  if (methodevent_ == NULL) methodevent_ = new ::AgentMessage_MethodEvent;
+  return methodevent_;
+}
+inline ::AgentMessage_MethodEvent* AgentMessage::release_methodevent() {
+  clear_has_methodevent();
+  ::AgentMessage_MethodEvent* temp = methodevent_;
+  methodevent_ = NULL;
   return temp;
 }
 
