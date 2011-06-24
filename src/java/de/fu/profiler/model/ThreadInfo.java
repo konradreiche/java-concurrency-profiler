@@ -3,6 +3,8 @@ package de.fu.profiler.model;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
+
 /**
  * Models a java thread and describes selected and analysed information of a
  * thread.
@@ -90,8 +92,8 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 	long timeSinceLastUpdate;
 
 	/**
-	 * The monitor which is requested, i.e. trying to be acquired by this thread.
-	 * Null if the thread does not currently try to acquire a monitor.
+	 * The monitor which is requested, i.e. trying to be acquired by this
+	 * thread. Null if the thread does not currently try to acquire a monitor.
 	 */
 	Monitor requestedResource;
 
@@ -128,7 +130,12 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 		for (String possibleState : possibleStates) {
 			stateToDuration.put(possibleState, 0l);
 		}
+	}
 
+	public ThreadInfo(AgentMessage.Thread thread, long timestamp) {
+		this(thread.getId(), thread.getName(), thread.getPriority(), thread
+				.getState().toString(), thread.getIsContextClassLoaderSet(),
+				timestamp);
 	}
 
 	public int getId() {
@@ -268,5 +275,5 @@ public class ThreadInfo implements Comparable<ThreadInfo> {
 
 	public Monitor getRequestedResource() {
 		return requestedResource;
-	}	
+	}
 }

@@ -67,4 +67,9 @@ public class LockTableModel extends AbstractTableModel {
 		this.jvm = jvm;
 	}
 
+	public JVM getJvm() {
+		return jvm;
+	}
+
+	
 }

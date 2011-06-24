@@ -1,5 +1,7 @@
 package de.fu.profiler.model;
 
+import java.util.Map;
+
 /**
  * Represents a Java monitor.
  * 
@@ -38,14 +40,21 @@ public class Monitor {
 	 */
 	ThreadInfo allocatedToThread;
 
+	Map<ThreadInfo,StackTrace> waiter;
+
+	Map<ThreadInfo,StackTrace> notifyWaiter;
+
 	public Monitor(long id, String className, int entryCount, int waiterCount,
-			int notifyWaiterCount) {
+			int notifyWaiterCount, Map<ThreadInfo,StackTrace> waiter,
+			Map<ThreadInfo,StackTrace> notifyWaiter) {
 		super();
 		this.id = id;
 		this.className = className;
 		this.entryCount = entryCount;
 		this.waiterCount = waiterCount;
 		this.notifyWaiterCount = notifyWaiterCount;
+		this.waiter = waiter;
+		this.notifyWaiter = notifyWaiter;
 	}
 
 	public long getId() {
@@ -85,16 +94,27 @@ public class Monitor {
 
 		if (waiterCount != monitor.getWaiterCount()) {
 			waiterCount = monitor.getWaiterCount();
+			waiter = monitor.getWaiter();
 		}
 
 		if (notifyWaiterCount != monitor.getNotifyWaiterCount()) {
 			notifyWaiterCount = monitor.getNotifyWaiterCount();
+			notifyWaiter = monitor.getNotifyWaiter();
 		}
 	}
 
 	public ThreadInfo getAllocatedToThread() {
 		return allocatedToThread;
 	}
+
+	public Map<ThreadInfo,StackTrace> getWaiter() {
+		return waiter;
+	}
+
+	public Map<ThreadInfo,StackTrace> getNotifyWaiter() {
+		return notifyWaiter;
+	}
 	
 	
+
 }

@@ -22,6 +22,7 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -35,6 +36,7 @@ import org.jfree.chart.renderer.category.StackedBarRenderer3D;
 import org.jfree.ui.TextAnchor;
 import org.jfree.util.Rotation;
 
+import de.fu.profiler.controller.LockTableListener;
 import de.fu.profiler.controller.NotifyWaitTableListener;
 import de.fu.profiler.controller.ProfilerController.JVMSelectionListener;
 import de.fu.profiler.model.ProfilerModel;
@@ -141,7 +143,6 @@ public class ProfilerView extends JFrame {
 	 */
 	JTextArea synchronizedLogTextArea;
 
-	
 	JTable lockTable;
 
 	/**
@@ -194,6 +195,8 @@ public class ProfilerView extends JFrame {
 
 	JTree stackTraces;
 
+	JTree monitorRelatedThreads;
+
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
@@ -241,13 +244,13 @@ public class ProfilerView extends JFrame {
 
 		this.notifyWaitGraph = graphBuilder.getNotifyWaitGraph();
 		this.notifyWaitPanel = new JPanel(new GridLayout(2, 1));
-		
+
 		JTable notifyWaitTable = new JTable(model.getNotifyWaitTableModel());
 		notifyWaitTable.getSelectionModel()
 				.addListSelectionListener(
 						new NotifyWaitTableListener(notifyWaitTable, model,
 								stackTraces));
-		
+
 		notifyWaitTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		notifyWaitTable.setRowSelectionAllowed(true);
 		this.notifyWaitLogScrollPane = new JScrollPane(notifyWaitTable);
@@ -256,7 +259,9 @@ public class ProfilerView extends JFrame {
 		// this.notifyWaitPanel.add(notifyWaitGraph);
 
 		this.lockTable = new JTable(model.getLockTableModel());
-		
+		monitorRelatedThreads = new JTree(new DefaultMutableTreeNode("Threads"));
+		this.lockTable.getSelectionModel().addListSelectionListener(
+				new LockTableListener(lockTable, model, monitorRelatedThreads));
 
 		this.synchronizedPanel = new JPanel(new GridLayout(1, 1));
 		this.synchronizedLogTextArea = new JTextArea();
@@ -272,9 +277,10 @@ public class ProfilerView extends JFrame {
 
 		this.timePanel = new JScrollPane(timeTable);
 
-		JSplitPane locksPanel = new JSplitPane();
-		locksPanel.add(new JScrollPane(lockTable));
-		
+		JSplitPane locksPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+				new JScrollPane(lockTable), new JScrollPane(
+						monitorRelatedThreads));
+
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);
 		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
@@ -369,7 +375,6 @@ public class ProfilerView extends JFrame {
 	public void addPreviousEventListener(ActionListener actionListener) {
 		this.previousEvent.addActionListener(actionListener);
 	}
-
 
 	public void setEnabledPreviousEventButton(boolean isEnabled) {
 		previousEvent.setEnabled(isEnabled);

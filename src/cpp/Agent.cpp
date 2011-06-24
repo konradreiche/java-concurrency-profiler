@@ -143,7 +143,7 @@ static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 		}
 
 		for (int i = 0; i < monitorUseage.notify_waiter_count; ++i) {
-			AgentMessage::Thread *thread = monitorMessage->add_waiterthreads();
+			AgentMessage::Thread *thread = monitorMessage->add_notifywaiterthreads();
 			Agent::Helper::initializeThreadMessage(jvmti, thread,
 					monitorUseage.notify_waiters[i]);
 		}
