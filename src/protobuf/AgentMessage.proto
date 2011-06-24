@@ -4,7 +4,8 @@ option java_outer_classname = "AgentMessageProtos";
 message AgentMessage {
 
 	required int64 timestamp = 1;
-	required int32 jvm_id = 2;
+	required int64 systemTime = 2;
+	required int32 jvm_id = 3;
 
 	message ThreadEvent {
 
@@ -18,6 +19,21 @@ message AgentMessage {
 
 
 		required EventType eventType = 2 [default = NONE];
+	}
+
+	message StackTrace {
+	
+		required Thread thread = 1;
+		repeated StackTraceElement stackTrace = 2;
+		
+		message StackTraceElement {
+
+			required string className = 1;
+			required string methodName = 2;
+			required string methodSignature = 3;
+			required string fileName = 4;
+			required bool isNativeMethod = 5;
+		}
 	}
 
 	message MonitorEvent {
@@ -38,6 +54,7 @@ message AgentMessage {
 		optional Monitor monitor = 3;
 		required string className = 4;
 		required string methodName = 5;
+		repeated StackTrace stackTraces = 6;
 	}
 
 	message MethodEvent {
@@ -65,8 +82,15 @@ message AgentMessage {
 		}
 
 		required State state = 4 [default = NEW];
-		required bool isContextClassLoaderSet = 5;
+		required bool isContextClassLoaderSet = 5;		
 		optional int64 cpuTime = 6;
+	}
+
+	message StackTraceElement {
+
+		required string className = 1;
+		required string method = 2;
+
 	}
 
 	message Monitor {
@@ -76,9 +100,11 @@ message AgentMessage {
 		required int32 entryCount = 3;
 		required int32 waiterCount = 4;
 		required int32 notifyWaiterCount = 5;
+		repeated Thread waiterThreads = 6;
+		repeated Thread notifyWaiterThreads = 7;
 	}
 
-	optional ThreadEvent threadEvent = 3;
-	optional MonitorEvent monitorEvent = 4;
-	optional MethodEvent methodEvent = 5;
+	optional ThreadEvent threadEvent = 4;
+	optional MonitorEvent monitorEvent = 5;
+	optional MethodEvent methodEvent = 6;
 }

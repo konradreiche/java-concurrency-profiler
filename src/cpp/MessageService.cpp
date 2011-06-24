@@ -25,9 +25,10 @@ MessageService::MessageService(std::string ip, std::string port) :
 	boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
 }
 
-void MessageService::write(AgentMessage agentMessage, int JVM_ID) {
+void MessageService::write(AgentMessage agentMessage, long systemTime, int JVM_ID) {
 	agentMessage.set_timestamp(Agent::Helper::getCurrentClockCycle());
 	agentMessage.set_jvm_id(JVM_ID);
+	agentMessage.set_systemtime(systemTime);
 	io_service.post(boost::bind(&MessageService::do_write, this, agentMessage));
 }
 

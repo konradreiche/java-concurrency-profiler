@@ -15,7 +15,6 @@ import org.jfree.data.general.DefaultPieDataset;
 
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
 import de.fu.profiler.model.JVM;
-import de.fu.profiler.model.Monitor;
 import de.fu.profiler.model.ThreadInfo;
 
 /**
@@ -48,25 +47,12 @@ public class ProfilerObserver implements Observer {
 							+ jvm.getId());
 				}
 
-				view.notifyWaitLogTextArea.setText(null);
 				if (view.model.getCurrentJVM() != null) {
-
-					SortedSet<Long> sortedTimestamp = new TreeSet<Long>(
-							view.model.getCurrentJVM().getNotifyWaitTextualLog()
-									.keySet());
-
-					for (Long timestamp : sortedTimestamp) {
-						view.notifyWaitLogTextArea.append(timestamp
-								+ ": "
-								+ view.model.getCurrentJVM().getNotifyWaitTextualLog()
-										.get(timestamp));
-						view.notifyWaitLogTextArea.repaint();
-					}
 
 					view.synchronizedLogTextArea.setText((null));
 					if (view.model.getCurrentJVM() != null) {
 
-						sortedTimestamp = new TreeSet<Long>(view.model
+						SortedSet<Long> sortedTimestamp = new TreeSet<Long>(view.model
 								.getCurrentJVM().getSynchronizedLog().keySet());
 
 						for (Long timestamp : sortedTimestamp) {
@@ -75,7 +61,7 @@ public class ProfilerObserver implements Observer {
 									+ view.model.getCurrentJVM()
 											.getSynchronizedLog()
 											.get(timestamp));
-							view.notifyWaitLogTextArea.repaint();
+							view.synchronizedLogTextArea.repaint();
 						}
 
 					}
@@ -133,16 +119,13 @@ public class ProfilerObserver implements Observer {
 					((AbstractTableModel) view.model.getTimeTableModel())
 					.fireTableDataChanged();
 
+					((AbstractTableModel) view.model.getNotifyWaitTableModel())
+					.fireTableDataChanged();
 					
-					view.monitorSelection.removeAllItems();
-					for (Monitor monitor : view.model.getCurrentJVM()
-							.getMonitors().values()) {
-
-						String monitorItem = monitor.getClassName() + " (id: "
-								+ monitor.getId() + ")";
-
-						view.monitorSelection.addItem(monitorItem);
-					}
+					((AbstractTableModel) view.model.getLockTableModel())
+					.fireTableDataChanged();
+					
+					view.stackTraces.repaint();
 
 					int jvmId = view.model.getCurrentJVM().getId();
 					List<AgentMessage> eventHistory = view.model

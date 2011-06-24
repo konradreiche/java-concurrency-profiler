@@ -1,5 +1,7 @@
 package de.fu.profiler.model;
 
+import java.util.List;
+
 /**
  * Models an event entry of a notify and wait event.
  * 
@@ -9,23 +11,30 @@ package de.fu.profiler.model;
 public class NotifyWaitLogEntry {
 
 	final ThreadInfo threadInfo;
-	final String state;
+	final String oldState;
+	final String newState;
 	final Type type;
 	final String methodContext;
 	final String monitorClass;
+	final long systemTime;
+	final List<StackTrace> stackTraces;
 
 	public enum Type {
 		INVOKED_WAIT, LEFT_WAIT, INVOKED_NOTIFY_ALL, INVOKED_NOTIFY,
 	}
-	
-	
-	public NotifyWaitLogEntry(ThreadInfo threadInfo, String state, Type type, String methodContext, String monitorClass) {
+
+	public NotifyWaitLogEntry(ThreadInfo threadInfo, String oldState,
+			String newState, Type type, String methodContext,
+			String monitorClass, long systemTime, List<StackTrace> stackTraces) {
 		super();
 		this.threadInfo = threadInfo;
-		this.state = state;
+		this.oldState = oldState;
+		this.newState = newState;
 		this.type = type;
 		this.methodContext = methodContext;
 		this.monitorClass = monitorClass;
+		this.systemTime = systemTime;
+		this.stackTraces = stackTraces;
 	}
 
 	public ThreadInfo getThreadInfo() {
@@ -33,7 +42,7 @@ public class NotifyWaitLogEntry {
 	}
 
 	public String getState() {
-		return state;
+		return oldState;
 	}
 
 	public Type getType() {
@@ -47,6 +56,11 @@ public class NotifyWaitLogEntry {
 	public String getMonitorClass() {
 		return monitorClass;
 	}
+
+	public List<StackTrace> getStackTraces() {
+		return stackTraces;
+	}
 	
 	
+
 }

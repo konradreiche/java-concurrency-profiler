@@ -28,7 +28,7 @@ public:
 	MessageService(std::string ip, std::string port);
 	virtual ~MessageService();
 
-	void write(AgentMessage agentMessage, int JVM_ID);
+	void write(AgentMessage agentMessage, long systemTime, int JVM_ID);
 
 private:
 	boost::asio::io_service io_service;

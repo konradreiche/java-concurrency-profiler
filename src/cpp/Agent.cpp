@@ -33,8 +33,9 @@ static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
 static MessageService messageService("192.168.1.101", "50000");
+//static MessageService messageService("127.0.0.1", "50000");
+
 static int jvmPid;
-static int objectId = 1;
 
 /** Global agent data structure */
 typedef struct {
@@ -72,62 +73,6 @@ typedef std::stack<long> timeTakenStack;
 static std::map<long, timestampStack> threadToTimestamps;
 static std::map<long, timeTakenStack> threadToTimeTaken;
 
-static void initializeThreadMessage(AgentMessage::Thread *threadMessage,
-		jthread thread) {
-
-	jvmtiThreadInfo jvmtiThreadInfo;
-	jint thr_st_ptr;
-	jlong thr_id_ptr;
-	jvmtiError error;
-
-	(void) memset(&jvmtiThreadInfo, 0, sizeof(jvmtiThreadInfo));
-	error = jvmti->GetThreadInfo(thread, &jvmtiThreadInfo);
-	Agent::Helper::checkError(jvmti, error, "Cannot get thread information.");
-
-	error = jvmti->GetThreadState(thread, &thr_st_ptr);
-	Agent::Helper::checkError(jvmti, error, "Cannot get thread state.");
-
-	AgentMessage::Thread::State state;
-	switch (thr_st_ptr & JVMTI_JAVA_LANG_THREAD_STATE_MASK) {
-	case JVMTI_JAVA_LANG_THREAD_STATE_NEW:
-		state = AgentMessage::Thread::NEW;
-		break;
-	case JVMTI_JAVA_LANG_THREAD_STATE_TERMINATED:
-		state = AgentMessage::Thread::TERMINATED;
-		break;
-	case JVMTI_JAVA_LANG_THREAD_STATE_RUNNABLE:
-		state = AgentMessage::Thread::RUNNABLE;
-		break;
-	case JVMTI_JAVA_LANG_THREAD_STATE_BLOCKED:
-		state = AgentMessage::Thread::BLOCKED;
-		break;
-	case JVMTI_JAVA_LANG_THREAD_STATE_WAITING:
-		state = AgentMessage::Thread::WAITING;
-		break;
-	case JVMTI_JAVA_LANG_THREAD_STATE_TIMED_WAITING:
-		state = AgentMessage::Thread::TIMED_WAITING;
-		break;
-	default:
-		state = AgentMessage::Thread::NEW;
-		break;
-	}
-
-	jvmti->GetTag(thread, &thr_id_ptr);
-	if (thr_id_ptr == 0) {
-		jvmti->SetTag(thread, objectId);
-		++objectId;
-		jvmti->GetTag(thread, &thr_id_ptr);
-	}
-
-	threadMessage->set_id(thr_id_ptr);
-	threadMessage->set_name(jvmtiThreadInfo.name);
-	threadMessage->set_priority(jvmtiThreadInfo.priority);
-	threadMessage->set_state(state);
-	threadMessage->set_iscontextclassloaderset(
-			jvmtiThreadInfo.context_class_loader == NULL);
-
-}
-
 /**
  * Inserts the data accessible by jthread into an AgentMessage.
  *
@@ -145,7 +90,7 @@ static AgentMessage createThreadEventMessage(AgentMessage agentMessage,
 	threadEvent->set_eventtype(eventType);
 
 	AgentMessage::Thread *threadMessage = threadEvent->add_thread();
-	initializeThreadMessage(threadMessage, thread);
+	Agent::Helper::initializeThreadMessage(jvmti, threadMessage, thread);
 
 	if (eventType == AgentMessage::ThreadEvent::ENDED) {
 		jlong cpuTime;
@@ -171,7 +116,7 @@ static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 	monitorEvent->set_methodname(methodName);
 
 	AgentMessage::Thread *threadMessage = monitorEvent->mutable_thread();
-	initializeThreadMessage(threadMessage, thread);
+	Agent::Helper::initializeThreadMessage(jvmti, threadMessage, thread);
 
 	if (objectId != -1) {
 		AgentMessage::Monitor *monitorMessage = monitorEvent->mutable_monitor();
@@ -183,11 +128,25 @@ static AgentMessage createMonitorEventMessage(AgentMessage agentMessage,
 			ownerId = -1;
 		}
 
+		Agent::Helper::insertAllStackTraces(jvmti, monitorEvent);
+
 		monitorMessage->set_id(objectId);
 		monitorMessage->set_owningthread(ownerId);
 		monitorMessage->set_entrycount(monitorUseage.entry_count);
 		monitorMessage->set_waitercount(monitorUseage.waiter_count);
 		monitorMessage->set_notifywaitercount(monitorUseage.notify_waiter_count);
+
+		for (int i = 0; i < monitorUseage.waiter_count; ++i) {
+			AgentMessage::Thread *thread = monitorMessage->add_waiterthreads();
+			Agent::Helper::initializeThreadMessage(jvmti, thread,
+					monitorUseage.waiters[i]);
+		}
+
+		for (int i = 0; i < monitorUseage.notify_waiter_count; ++i) {
+			AgentMessage::Thread *thread = monitorMessage->add_waiterthreads();
+			Agent::Helper::initializeThreadMessage(jvmti, thread,
+					monitorUseage.notify_waiters[i]);
+		}
 	}
 
 	return agentMessage;
@@ -240,14 +199,14 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 
 		jvmti->GetTag(object, &currentObjectId);
 		if (currentObjectId == 0) {
-			jvmti->SetTag(object, objectId);
-			++objectId;
+			jvmti->SetTag(object, Agent::Helper::objectId);
+			++Agent::Helper::objectId;
 			jvmti->GetTag(object, &currentObjectId);
 		}
 
 		AgentMessage agentMessage;
 
-		Agent::Helper::StrackTraceElement stackTraceElement =
+		Agent::Helper::StackTraceElement stackTraceElement =
 				Agent::Helper::getStackTraceElement(jvmti_env, thread, 0);
 
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
@@ -255,7 +214,9 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
 
-		messageService.write(agentMessage, jvmPid);
+		jlong systemTime;
+		jvmti->GetTime(&systemTime);
+		messageService.write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -275,14 +236,14 @@ static void JNICALL callbackMonitorContendedEntered(jvmtiEnv *jvmti_env,
 
 		jvmti->GetTag(object, &currentObjectId);
 		if (currentObjectId == 0) {
-			jvmti->SetTag(object, objectId);
-			++objectId;
+			jvmti->SetTag(object, Agent::Helper::objectId);
+			++Agent::Helper::objectId;
 			jvmti->GetTag(object, &currentObjectId);
 		}
 
 		AgentMessage agentMessage;
 
-		Agent::Helper::StrackTraceElement stackTraceElement =
+		Agent::Helper::StackTraceElement stackTraceElement =
 				Agent::Helper::getStackTraceElement(jvmti_env, thread, 0);
 
 		agentMessage = createMonitorEventMessage(agentMessage, thread,
@@ -290,7 +251,9 @@ static void JNICALL callbackMonitorContendedEntered(jvmtiEnv *jvmti_env,
 				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
 
-		messageService.write(agentMessage, jvmPid);
+		jlong systemTime;
+		jvmti->GetTime(&systemTime);
+		messageService.write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -310,12 +273,12 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		jvmti->GetTag(object, &currentObjectId);
 		if (currentObjectId == 0) {
-			jvmti->SetTag(object, objectId);
-			++objectId;
+			jvmti->SetTag(object, Agent::Helper::objectId);
+			++Agent::Helper::objectId;
 			jvmti->GetTag(object, &currentObjectId);
 		}
 
-		Agent::Helper::StrackTraceElement stackTraceElement =
+		Agent::Helper::StackTraceElement stackTraceElement =
 				Agent::Helper::getStackTraceElement(jvmti_env, thread, 2);
 
 		AgentMessage agentMessage;
@@ -323,7 +286,9 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				AgentMessage::MonitorEvent::WAIT, stackTraceElement.methodName,
 				stackTraceElement.className, currentObjectId, monitorUseage);
 
-		messageService.write(agentMessage, jvmPid);
+		jlong systemTime;
+		jvmti->GetTime(&systemTime);
+		messageService.write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -343,12 +308,12 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		jvmti->GetTag(object, &currentObjectId);
 		if (currentObjectId == 0) {
-			jvmti->SetTag(object, objectId);
-			++objectId;
+			jvmti->SetTag(object, Agent::Helper::objectId);
+			++Agent::Helper::objectId;
 			jvmti->GetTag(object, &currentObjectId);
 		}
 
-		Agent::Helper::StrackTraceElement stackTraceElement =
+		Agent::Helper::StackTraceElement stackTraceElement =
 				Agent::Helper::getStackTraceElement(jvmti_env, thread, 2);
 
 		AgentMessage agentMessage;
@@ -357,7 +322,9 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				stackTraceElement.methodName, stackTraceElement.className,
 				currentObjectId, monitorUseage);
 
-		messageService.write(agentMessage, jvmPid);
+		jlong systemTime;
+		jvmti->GetTime(&systemTime);
+		messageService.write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -384,7 +351,10 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 		AgentMessage agentMessage;
 		agentMessage = createThreadEventMessage(agentMessage, thread,
 				AgentMessage::ThreadEvent::ENDED);
-		messageService.write(agentMessage, jvmPid);
+
+		jlong systemTime;
+		jvmti->GetTime(&systemTime);
+		messageService.write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -430,7 +400,7 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 
 	enter_critical_section(jvmti);
 	{
-		Agent::Helper::StrackTraceElement stackTraceElement =
+		Agent::Helper::StackTraceElement stackTraceElement =
 				Agent::Helper::getStackTraceElement(jvmti_env, thread, 1);
 
 		// notify wait events
@@ -454,7 +424,14 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 			agentMessage = createMonitorEventMessage(agentMessage, thread,
 					eventType, stackTraceElement.methodName,
 					stackTraceElement.className, -1, monitorUseage);
-			messageService.write(agentMessage, jvmPid);
+
+			AgentMessage::MonitorEvent *monitorEvent =
+					agentMessage.mutable_monitorevent();
+			Agent::Helper::insertAllStackTraces(jvmti, monitorEvent);
+
+			jlong systemTime;
+			jvmti->GetTime(&systemTime);
+			messageService.write(agentMessage, systemTime, jvmPid);
 		}
 
 		stackTraceElement = Agent::Helper::getStackTraceElement(jvmti_env,
@@ -482,17 +459,19 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 		AgentMessage::MethodEvent *methodEvent =
 				agentMessage.mutable_methodevent();
 		AgentMessage::Thread *threadMessage = methodEvent->mutable_thread();
-		initializeThreadMessage(threadMessage, thread);
+		Agent::Helper::initializeThreadMessage(jvmti, threadMessage, thread);
 
 		methodEvent->set_classname(stackTraceElement.className);
 		methodEvent->set_methodname(stackTraceElement.methodName);
 		methodEvent->set_clockcycles(clockCyclesConsumed);
 		methodEvent->set_timetaken(timeConsumed);
-		messageService.write(agentMessage, jvmPid);
+
+		jlong systemTime;
+		jvmti->GetTime(&systemTime);
+		messageService.write(agentMessage, systemTime, jvmPid);
 
 		it1->second.pop();
 		it2->second.pop();
-
 	}
 	exit_critical_section(jvmti);
 }
@@ -507,7 +486,6 @@ static void JNICALL callbackException(jvmtiEnv *jvmti_env, JNIEnv* env,
 
 	}
 	exit_critical_section(jvmti);
-
 }
 /** VM Death callback */
 static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
@@ -530,7 +508,10 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 				agentMessage = createThreadEventMessage(agentMessage,
 						threads[i], AgentMessage::ThreadEvent::ENDED);
 			}
-			messageService.write(agentMessage, jvmPid);
+
+			jlong systemTime;
+			jvmti->GetTime(&systemTime);
+			messageService.write(agentMessage, systemTime, jvmPid);
 		}
 		exit_critical_section(jvmti);
 	}
@@ -637,7 +618,10 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 				agentMessage = createThreadEventMessage(agentMessage,
 						threads[i], AgentMessage::ThreadEvent::STARTED);
 			}
-			messageService.write(agentMessage, jvmPid);
+
+			jlong systemTime;
+			jvmti->GetTime(&systemTime);
+			messageService.write(agentMessage, systemTime, jvmPid);
 		}
 	}
 	exit_critical_section(jvmti);

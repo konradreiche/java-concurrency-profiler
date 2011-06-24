@@ -30,14 +30,20 @@ namespace Helper {
  * @param JVM_ID
  */
 
-struct StrackTraceElement {
+struct StackTraceElement {
 	std::string className;
 	std::string methodName;
 	std::string sourceFile;
 	bool isNativeMethod;
 };
 
-//AgentMessage generateMethodEvent()
+static int objectId = 1;
+
+void initializeThreadMessage(jvmtiEnv *jvmti, AgentMessage::Thread *threadMessage,
+		jthread thread);
+
+void insertAllStackTraces(jvmtiEnv *jvmti,
+		AgentMessage::MonitorEvent *monitorEvent);
 
 /** Every JVMTI interface returns an error code, which should be checked
  *   to avoid any cascading errors down the line.
@@ -49,7 +55,7 @@ void checkError(jvmtiEnv *jvmti, jvmtiError errnum, const char *str);
 /**
  * When this is a native call, the class signature is read from the stack trace element depth-1
  */
-StrackTraceElement getStackTraceElement(jvmtiEnv *jvmti, jthread thread,
+StackTraceElement getStackTraceElement(jvmtiEnv *jvmti, jthread thread,
 		int index);
 
 uint64_t getCurrentClockCycle();

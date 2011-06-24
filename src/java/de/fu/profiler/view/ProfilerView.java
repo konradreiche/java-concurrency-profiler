@@ -9,7 +9,6 @@ import java.text.NumberFormat;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -19,6 +18,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -34,6 +35,7 @@ import org.jfree.chart.renderer.category.StackedBarRenderer3D;
 import org.jfree.ui.TextAnchor;
 import org.jfree.util.Rotation;
 
+import de.fu.profiler.controller.NotifyWaitTableListener;
 import de.fu.profiler.controller.ProfilerController.JVMSelectionListener;
 import de.fu.profiler.model.ProfilerModel;
 
@@ -111,6 +113,8 @@ public class ProfilerView extends JFrame {
 	 */
 	JTabbedPane tabbedDiagramPane;
 
+	JTabbedPane tabbedNotifyWaitPane;
+
 	/**
 	 * The split pane splits the whole frame into two sides. One side is for the
 	 * JVM selection and one is for the information views.
@@ -137,28 +141,8 @@ public class ProfilerView extends JFrame {
 	 */
 	JTextArea synchronizedLogTextArea;
 
-	/**
-	 * A box to select one of the available monitors to view their information.
-	 */
-	JComboBox monitorSelection;
-
-	/**
-	 * Label which displays the number of times the owning thread has entered
-	 * the monitor.
-	 */
-	JLabel monitorEntryCount;
-
-	/**
-	 * Label which displays the number number of threads waiting to own this
-	 * monitor.
-	 */
-	JLabel monitorWaiterCount;
-
-	/**
-	 * Label which displays the number of threads waiting to be notified by this
-	 * monitor.
-	 */
-	JLabel monitorNotifyWaiterCount;
+	
+	JTable lockTable;
 
 	/**
 	 * Button to display the next event from the event history.
@@ -208,6 +192,8 @@ public class ProfilerView extends JFrame {
 	 */
 	JScrollPane timePanel;
 
+	JTree stackTraces;
+
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
@@ -246,24 +232,31 @@ public class ProfilerView extends JFrame {
 		this.overviewPanel.add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 				threadTableScrollPane, tabbedDiagramPane));
 
+		this.stackTraces = new JTree(model.getTreeNode());
+		stackTraces.setExpandsSelectedPaths(true);
+		this.tabbedNotifyWaitPane = new JTabbedPane();
+		tabbedNotifyWaitPane.add("Stack Traces", new JScrollPane(stackTraces));
+		tabbedNotifyWaitPane
+				.add("Statistic", new JScrollPane(threadStatsTable));
+
 		this.notifyWaitGraph = graphBuilder.getNotifyWaitGraph();
 		this.notifyWaitPanel = new JPanel(new GridLayout(2, 1));
-		this.notifyWaitLogTextArea = new JTextArea();
-		this.notifyWaitLogScrollPane = new JScrollPane(notifyWaitLogTextArea);
+		
+		JTable notifyWaitTable = new JTable(model.getNotifyWaitTableModel());
+		notifyWaitTable.getSelectionModel()
+				.addListSelectionListener(
+						new NotifyWaitTableListener(notifyWaitTable, model,
+								stackTraces));
+		
+		notifyWaitTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		notifyWaitTable.setRowSelectionAllowed(true);
+		this.notifyWaitLogScrollPane = new JScrollPane(notifyWaitTable);
 		this.notifyWaitPanel.add(notifyWaitLogScrollPane);
-		this.notifyWaitPanel.add(new JScrollPane(threadStatsTable));
+		this.notifyWaitPanel.add(tabbedNotifyWaitPane);
 		// this.notifyWaitPanel.add(notifyWaitGraph);
 
-		this.monitorSelection = new JComboBox();
-		this.monitorEntryCount = new JLabel("Entry Count: N/A");
-		this.monitorWaiterCount = new JLabel("Waiter Count: N/A");
-		this.monitorNotifyWaiterCount = new JLabel("Notify Waiter Count: N/A");
-
-		this.locksPanel = new JPanel();
-		this.locksPanel.add(monitorSelection);
-		this.locksPanel.add(monitorEntryCount);
-		this.locksPanel.add(monitorWaiterCount);
-		this.locksPanel.add(monitorNotifyWaiterCount);
+		this.lockTable = new JTable(model.getLockTableModel());
+		
 
 		this.synchronizedPanel = new JPanel(new GridLayout(1, 1));
 		this.synchronizedLogTextArea = new JTextArea();
@@ -276,9 +269,12 @@ public class ProfilerView extends JFrame {
 		JTable timeTable = new JTable(model.getTimeTableModel());
 		timeTable.getTableHeader().setReorderingAllowed(false);
 		timeTable.setAutoCreateRowSorter(true);
-		
+
 		this.timePanel = new JScrollPane(timeTable);
 
+		JSplitPane locksPanel = new JSplitPane();
+		locksPanel.add(new JScrollPane(lockTable));
+		
 		this.tabbedPane = new JTabbedPane();
 		this.tabbedPane.add("Overview", overviewPanel);
 		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
@@ -366,10 +362,6 @@ public class ProfilerView extends JFrame {
 		this.list.addListSelectionListener(jvmSelectionListener);
 	}
 
-	public void addMonitorSelectionListener(ActionListener actionListener) {
-		this.monitorSelection.addActionListener(actionListener);
-	}
-
 	public void addNextEventListener(ActionListener actionListener) {
 		this.nextEvent.addActionListener(actionListener);
 	}
@@ -378,14 +370,6 @@ public class ProfilerView extends JFrame {
 		this.previousEvent.addActionListener(actionListener);
 	}
 
-	public void setMonitorLabels(int entryCount, int waiterCount,
-			int notifyWaiterCount) {
-
-		monitorEntryCount.setText("Entry Count: " + entryCount);
-		monitorWaiterCount.setText("Waiter Count: " + waiterCount);
-		monitorNotifyWaiterCount.setText("Notify Waiter Count: "
-				+ notifyWaiterCount);
-	}
 
 	public void setEnabledPreviousEventButton(boolean isEnabled) {
 		previousEvent.setEnabled(isEnabled);

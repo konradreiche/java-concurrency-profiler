@@ -57,7 +57,12 @@ public class ConnectionHandler implements Runnable {
 				public void run() {
 					
 					while (true) {
-						profilerModel.notifyGUI();
+						
+						if (profilerModel.hasChanged) {
+							profilerModel.hasChanged = false;
+							profilerModel.notifyGUI();
+						}
+						
 						try {
 							Thread.sleep(2000);
 						} catch (InterruptedException e) {

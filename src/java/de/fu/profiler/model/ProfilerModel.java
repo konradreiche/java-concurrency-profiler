@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
@@ -19,6 +20,7 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage.MethodEvent;
+import de.fu.profiler.model.AgentMessageProtos.AgentMessage.StackTrace.StackTraceElement;
 import de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread;
 
 /**
@@ -43,6 +45,8 @@ public class ProfilerModel extends Observable {
 	 * The table model for displaying the statistical data of each thread.
 	 */
 	TableModel threadStatsTableModel;
+	
+	LockTableModel lockTableModel;
 
 	/**
 	 * The data set on which the thread state pie chart is based on.
@@ -76,6 +80,12 @@ public class ProfilerModel extends Observable {
 	 */
 	TimeTableModel timeTableModel;
 
+	NotifyWaitTableModel notifyWaitTableModel;
+
+	volatile boolean hasChanged;
+	
+	StackTracesTree stackTracesTree;
+
 	/**
 	 * At the start of the profiler all available JVMs are read and listed.
 	 * 
@@ -87,6 +97,9 @@ public class ProfilerModel extends Observable {
 		this.IDsToJVMs = new ConcurrentHashMap<Integer, JVM>();
 		this.tableModel = new ThreadTableModel(threadPieDataSet);
 		this.threadStatsTableModel = new ThreadStatsTableModel();
+		this.lockTableModel = new LockTableModel();
+		this.stackTracesTree = new StackTracesTree();
+		this.notifyWaitTableModel = new NotifyWaitTableModel(stackTracesTree);
 		this.timeTableModel = new TimeTableModel();
 		this.messageHistory = new ConcurrentHashMap<Integer, List<AgentMessage>>();
 		initializeThreadStatePieDataset();
@@ -109,8 +122,8 @@ public class ProfilerModel extends Observable {
 	private void initializeJVMs() {
 
 		for (VirtualMachineDescriptor vmd : VirtualMachine.list()) {
-			IDsToJVMs.put(Integer.parseInt(vmd.id()),
-					new JVM(Integer.parseInt(vmd.id()), vmd.displayName()));
+			IDsToJVMs.put(Integer.parseInt(vmd.id()), new JVM(Integer
+					.parseInt(vmd.id()), vmd.displayName()));
 		}
 		notifyGUI();
 	}
@@ -189,6 +202,8 @@ public class ProfilerModel extends Observable {
 			return;
 		}
 
+		hasChanged = true;
+
 		int jvm_id = agentMessage.getJvmId();
 		JVM jvm = null;
 
@@ -202,6 +217,11 @@ public class ProfilerModel extends Observable {
 
 				((ThreadStatsTableModel) threadStatsTableModel)
 						.setCurrentJVM(jvm);
+				((NotifyWaitTableModel) notifyWaitTableModel)
+						.setCurrentJVM(jvm);
+				lockTableModel.setCurrentJVM(jvm);
+				
+
 				setCurrentJVM(jvm);
 
 				timeTableModel.setCurrentJVM(jvm);
@@ -223,61 +243,57 @@ public class ProfilerModel extends Observable {
 		if (agentMessage.hasMethodEvent()) {
 
 			MethodEvent methodEvent = agentMessage.getMethodEvent();
-						
+
 			String methodIdentifier = methodEvent.getClassName() + "."
 					+ methodEvent.getMethodName();
 
 			MethodInfo method = jvm.methods.get(methodIdentifier);
 
 			if (method == null) {
-				method = new MethodInfo(methodEvent.getClassName(),
-						methodEvent.getMethodName(),
-						methodEvent.getClockCycles(),
+				method = new MethodInfo(methodEvent.getClassName(), methodEvent
+						.getMethodName(), methodEvent.getClockCycles(),
 						methodEvent.getTimeTaken(), jvm.getThread(methodEvent
 								.getThread().getId()));
 				jvm.methods.put(methodIdentifier, method);
 			} else {
-				method.wasInvoked(methodEvent.getClockCycles(),
-						methodEvent.getTimeTaken(),
-						jvm.getThread(methodEvent.getThread().getId()));
+				method.wasInvoked(methodEvent.getClockCycles(), methodEvent
+						.getTimeTaken(), jvm.getThread(methodEvent.getThread()
+						.getId()));
 			}
-			
-			if (methodIdentifier.equals("de.fu.profiler.examples.Consumer.run")) {
-				System.out.println(methodEvent.isInitialized());
-			}
-			
+
 			MethodInfo.updateRelativeTime(jvm);
 		}
 
 		if (agentMessage.hasMonitorEvent()) {
+
 
 			de.fu.profiler.model.AgentMessageProtos.AgentMessage.Thread thread = agentMessage
 					.getMonitorEvent().getThread();
 
 			ThreadInfo threadInfo = jvm.getThread(thread.getId());
 
+			
+			
 			if (threadInfo == null) {
 				threadInfo = new ThreadInfo(thread.getId(), thread.getName(),
 						thread.getPriority(), thread.getState().toString(),
-						thread.getIsContextClassLoaderSet(),
-						agentMessage.getTimestamp());
+						thread.getIsContextClassLoaderSet(), agentMessage
+								.getTimestamp());
 				addThreadInfo(jvm_id, threadInfo);
 			}
+			
+			boolean hasThreadStateChaned = false;
+			String oldState = null;
+			String newState = null;
 
-			String stateChangeNotification = null;
 			if (!threadInfo.getState().equals(
 					agentMessage.getMonitorEvent().getThread().getState()
 							.toString())) {
 
-				stateChangeNotification = agentMessage.getTimestamp()
-						+ ": "
-						+ threadInfo.getName()
-						+ " switched from "
-						+ threadInfo.getState()
-						+ " to "
-						+ agentMessage.getMonitorEvent().getThread().getState()
-								.toString();
-
+				oldState = threadInfo.getState();
+				newState = agentMessage.getMonitorEvent().getThread()
+						.getState().toString();
+				hasThreadStateChaned = true;
 			}
 
 			setThreadInfoState(jvm_id, threadInfo, agentMessage
@@ -288,6 +304,29 @@ public class ProfilerModel extends Observable {
 			NotifyWaitLogEntry notifyWaitLogEntry = null;
 			String monitorStatus = null;
 			Monitor monitor = null;
+
+			List<StackTrace> stackTraces = new ArrayList<StackTrace>();
+						
+			for (AgentMessage.StackTrace st : agentMessage.getMonitorEvent()
+					.getStackTracesList()) {
+
+				ThreadInfo t = new ThreadInfo(st.getThread()
+						.getId(), st.getThread().getName(), st.getThread()
+						.getPriority(), st.getThread().getState().toString(),
+						st.getThread().getIsContextClassLoaderSet(),
+						agentMessage.getTimestamp());
+
+				List<java.lang.StackTraceElement> stes = new ArrayList<java.lang.StackTraceElement>();
+				for (StackTraceElement ste : st.getStackTraceList()) {
+
+					stes.add(new java.lang.StackTraceElement(
+							ste.getClassName(), ste.getMethodName(), ste
+									.getFileName(), -1));
+				}
+
+				stackTraces.add(new StackTrace(t, stes));
+			}
+			
 
 			if (agentMessage.getMonitorEvent().hasMonitor()) {
 				monitor = new Monitor(agentMessage.getMonitorEvent()
@@ -308,18 +347,23 @@ public class ProfilerModel extends Observable {
 						+ agentMessage.getMonitorEvent().getClassName() + "."
 						+ agentMessage.getMonitorEvent().getMethodName() + "\n";
 
-				if (stateChangeNotification != null) {
-					monitorStatus += stateChangeNotification + "\n";
+				if (hasThreadStateChaned) {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							oldState, newState,
+							NotifyWaitLogEntry.Type.INVOKED_WAIT, agentMessage
+									.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
+				} else {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							null, null, NotifyWaitLogEntry.Type.INVOKED_WAIT,
+							agentMessage.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
 				}
 
-				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
-						threadInfo.getState(),
-						NotifyWaitLogEntry.Type.INVOKED_WAIT, agentMessage
-								.getMonitorEvent().getMethodName(),
-						agentMessage.getMonitorEvent().getClassName());
-
-				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), monitorStatus, false,
+				setThreadInfoMonitorStatus(jvm_id, threadInfo, agentMessage
+						.getTimestamp(), monitorStatus, false,
 						notifyWaitLogEntry);
 
 				++threadInfo.waitCount;
@@ -329,18 +373,23 @@ public class ProfilerModel extends Observable {
 						+ agentMessage.getMonitorEvent().getClassName() + "."
 						+ agentMessage.getMonitorEvent().getMethodName() + "\n";
 
-				if (stateChangeNotification != null) {
-					monitorStatus += stateChangeNotification + "\n";
+				if (hasThreadStateChaned) {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							oldState, newState,
+							NotifyWaitLogEntry.Type.LEFT_WAIT, agentMessage
+									.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
+				} else {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							null, null, NotifyWaitLogEntry.Type.LEFT_WAIT,
+							agentMessage.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
 				}
 
-				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
-						threadInfo.getState(),
-						NotifyWaitLogEntry.Type.LEFT_WAIT, agentMessage
-								.getMonitorEvent().getMethodName(),
-						agentMessage.getMonitorEvent().getClassName());
-
-				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), monitorStatus, false,
+				setThreadInfoMonitorStatus(jvm_id, threadInfo, agentMessage
+						.getTimestamp(), monitorStatus, false,
 						notifyWaitLogEntry);
 				break;
 			case NOTIFY_ALL:
@@ -349,17 +398,24 @@ public class ProfilerModel extends Observable {
 						+ agentMessage.getMonitorEvent().getClassName() + "."
 						+ agentMessage.getMonitorEvent().getMethodName() + "\n";
 
-				if (stateChangeNotification != null) {
-					monitorStatus += stateChangeNotification + "\n";
+				if (hasThreadStateChaned) {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							oldState, newState,
+							NotifyWaitLogEntry.Type.INVOKED_NOTIFY_ALL,
+							agentMessage.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
+				} else {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							null, null,
+							NotifyWaitLogEntry.Type.INVOKED_NOTIFY_ALL,
+							agentMessage.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
 				}
-				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
-						threadInfo.getState(),
-						NotifyWaitLogEntry.Type.INVOKED_NOTIFY_ALL,
-						agentMessage.getMonitorEvent().getMethodName(),
-						agentMessage.getMonitorEvent().getClassName());
 
-				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), monitorStatus, false,
+				setThreadInfoMonitorStatus(jvm_id, threadInfo, agentMessage
+						.getTimestamp(), monitorStatus, false,
 						notifyWaitLogEntry);
 
 				++threadInfo.notifyAllCount;
@@ -371,17 +427,23 @@ public class ProfilerModel extends Observable {
 						+ agentMessage.getMonitorEvent().getClassName() + "."
 						+ agentMessage.getMonitorEvent().getMethodName() + "\n";
 
-				if (stateChangeNotification != null) {
-					monitorStatus += stateChangeNotification + "\n";
+				if (hasThreadStateChaned) {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							oldState, newState,
+							NotifyWaitLogEntry.Type.INVOKED_NOTIFY,
+							agentMessage.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
+				} else {
+					notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
+							null, null, NotifyWaitLogEntry.Type.INVOKED_NOTIFY,
+							agentMessage.getMonitorEvent().getMethodName(),
+							agentMessage.getMonitorEvent().getClassName(),
+							agentMessage.getSystemTime(), stackTraces);
 				}
-				notifyWaitLogEntry = new NotifyWaitLogEntry(threadInfo,
-						threadInfo.getState(),
-						NotifyWaitLogEntry.Type.INVOKED_NOTIFY, agentMessage
-								.getMonitorEvent().getMethodName(),
-						agentMessage.getMonitorEvent().getClassName());
 
-				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), monitorStatus, false,
+				setThreadInfoMonitorStatus(jvm_id, threadInfo, agentMessage
+						.getTimestamp(), monitorStatus, false,
 						notifyWaitLogEntry);
 				++threadInfo.notifyCount;
 				break;
@@ -411,15 +473,16 @@ public class ProfilerModel extends Observable {
 							+ "\n";
 				}
 
-				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), message, true, null);
+				setThreadInfoMonitorStatus(jvm_id, threadInfo, agentMessage
+						.getTimestamp(), message, true, null);
 
 				threadInfo.requestedResource = monitor;
 				++threadInfo.monitorContendedCount;
 				break;
 			case ENTERED:
-				setThreadInfoMonitorStatus(jvm_id, threadInfo,
-						agentMessage.getTimestamp(), threadInfo.getName()
+				setThreadInfoMonitorStatus(jvm_id, threadInfo, agentMessage
+						.getTimestamp(),
+						threadInfo.getName()
 								+ " acquired a monitor in "
 								+ agentMessage.getMonitorEvent().getClassName()
 								+ "."
@@ -431,7 +494,6 @@ public class ProfilerModel extends Observable {
 				++threadInfo.monitorEnteredCount;
 				break;
 			}
-
 		}
 	}
 
@@ -441,9 +503,9 @@ public class ProfilerModel extends Observable {
 
 		if (threadInfo == null) {
 			threadInfo = new ThreadInfo(thread.getId(), thread.getName(),
-					thread.getPriority(), thread.getState().toString(),
-					thread.getIsContextClassLoaderSet(),
-					agentMessage.getTimestamp());
+					thread.getPriority(), thread.getState().toString(), thread
+							.getIsContextClassLoaderSet(), agentMessage
+							.getTimestamp());
 			addThreadInfo(jvm.getId(), threadInfo);
 		} else {
 
@@ -504,4 +566,21 @@ public class ProfilerModel extends Observable {
 		return timeTableModel;
 	}
 
+	public NotifyWaitTableModel getNotifyWaitTableModel() {
+		return notifyWaitTableModel;
+	}
+
+	public DefaultMutableTreeNode getTreeNode() {
+		return stackTracesTree.root;
+	}
+
+	public StackTracesTree getStackTracesTree() {
+		return stackTracesTree;
+	}
+	
+	public LockTableModel getLockTableModel() {
+		return lockTableModel;
+	}
+	
+	
 }

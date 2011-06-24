@@ -3,9 +3,7 @@ package de.fu.profiler.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import javax.swing.JComboBox;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -14,8 +12,6 @@ import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 
-import de.fu.profiler.model.JVM;
-import de.fu.profiler.model.Monitor;
 import de.fu.profiler.model.ProfilerModel;
 import de.fu.profiler.view.ProfilerView;
 
@@ -29,7 +25,6 @@ public class ProfilerController {
 		this.view = view;
 		this.model = model;
 		this.view.addJVMSelectionListener(new JVMSelectionListener());
-		this.view.addMonitorSelectionListener(new MonitorSelectionListener());
 		this.view.addNextEventListener(new NextEventListener());
 		this.view.addPreviousEventListener(new PreviousEventListener());
 	}
@@ -58,28 +53,6 @@ public class ProfilerController {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}
-		}
-	}
-
-	public class MonitorSelectionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JComboBox monitorSelection = (JComboBox) e.getSource();
-			int index = monitorSelection.getSelectedIndex();
-
-			JVM currentJvm = model.getCurrentJVM();
-			Long id = null;
-			if (index > -1) {
-				id = new ArrayList<Long>(currentJvm.getMonitors().keySet())
-						.get(index);
-			}
-
-			if (currentJvm != null && id != null) {
-				Monitor monitor = currentJvm.getMonitors().get(id);
-				view.setMonitorLabels(monitor.getEntryCount(), monitor
-						.getWaiterCount(), monitor.getNotifyWaiterCount());
 			}
 		}
 	}

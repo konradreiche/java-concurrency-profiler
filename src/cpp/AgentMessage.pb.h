@@ -32,9 +32,12 @@ void protobuf_ShutdownFile_AgentMessage_2eproto();
 
 class AgentMessage;
 class AgentMessage_ThreadEvent;
+class AgentMessage_StackTrace;
+class AgentMessage_StackTrace_StackTraceElement;
 class AgentMessage_MonitorEvent;
 class AgentMessage_MethodEvent;
 class AgentMessage_Thread;
+class AgentMessage_StackTraceElement;
 class AgentMessage_Monitor;
 
 enum AgentMessage_ThreadEvent_EventType {
@@ -226,6 +229,242 @@ class AgentMessage_ThreadEvent : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class AgentMessage_StackTrace_StackTraceElement : public ::google::protobuf::Message {
+ public:
+  AgentMessage_StackTrace_StackTraceElement();
+  virtual ~AgentMessage_StackTrace_StackTraceElement();
+  
+  AgentMessage_StackTrace_StackTraceElement(const AgentMessage_StackTrace_StackTraceElement& from);
+  
+  inline AgentMessage_StackTrace_StackTraceElement& operator=(const AgentMessage_StackTrace_StackTraceElement& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentMessage_StackTrace_StackTraceElement& default_instance();
+  
+  void Swap(AgentMessage_StackTrace_StackTraceElement* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AgentMessage_StackTrace_StackTraceElement* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentMessage_StackTrace_StackTraceElement& from);
+  void MergeFrom(const AgentMessage_StackTrace_StackTraceElement& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string className = 1;
+  inline bool has_classname() const;
+  inline void clear_classname();
+  static const int kClassNameFieldNumber = 1;
+  inline const ::std::string& classname() const;
+  inline void set_classname(const ::std::string& value);
+  inline void set_classname(const char* value);
+  inline void set_classname(const char* value, size_t size);
+  inline ::std::string* mutable_classname();
+  inline ::std::string* release_classname();
+  
+  // required string methodName = 2;
+  inline bool has_methodname() const;
+  inline void clear_methodname();
+  static const int kMethodNameFieldNumber = 2;
+  inline const ::std::string& methodname() const;
+  inline void set_methodname(const ::std::string& value);
+  inline void set_methodname(const char* value);
+  inline void set_methodname(const char* value, size_t size);
+  inline ::std::string* mutable_methodname();
+  inline ::std::string* release_methodname();
+  
+  // required string methodSignature = 3;
+  inline bool has_methodsignature() const;
+  inline void clear_methodsignature();
+  static const int kMethodSignatureFieldNumber = 3;
+  inline const ::std::string& methodsignature() const;
+  inline void set_methodsignature(const ::std::string& value);
+  inline void set_methodsignature(const char* value);
+  inline void set_methodsignature(const char* value, size_t size);
+  inline ::std::string* mutable_methodsignature();
+  inline ::std::string* release_methodsignature();
+  
+  // required string fileName = 4;
+  inline bool has_filename() const;
+  inline void clear_filename();
+  static const int kFileNameFieldNumber = 4;
+  inline const ::std::string& filename() const;
+  inline void set_filename(const ::std::string& value);
+  inline void set_filename(const char* value);
+  inline void set_filename(const char* value, size_t size);
+  inline ::std::string* mutable_filename();
+  inline ::std::string* release_filename();
+  
+  // required bool isNativeMethod = 5;
+  inline bool has_isnativemethod() const;
+  inline void clear_isnativemethod();
+  static const int kIsNativeMethodFieldNumber = 5;
+  inline bool isnativemethod() const;
+  inline void set_isnativemethod(bool value);
+  
+  // @@protoc_insertion_point(class_scope:AgentMessage.StackTrace.StackTraceElement)
+ private:
+  inline void set_has_classname();
+  inline void clear_has_classname();
+  inline void set_has_methodname();
+  inline void clear_has_methodname();
+  inline void set_has_methodsignature();
+  inline void clear_has_methodsignature();
+  inline void set_has_filename();
+  inline void clear_has_filename();
+  inline void set_has_isnativemethod();
+  inline void clear_has_isnativemethod();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* classname_;
+  ::std::string* methodname_;
+  ::std::string* methodsignature_;
+  ::std::string* filename_;
+  bool isnativemethod_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_AgentMessage_2eproto();
+  friend void protobuf_AssignDesc_AgentMessage_2eproto();
+  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AgentMessage_StackTrace_StackTraceElement* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AgentMessage_StackTrace : public ::google::protobuf::Message {
+ public:
+  AgentMessage_StackTrace();
+  virtual ~AgentMessage_StackTrace();
+  
+  AgentMessage_StackTrace(const AgentMessage_StackTrace& from);
+  
+  inline AgentMessage_StackTrace& operator=(const AgentMessage_StackTrace& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentMessage_StackTrace& default_instance();
+  
+  void Swap(AgentMessage_StackTrace* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AgentMessage_StackTrace* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentMessage_StackTrace& from);
+  void MergeFrom(const AgentMessage_StackTrace& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef AgentMessage_StackTrace_StackTraceElement StackTraceElement;
+  
+  // accessors -------------------------------------------------------
+  
+  // required .AgentMessage.Thread thread = 1;
+  inline bool has_thread() const;
+  inline void clear_thread();
+  static const int kThreadFieldNumber = 1;
+  inline const ::AgentMessage_Thread& thread() const;
+  inline ::AgentMessage_Thread* mutable_thread();
+  inline ::AgentMessage_Thread* release_thread();
+  
+  // repeated .AgentMessage.StackTrace.StackTraceElement stackTrace = 2;
+  inline int stacktrace_size() const;
+  inline void clear_stacktrace();
+  static const int kStackTraceFieldNumber = 2;
+  inline const ::AgentMessage_StackTrace_StackTraceElement& stacktrace(int index) const;
+  inline ::AgentMessage_StackTrace_StackTraceElement* mutable_stacktrace(int index);
+  inline ::AgentMessage_StackTrace_StackTraceElement* add_stacktrace();
+  inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace_StackTraceElement >&
+      stacktrace() const;
+  inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace_StackTraceElement >*
+      mutable_stacktrace();
+  
+  // @@protoc_insertion_point(class_scope:AgentMessage.StackTrace)
+ private:
+  inline void set_has_thread();
+  inline void clear_has_thread();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::AgentMessage_Thread* thread_;
+  ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace_StackTraceElement > stacktrace_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_AgentMessage_2eproto();
+  friend void protobuf_AssignDesc_AgentMessage_2eproto();
+  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AgentMessage_StackTrace* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
  public:
   AgentMessage_MonitorEvent();
@@ -354,6 +593,18 @@ class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
   inline ::std::string* mutable_methodname();
   inline ::std::string* release_methodname();
   
+  // repeated .AgentMessage.StackTrace stackTraces = 6;
+  inline int stacktraces_size() const;
+  inline void clear_stacktraces();
+  static const int kStackTracesFieldNumber = 6;
+  inline const ::AgentMessage_StackTrace& stacktraces(int index) const;
+  inline ::AgentMessage_StackTrace* mutable_stacktraces(int index);
+  inline ::AgentMessage_StackTrace* add_stacktraces();
+  inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace >&
+      stacktraces() const;
+  inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace >*
+      mutable_stacktraces();
+  
   // @@protoc_insertion_point(class_scope:AgentMessage.MonitorEvent)
  private:
   inline void set_has_thread();
@@ -373,10 +624,11 @@ class AgentMessage_MonitorEvent : public ::google::protobuf::Message {
   ::AgentMessage_Monitor* monitor_;
   ::std::string* classname_;
   ::std::string* methodname_;
+  ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace > stacktraces_;
   int eventtype_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -682,6 +934,106 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class AgentMessage_StackTraceElement : public ::google::protobuf::Message {
+ public:
+  AgentMessage_StackTraceElement();
+  virtual ~AgentMessage_StackTraceElement();
+  
+  AgentMessage_StackTraceElement(const AgentMessage_StackTraceElement& from);
+  
+  inline AgentMessage_StackTraceElement& operator=(const AgentMessage_StackTraceElement& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AgentMessage_StackTraceElement& default_instance();
+  
+  void Swap(AgentMessage_StackTraceElement* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AgentMessage_StackTraceElement* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AgentMessage_StackTraceElement& from);
+  void MergeFrom(const AgentMessage_StackTraceElement& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string className = 1;
+  inline bool has_classname() const;
+  inline void clear_classname();
+  static const int kClassNameFieldNumber = 1;
+  inline const ::std::string& classname() const;
+  inline void set_classname(const ::std::string& value);
+  inline void set_classname(const char* value);
+  inline void set_classname(const char* value, size_t size);
+  inline ::std::string* mutable_classname();
+  inline ::std::string* release_classname();
+  
+  // required string method = 2;
+  inline bool has_method() const;
+  inline void clear_method();
+  static const int kMethodFieldNumber = 2;
+  inline const ::std::string& method() const;
+  inline void set_method(const ::std::string& value);
+  inline void set_method(const char* value);
+  inline void set_method(const char* value, size_t size);
+  inline ::std::string* mutable_method();
+  inline ::std::string* release_method();
+  
+  // @@protoc_insertion_point(class_scope:AgentMessage.StackTraceElement)
+ private:
+  inline void set_has_classname();
+  inline void clear_has_classname();
+  inline void set_has_method();
+  inline void clear_has_method();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* classname_;
+  ::std::string* method_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_AgentMessage_2eproto();
+  friend void protobuf_AssignDesc_AgentMessage_2eproto();
+  friend void protobuf_ShutdownFile_AgentMessage_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AgentMessage_StackTraceElement* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class AgentMessage_Monitor : public ::google::protobuf::Message {
  public:
   AgentMessage_Monitor();
@@ -771,6 +1123,30 @@ class AgentMessage_Monitor : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 notifywaitercount() const;
   inline void set_notifywaitercount(::google::protobuf::int32 value);
   
+  // repeated .AgentMessage.Thread waiterThreads = 6;
+  inline int waiterthreads_size() const;
+  inline void clear_waiterthreads();
+  static const int kWaiterThreadsFieldNumber = 6;
+  inline const ::AgentMessage_Thread& waiterthreads(int index) const;
+  inline ::AgentMessage_Thread* mutable_waiterthreads(int index);
+  inline ::AgentMessage_Thread* add_waiterthreads();
+  inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >&
+      waiterthreads() const;
+  inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >*
+      mutable_waiterthreads();
+  
+  // repeated .AgentMessage.Thread notifyWaiterThreads = 7;
+  inline int notifywaiterthreads_size() const;
+  inline void clear_notifywaiterthreads();
+  static const int kNotifyWaiterThreadsFieldNumber = 7;
+  inline const ::AgentMessage_Thread& notifywaiterthreads(int index) const;
+  inline ::AgentMessage_Thread* mutable_notifywaiterthreads(int index);
+  inline ::AgentMessage_Thread* add_notifywaiterthreads();
+  inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >&
+      notifywaiterthreads() const;
+  inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >*
+      mutable_notifywaiterthreads();
+  
   // @@protoc_insertion_point(class_scope:AgentMessage.Monitor)
  private:
   inline void set_has_id();
@@ -791,9 +1167,11 @@ class AgentMessage_Monitor : public ::google::protobuf::Message {
   ::google::protobuf::int32 entrycount_;
   ::google::protobuf::int32 waitercount_;
   ::google::protobuf::int32 notifywaitercount_;
+  ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread > waiterthreads_;
+  ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread > notifywaiterthreads_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -857,9 +1235,11 @@ class AgentMessage : public ::google::protobuf::Message {
   // nested types ----------------------------------------------------
   
   typedef AgentMessage_ThreadEvent ThreadEvent;
+  typedef AgentMessage_StackTrace StackTrace;
   typedef AgentMessage_MonitorEvent MonitorEvent;
   typedef AgentMessage_MethodEvent MethodEvent;
   typedef AgentMessage_Thread Thread;
+  typedef AgentMessage_StackTraceElement StackTraceElement;
   typedef AgentMessage_Monitor Monitor;
   
   // accessors -------------------------------------------------------
@@ -871,33 +1251,40 @@ class AgentMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::int64 timestamp() const;
   inline void set_timestamp(::google::protobuf::int64 value);
   
-  // required int32 jvm_id = 2;
+  // required int64 systemTime = 2;
+  inline bool has_systemtime() const;
+  inline void clear_systemtime();
+  static const int kSystemTimeFieldNumber = 2;
+  inline ::google::protobuf::int64 systemtime() const;
+  inline void set_systemtime(::google::protobuf::int64 value);
+  
+  // required int32 jvm_id = 3;
   inline bool has_jvm_id() const;
   inline void clear_jvm_id();
-  static const int kJvmIdFieldNumber = 2;
+  static const int kJvmIdFieldNumber = 3;
   inline ::google::protobuf::int32 jvm_id() const;
   inline void set_jvm_id(::google::protobuf::int32 value);
   
-  // optional .AgentMessage.ThreadEvent threadEvent = 3;
+  // optional .AgentMessage.ThreadEvent threadEvent = 4;
   inline bool has_threadevent() const;
   inline void clear_threadevent();
-  static const int kThreadEventFieldNumber = 3;
+  static const int kThreadEventFieldNumber = 4;
   inline const ::AgentMessage_ThreadEvent& threadevent() const;
   inline ::AgentMessage_ThreadEvent* mutable_threadevent();
   inline ::AgentMessage_ThreadEvent* release_threadevent();
   
-  // optional .AgentMessage.MonitorEvent monitorEvent = 4;
+  // optional .AgentMessage.MonitorEvent monitorEvent = 5;
   inline bool has_monitorevent() const;
   inline void clear_monitorevent();
-  static const int kMonitorEventFieldNumber = 4;
+  static const int kMonitorEventFieldNumber = 5;
   inline const ::AgentMessage_MonitorEvent& monitorevent() const;
   inline ::AgentMessage_MonitorEvent* mutable_monitorevent();
   inline ::AgentMessage_MonitorEvent* release_monitorevent();
   
-  // optional .AgentMessage.MethodEvent methodEvent = 5;
+  // optional .AgentMessage.MethodEvent methodEvent = 6;
   inline bool has_methodevent() const;
   inline void clear_methodevent();
-  static const int kMethodEventFieldNumber = 5;
+  static const int kMethodEventFieldNumber = 6;
   inline const ::AgentMessage_MethodEvent& methodevent() const;
   inline ::AgentMessage_MethodEvent* mutable_methodevent();
   inline ::AgentMessage_MethodEvent* release_methodevent();
@@ -906,6 +1293,8 @@ class AgentMessage : public ::google::protobuf::Message {
  private:
   inline void set_has_timestamp();
   inline void clear_has_timestamp();
+  inline void set_has_systemtime();
+  inline void clear_has_systemtime();
   inline void set_has_jvm_id();
   inline void clear_has_jvm_id();
   inline void set_has_threadevent();
@@ -918,13 +1307,14 @@ class AgentMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::int64 timestamp_;
+  ::google::protobuf::int64 systemtime_;
   ::AgentMessage_ThreadEvent* threadevent_;
   ::AgentMessage_MonitorEvent* monitorevent_;
   ::AgentMessage_MethodEvent* methodevent_;
   ::google::protobuf::int32 jvm_id_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -986,6 +1376,322 @@ inline void AgentMessage_ThreadEvent::set_eventtype(::AgentMessage_ThreadEvent_E
   GOOGLE_DCHECK(::AgentMessage_ThreadEvent_EventType_IsValid(value));
   set_has_eventtype();
   eventtype_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// AgentMessage_StackTrace_StackTraceElement
+
+// required string className = 1;
+inline bool AgentMessage_StackTrace_StackTraceElement::has_classname() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_has_classname() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_has_classname() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_classname() {
+  if (classname_ != &::google::protobuf::internal::kEmptyString) {
+    classname_->clear();
+  }
+  clear_has_classname();
+}
+inline const ::std::string& AgentMessage_StackTrace_StackTraceElement::classname() const {
+  return *classname_;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_classname(const ::std::string& value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_classname(const char* value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_classname(const char* value, size_t size) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::mutable_classname() {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  return classname_;
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::release_classname() {
+  clear_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = classname_;
+    classname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string methodName = 2;
+inline bool AgentMessage_StackTrace_StackTraceElement::has_methodname() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_has_methodname() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_has_methodname() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_methodname() {
+  if (methodname_ != &::google::protobuf::internal::kEmptyString) {
+    methodname_->clear();
+  }
+  clear_has_methodname();
+}
+inline const ::std::string& AgentMessage_StackTrace_StackTraceElement::methodname() const {
+  return *methodname_;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_methodname(const ::std::string& value) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_methodname(const char* value) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_methodname(const char* value, size_t size) {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  methodname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::mutable_methodname() {
+  set_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    methodname_ = new ::std::string;
+  }
+  return methodname_;
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::release_methodname() {
+  clear_has_methodname();
+  if (methodname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = methodname_;
+    methodname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string methodSignature = 3;
+inline bool AgentMessage_StackTrace_StackTraceElement::has_methodsignature() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_has_methodsignature() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_has_methodsignature() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_methodsignature() {
+  if (methodsignature_ != &::google::protobuf::internal::kEmptyString) {
+    methodsignature_->clear();
+  }
+  clear_has_methodsignature();
+}
+inline const ::std::string& AgentMessage_StackTrace_StackTraceElement::methodsignature() const {
+  return *methodsignature_;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_methodsignature(const ::std::string& value) {
+  set_has_methodsignature();
+  if (methodsignature_ == &::google::protobuf::internal::kEmptyString) {
+    methodsignature_ = new ::std::string;
+  }
+  methodsignature_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_methodsignature(const char* value) {
+  set_has_methodsignature();
+  if (methodsignature_ == &::google::protobuf::internal::kEmptyString) {
+    methodsignature_ = new ::std::string;
+  }
+  methodsignature_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_methodsignature(const char* value, size_t size) {
+  set_has_methodsignature();
+  if (methodsignature_ == &::google::protobuf::internal::kEmptyString) {
+    methodsignature_ = new ::std::string;
+  }
+  methodsignature_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::mutable_methodsignature() {
+  set_has_methodsignature();
+  if (methodsignature_ == &::google::protobuf::internal::kEmptyString) {
+    methodsignature_ = new ::std::string;
+  }
+  return methodsignature_;
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::release_methodsignature() {
+  clear_has_methodsignature();
+  if (methodsignature_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = methodsignature_;
+    methodsignature_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string fileName = 4;
+inline bool AgentMessage_StackTrace_StackTraceElement::has_filename() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_has_filename() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_has_filename() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_filename() {
+  if (filename_ != &::google::protobuf::internal::kEmptyString) {
+    filename_->clear();
+  }
+  clear_has_filename();
+}
+inline const ::std::string& AgentMessage_StackTrace_StackTraceElement::filename() const {
+  return *filename_;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_filename(const ::std::string& value) {
+  set_has_filename();
+  if (filename_ == &::google::protobuf::internal::kEmptyString) {
+    filename_ = new ::std::string;
+  }
+  filename_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_filename(const char* value) {
+  set_has_filename();
+  if (filename_ == &::google::protobuf::internal::kEmptyString) {
+    filename_ = new ::std::string;
+  }
+  filename_->assign(value);
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_filename(const char* value, size_t size) {
+  set_has_filename();
+  if (filename_ == &::google::protobuf::internal::kEmptyString) {
+    filename_ = new ::std::string;
+  }
+  filename_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::mutable_filename() {
+  set_has_filename();
+  if (filename_ == &::google::protobuf::internal::kEmptyString) {
+    filename_ = new ::std::string;
+  }
+  return filename_;
+}
+inline ::std::string* AgentMessage_StackTrace_StackTraceElement::release_filename() {
+  clear_has_filename();
+  if (filename_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = filename_;
+    filename_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required bool isNativeMethod = 5;
+inline bool AgentMessage_StackTrace_StackTraceElement::has_isnativemethod() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_has_isnativemethod() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_has_isnativemethod() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::clear_isnativemethod() {
+  isnativemethod_ = false;
+  clear_has_isnativemethod();
+}
+inline bool AgentMessage_StackTrace_StackTraceElement::isnativemethod() const {
+  return isnativemethod_;
+}
+inline void AgentMessage_StackTrace_StackTraceElement::set_isnativemethod(bool value) {
+  set_has_isnativemethod();
+  isnativemethod_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// AgentMessage_StackTrace
+
+// required .AgentMessage.Thread thread = 1;
+inline bool AgentMessage_StackTrace::has_thread() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AgentMessage_StackTrace::set_has_thread() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AgentMessage_StackTrace::clear_has_thread() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AgentMessage_StackTrace::clear_thread() {
+  if (thread_ != NULL) thread_->::AgentMessage_Thread::Clear();
+  clear_has_thread();
+}
+inline const ::AgentMessage_Thread& AgentMessage_StackTrace::thread() const {
+  return thread_ != NULL ? *thread_ : *default_instance_->thread_;
+}
+inline ::AgentMessage_Thread* AgentMessage_StackTrace::mutable_thread() {
+  set_has_thread();
+  if (thread_ == NULL) thread_ = new ::AgentMessage_Thread;
+  return thread_;
+}
+inline ::AgentMessage_Thread* AgentMessage_StackTrace::release_thread() {
+  clear_has_thread();
+  ::AgentMessage_Thread* temp = thread_;
+  thread_ = NULL;
+  return temp;
+}
+
+// repeated .AgentMessage.StackTrace.StackTraceElement stackTrace = 2;
+inline int AgentMessage_StackTrace::stacktrace_size() const {
+  return stacktrace_.size();
+}
+inline void AgentMessage_StackTrace::clear_stacktrace() {
+  stacktrace_.Clear();
+}
+inline const ::AgentMessage_StackTrace_StackTraceElement& AgentMessage_StackTrace::stacktrace(int index) const {
+  return stacktrace_.Get(index);
+}
+inline ::AgentMessage_StackTrace_StackTraceElement* AgentMessage_StackTrace::mutable_stacktrace(int index) {
+  return stacktrace_.Mutable(index);
+}
+inline ::AgentMessage_StackTrace_StackTraceElement* AgentMessage_StackTrace::add_stacktrace() {
+  return stacktrace_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace_StackTraceElement >&
+AgentMessage_StackTrace::stacktrace() const {
+  return stacktrace_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace_StackTraceElement >*
+AgentMessage_StackTrace::mutable_stacktrace() {
+  return &stacktrace_;
 }
 
 // -------------------------------------------------------------------
@@ -1187,6 +1893,31 @@ inline ::std::string* AgentMessage_MonitorEvent::release_methodname() {
     methodname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
+}
+
+// repeated .AgentMessage.StackTrace stackTraces = 6;
+inline int AgentMessage_MonitorEvent::stacktraces_size() const {
+  return stacktraces_.size();
+}
+inline void AgentMessage_MonitorEvent::clear_stacktraces() {
+  stacktraces_.Clear();
+}
+inline const ::AgentMessage_StackTrace& AgentMessage_MonitorEvent::stacktraces(int index) const {
+  return stacktraces_.Get(index);
+}
+inline ::AgentMessage_StackTrace* AgentMessage_MonitorEvent::mutable_stacktraces(int index) {
+  return stacktraces_.Mutable(index);
+}
+inline ::AgentMessage_StackTrace* AgentMessage_MonitorEvent::add_stacktraces() {
+  return stacktraces_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace >&
+AgentMessage_MonitorEvent::stacktraces() const {
+  return stacktraces_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_StackTrace >*
+AgentMessage_MonitorEvent::mutable_stacktraces() {
+  return &stacktraces_;
 }
 
 // -------------------------------------------------------------------
@@ -1557,6 +2288,126 @@ inline void AgentMessage_Thread::set_cputime(::google::protobuf::int64 value) {
 
 // -------------------------------------------------------------------
 
+// AgentMessage_StackTraceElement
+
+// required string className = 1;
+inline bool AgentMessage_StackTraceElement::has_classname() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AgentMessage_StackTraceElement::set_has_classname() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AgentMessage_StackTraceElement::clear_has_classname() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AgentMessage_StackTraceElement::clear_classname() {
+  if (classname_ != &::google::protobuf::internal::kEmptyString) {
+    classname_->clear();
+  }
+  clear_has_classname();
+}
+inline const ::std::string& AgentMessage_StackTraceElement::classname() const {
+  return *classname_;
+}
+inline void AgentMessage_StackTraceElement::set_classname(const ::std::string& value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(value);
+}
+inline void AgentMessage_StackTraceElement::set_classname(const char* value) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(value);
+}
+inline void AgentMessage_StackTraceElement::set_classname(const char* value, size_t size) {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  classname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_StackTraceElement::mutable_classname() {
+  set_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    classname_ = new ::std::string;
+  }
+  return classname_;
+}
+inline ::std::string* AgentMessage_StackTraceElement::release_classname() {
+  clear_has_classname();
+  if (classname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = classname_;
+    classname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string method = 2;
+inline bool AgentMessage_StackTraceElement::has_method() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AgentMessage_StackTraceElement::set_has_method() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AgentMessage_StackTraceElement::clear_has_method() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage_StackTraceElement::clear_method() {
+  if (method_ != &::google::protobuf::internal::kEmptyString) {
+    method_->clear();
+  }
+  clear_has_method();
+}
+inline const ::std::string& AgentMessage_StackTraceElement::method() const {
+  return *method_;
+}
+inline void AgentMessage_StackTraceElement::set_method(const ::std::string& value) {
+  set_has_method();
+  if (method_ == &::google::protobuf::internal::kEmptyString) {
+    method_ = new ::std::string;
+  }
+  method_->assign(value);
+}
+inline void AgentMessage_StackTraceElement::set_method(const char* value) {
+  set_has_method();
+  if (method_ == &::google::protobuf::internal::kEmptyString) {
+    method_ = new ::std::string;
+  }
+  method_->assign(value);
+}
+inline void AgentMessage_StackTraceElement::set_method(const char* value, size_t size) {
+  set_has_method();
+  if (method_ == &::google::protobuf::internal::kEmptyString) {
+    method_ = new ::std::string;
+  }
+  method_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AgentMessage_StackTraceElement::mutable_method() {
+  set_has_method();
+  if (method_ == &::google::protobuf::internal::kEmptyString) {
+    method_ = new ::std::string;
+  }
+  return method_;
+}
+inline ::std::string* AgentMessage_StackTraceElement::release_method() {
+  clear_has_method();
+  if (method_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = method_;
+    method_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
 // AgentMessage_Monitor
 
 // required int64 id = 1;
@@ -1669,6 +2520,56 @@ inline void AgentMessage_Monitor::set_notifywaitercount(::google::protobuf::int3
   notifywaitercount_ = value;
 }
 
+// repeated .AgentMessage.Thread waiterThreads = 6;
+inline int AgentMessage_Monitor::waiterthreads_size() const {
+  return waiterthreads_.size();
+}
+inline void AgentMessage_Monitor::clear_waiterthreads() {
+  waiterthreads_.Clear();
+}
+inline const ::AgentMessage_Thread& AgentMessage_Monitor::waiterthreads(int index) const {
+  return waiterthreads_.Get(index);
+}
+inline ::AgentMessage_Thread* AgentMessage_Monitor::mutable_waiterthreads(int index) {
+  return waiterthreads_.Mutable(index);
+}
+inline ::AgentMessage_Thread* AgentMessage_Monitor::add_waiterthreads() {
+  return waiterthreads_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >&
+AgentMessage_Monitor::waiterthreads() const {
+  return waiterthreads_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >*
+AgentMessage_Monitor::mutable_waiterthreads() {
+  return &waiterthreads_;
+}
+
+// repeated .AgentMessage.Thread notifyWaiterThreads = 7;
+inline int AgentMessage_Monitor::notifywaiterthreads_size() const {
+  return notifywaiterthreads_.size();
+}
+inline void AgentMessage_Monitor::clear_notifywaiterthreads() {
+  notifywaiterthreads_.Clear();
+}
+inline const ::AgentMessage_Thread& AgentMessage_Monitor::notifywaiterthreads(int index) const {
+  return notifywaiterthreads_.Get(index);
+}
+inline ::AgentMessage_Thread* AgentMessage_Monitor::mutable_notifywaiterthreads(int index) {
+  return notifywaiterthreads_.Mutable(index);
+}
+inline ::AgentMessage_Thread* AgentMessage_Monitor::add_notifywaiterthreads() {
+  return notifywaiterthreads_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >&
+AgentMessage_Monitor::notifywaiterthreads() const {
+  return notifywaiterthreads_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::AgentMessage_Thread >*
+AgentMessage_Monitor::mutable_notifywaiterthreads() {
+  return &notifywaiterthreads_;
+}
+
 // -------------------------------------------------------------------
 
 // AgentMessage
@@ -1695,15 +2596,37 @@ inline void AgentMessage::set_timestamp(::google::protobuf::int64 value) {
   timestamp_ = value;
 }
 
-// required int32 jvm_id = 2;
-inline bool AgentMessage::has_jvm_id() const {
+// required int64 systemTime = 2;
+inline bool AgentMessage::has_systemtime() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void AgentMessage::set_has_jvm_id() {
+inline void AgentMessage::set_has_systemtime() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void AgentMessage::clear_has_jvm_id() {
+inline void AgentMessage::clear_has_systemtime() {
   _has_bits_[0] &= ~0x00000002u;
+}
+inline void AgentMessage::clear_systemtime() {
+  systemtime_ = GOOGLE_LONGLONG(0);
+  clear_has_systemtime();
+}
+inline ::google::protobuf::int64 AgentMessage::systemtime() const {
+  return systemtime_;
+}
+inline void AgentMessage::set_systemtime(::google::protobuf::int64 value) {
+  set_has_systemtime();
+  systemtime_ = value;
+}
+
+// required int32 jvm_id = 3;
+inline bool AgentMessage::has_jvm_id() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void AgentMessage::set_has_jvm_id() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void AgentMessage::clear_has_jvm_id() {
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void AgentMessage::clear_jvm_id() {
   jvm_id_ = 0;
@@ -1717,15 +2640,15 @@ inline void AgentMessage::set_jvm_id(::google::protobuf::int32 value) {
   jvm_id_ = value;
 }
 
-// optional .AgentMessage.ThreadEvent threadEvent = 3;
+// optional .AgentMessage.ThreadEvent threadEvent = 4;
 inline bool AgentMessage::has_threadevent() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void AgentMessage::set_has_threadevent() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void AgentMessage::clear_has_threadevent() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void AgentMessage::clear_threadevent() {
   if (threadevent_ != NULL) threadevent_->::AgentMessage_ThreadEvent::Clear();
@@ -1746,15 +2669,15 @@ inline ::AgentMessage_ThreadEvent* AgentMessage::release_threadevent() {
   return temp;
 }
 
-// optional .AgentMessage.MonitorEvent monitorEvent = 4;
+// optional .AgentMessage.MonitorEvent monitorEvent = 5;
 inline bool AgentMessage::has_monitorevent() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void AgentMessage::set_has_monitorevent() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void AgentMessage::clear_has_monitorevent() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void AgentMessage::clear_monitorevent() {
   if (monitorevent_ != NULL) monitorevent_->::AgentMessage_MonitorEvent::Clear();
@@ -1775,15 +2698,15 @@ inline ::AgentMessage_MonitorEvent* AgentMessage::release_monitorevent() {
   return temp;
 }
 
-// optional .AgentMessage.MethodEvent methodEvent = 5;
+// optional .AgentMessage.MethodEvent methodEvent = 6;
 inline bool AgentMessage::has_methodevent() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void AgentMessage::set_has_methodevent() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void AgentMessage::clear_has_methodevent() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void AgentMessage::clear_methodevent() {
   if (methodevent_ != NULL) methodevent_->::AgentMessage_MethodEvent::Clear();
