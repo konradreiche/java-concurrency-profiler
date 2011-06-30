@@ -44,11 +44,11 @@ public class Reindeer extends Thread {
 
 	public synchronized void harness() {
 		santa_is_harnessing = true;
-		notifyAll();
+		notify();
 	}
 
 	public synchronized void unHarness() {
 		santa_is_harnessing = false;
-		notifyAll();
+		notify();
 	}
 }

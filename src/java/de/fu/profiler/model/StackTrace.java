@@ -23,7 +23,7 @@ public class StackTrace {
 		for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.StackTrace.StackTraceElement ste : st
 				.getStackTraceList()) {
 			
-			stackTrace.add(new StackTraceElement(ste.getClassName(), ste
+			this.stackTrace.add(new StackTraceElement(ste.getClassName(), ste
 					.getMethodName(), ste.getFileName(), -1));
 		}
 		

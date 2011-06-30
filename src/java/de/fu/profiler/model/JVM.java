@@ -44,7 +44,7 @@ public class JVM {
 	 * A list of events where its timestamp is mapped to a certain synchronized
 	 * log entry.
 	 */
-	final Map<Long, String> synchronizedLog;
+	final Map<Long, NotifyWaitLogEntry> synchronizedLog;
 
 	/**
 	 * A list of monitors mapped by their ids.
@@ -71,7 +71,7 @@ public class JVM {
 		this.threads = new CopyOnWriteArraySet<ThreadInfo>();
 		this.notifyWaitTextualLog = new ConcurrentHashMap<Long, String>();
 		this.notifyWaitLog = new ConcurrentHashMap<Long, NotifyWaitLogEntry>();
-		this.synchronizedLog = new ConcurrentHashMap<Long, String>();
+		this.synchronizedLog = new ConcurrentHashMap<Long, NotifyWaitLogEntry>();
 		this.monitors = new ConcurrentHashMap<Long, Monitor>();
 		this.methods = new ConcurrentHashMap<String, MethodInfo>();
 	}
@@ -138,7 +138,7 @@ public class JVM {
 		return monitors;
 	}
 
-	public Map<Long, String> getSynchronizedLog() {
+	public Map<Long, NotifyWaitLogEntry> getSynchronizedLog() {
 		return synchronizedLog;
 	}
 

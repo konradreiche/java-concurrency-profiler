@@ -1,20 +1,14 @@
 package de.fu.profiler.view;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
-import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
-import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ThreadInfo;
 
 /**
@@ -41,30 +35,7 @@ public class ProfilerObserver implements Observer {
 			@Override
 			public void run() {
 
-				((DefaultListModel) view.list.getModel()).clear();
-				for (JVM jvm : view.model.getIDsToJVMs().values()) {
-					((DefaultListModel) view.list.getModel()).addElement("pid "
-							+ jvm.getId());
-				}
-
 				if (view.model.getCurrentJVM() != null) {
-
-					view.synchronizedLogTextArea.setText((null));
-					if (view.model.getCurrentJVM() != null) {
-
-						SortedSet<Long> sortedTimestamp = new TreeSet<Long>(view.model
-								.getCurrentJVM().getSynchronizedLog().keySet());
-
-						for (Long timestamp : sortedTimestamp) {
-							view.synchronizedLogTextArea.append(timestamp
-									+ ": "
-									+ view.model.getCurrentJVM()
-											.getSynchronizedLog()
-											.get(timestamp));
-							view.synchronizedLogTextArea.repaint();
-						}
-
-					}
 
 					int newCounter = 0;
 					int terminatedCounter = 0;
@@ -125,40 +96,11 @@ public class ProfilerObserver implements Observer {
 					((AbstractTableModel) view.model.getLockTableModel())
 					.fireTableDataChanged();
 					
-					view.stackTraces.repaint();
+					((AbstractTableModel) view.model.getSynchronizedTableModel())
+					.fireTableDataChanged();
+					
+					view.notifyWaitPanel.stackTraces.repaint();				
 
-					int jvmId = view.model.getCurrentJVM().getId();
-					List<AgentMessage> eventHistory = view.model
-							.getMessageHistory().get(jvmId);
-					AgentMessage currentEvent = view.model.getCurrentEvent();
-
-					view.previousEvent.setEnabled(false);
-					view.nextEvent.setEnabled(false);
-					if (eventHistory.size() > 1
-							&& !currentEvent.equals(eventHistory.get(0))) {
-						view.previousEvent.setEnabled(true);
-					}
-
-					if (eventHistory.size() > 1
-							&& !currentEvent.equals(eventHistory
-									.get(eventHistory.size() - 1))) {
-						view.nextEvent.setEnabled(true);
-					}
-
-					String eventType = new String();
-					if (currentEvent.hasThreadEvent()) {
-						eventType = "Thread Event";
-					} else if (currentEvent.hasMonitorEvent()) {
-						eventType = "Monitor Event";
-					} else {
-						eventType = "N/A";
-					}
-
-					view.eventLabel.setText("Event #"
-							+ eventHistory.indexOf(currentEvent) + " ("
-							+ eventType + ")");
-
-					view.graphBuilder.createNotifyWaitGraph(view.model.getCurrentJVM());
 					view.graphBuilder.createWaitForGraph(view.model.getCurrentJVM());
 				}
 			}

@@ -11,8 +11,8 @@ public class Test {
 	private static final int NR_WRITER_THREADS = 1;
 
 	public static void main(String[] args) throws InterruptedException {
-//		performTest("ReadWriteMap: ", new ReadWriteMap(createMap()));		
-		performTest("SyncMap: ", new SyncMap(createMap()));	
+		performTest("ReadWriteMap: ", new ReadWriteMap(createMap()));		
+//		performTest("SyncMap: ", new SyncMap(createMap()));	
 //		performTest("ReentrantSyncMap: ", new ReentrantSyncMap(createMap()));
 	}
 
@@ -48,7 +48,7 @@ public class Test {
 			for (int i=0; i < NR_WRITER_THREADS; i++){ writerThreads[i].join(); }
 			
 			endTime = System.currentTimeMillis(); 
-			count++;
+			System.out.println(count++);
 		} while (startTime+20000 > endTime);	
 		System.out.println(s1 + count);
 	}

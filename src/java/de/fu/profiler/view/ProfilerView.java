@@ -3,97 +3,42 @@ package de.fu.profiler.view;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.ItemLabelAnchor;
-import org.jfree.chart.labels.ItemLabelPosition;
-import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
-import org.jfree.chart.plot.PiePlot3D;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.StackedBarRenderer3D;
-import org.jfree.ui.TextAnchor;
-import org.jfree.util.Rotation;
-
 import de.fu.profiler.controller.LockTableListener;
-import de.fu.profiler.controller.NotifyWaitTableListener;
-import de.fu.profiler.controller.ProfilerController.JVMSelectionListener;
 import de.fu.profiler.model.ProfilerModel;
 
 /**
- * The graphical user interface of the profiler.
+ * The graphical user interface of the profiler. Further elements of the
+ * graphical user interface are initialized during the constructor of this
+ * {@link JFrame}.
  * 
  * @author Konrad Johannes Reiche
  * 
  */
 public class ProfilerView extends JFrame {
 
+	
 	/**
-	 * 
+	 * generated serial version ID 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6276797391162392835L;
 
 	/**
-	 * The profiler itself.
+	 * The profiler model
 	 */
 	ProfilerModel model;
-
-	/**
-	 * The table displays the threads of the JVM.
-	 */
-	JTable threadTable;
-
-	/**
-	 * The list for displaying the available JVMs.
-	 */
-	JList list;
-
-	/**
-	 * The panel contains the selection for the different JVMs.
-	 */
-	JPanel jvmSelection;
-
-	/**
-	 * The scroll pane containing the JVM list.
-	 */
-	JScrollPane jvmSelectionScrollPane;
-
-	/**
-	 * The scroll pane containing the thread table.
-	 */
-	JScrollPane threadTableScrollPane;
-
-	/**
-	 * This panels shows a general overview on the profiled JVM.
-	 */
-	JPanel overviewPanel;
-
-	/**
-	 * This panel shows information about the notify and wait methods used by
-	 * the profiled JVM.
-	 */
-	JPanel notifyWaitPanel;
 
 	/**
 	 * This panel shows information about the locks used by the profiled JVM.
@@ -115,18 +60,13 @@ public class ProfilerView extends JFrame {
 	 */
 	JTabbedPane tabbedDiagramPane;
 
-	JTabbedPane tabbedNotifyWaitPane;
+	
 
 	/**
 	 * The split pane splits the whole frame into two sides. One side is for the
 	 * JVM selection and one is for the information views.
 	 */
 	JSplitPane splitPane;
-
-	/**
-	 * A text area which displays the logged data of the notify and wait events.
-	 */
-	JTextArea notifyWaitLogTextArea;
 
 	/**
 	 * The scroll pane for the notify wait log.
@@ -138,28 +78,7 @@ public class ProfilerView extends JFrame {
 	 */
 	JScrollPane synchronizedLogScrollPane;
 
-	/**
-	 * A text area which displays the logged data of the synchronized events.
-	 */
-	JTextArea synchronizedLogTextArea;
-
 	JTable lockTable;
-
-	/**
-	 * Button to display the next event from the event history.
-	 */
-	JButton nextEvent;
-
-	/**
-	 * Button to display the previous event from the event history-
-	 */
-	JButton previousEvent;
-
-	/**
-	 * Packages all elements which help to navigate through the available
-	 * events.
-	 */
-	JPanel eventNavigation;
 
 	/**
 	 * Displays the current event number.
@@ -193,70 +112,20 @@ public class ProfilerView extends JFrame {
 	 */
 	JScrollPane timePanel;
 
-	JTree stackTraces;
-
 	JTree monitorRelatedThreads;
+
+	NotifyWaitPanel notifyWaitPanel;
 
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
+		super.setTitle("Java Concurrency Profiler");
+		
 		setUpLookAndFeel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new GridLayout(1, 1));
-
-		this.graphBuilder = new GraphBuilder();
-		this.threadTable = new JTable(model.getTableModel());
-		this.threadStatsTable = new JTable(model.getThreadStatsTableModel());
-		this.list = new JList(new DefaultListModel());
-		this.threadTableScrollPane = new JScrollPane(threadTable);
-		this.threadTableScrollPane.setMinimumSize(new Dimension(300, 300));
-
-		this.nextEvent = new JButton(">>");
-		this.previousEvent = new JButton("<<");
-		this.eventLabel = new JLabel("Event #?");
-		this.eventNavigation = new JPanel();
-		this.eventNavigation.add(previousEvent);
-		this.eventNavigation.add(eventLabel);
-		this.eventNavigation.add(nextEvent);
-
-		this.jvmSelection = new JPanel(new GridLayout(3, 1));
-		this.jvmSelection.add(new JLabel("Available JVMs"));
-		this.jvmSelectionScrollPane = new JScrollPane(list);
-		this.jvmSelection.add(jvmSelectionScrollPane);
-		this.jvmSelection.add(eventNavigation);
-
-		this.tabbedDiagramPane = new JTabbedPane();
-		this.tabbedDiagramPane.add("Overall Thread State",
-				setUpOverallThreadStatePieChart());
-		this.tabbedDiagramPane.add("Thread State Over Time", new JScrollPane(
-				setUpThreadStateOverTimeBarChart()));
-
-		this.overviewPanel = new JPanel(new GridLayout(1, 1));
-		this.overviewPanel.add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				threadTableScrollPane, tabbedDiagramPane));
-
-		this.stackTraces = new JTree(model.getTreeNode());
-		stackTraces.setExpandsSelectedPaths(true);
-		this.tabbedNotifyWaitPane = new JTabbedPane();
-		tabbedNotifyWaitPane.add("Stack Traces", new JScrollPane(stackTraces));
-		tabbedNotifyWaitPane
-				.add("Statistic", new JScrollPane(threadStatsTable));
-
-		this.notifyWaitGraph = graphBuilder.getNotifyWaitGraph();
-		this.notifyWaitPanel = new JPanel(new GridLayout(2, 1));
-
-		JTable notifyWaitTable = new JTable(model.getNotifyWaitTableModel());
-		notifyWaitTable.getSelectionModel()
-				.addListSelectionListener(
-						new NotifyWaitTableListener(notifyWaitTable, model,
-								stackTraces));
-
-		notifyWaitTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		notifyWaitTable.setRowSelectionAllowed(true);
-		this.notifyWaitLogScrollPane = new JScrollPane(notifyWaitTable);
-		this.notifyWaitPanel.add(notifyWaitLogScrollPane);
-		this.notifyWaitPanel.add(tabbedNotifyWaitPane);
-		// this.notifyWaitPanel.add(notifyWaitGraph);
+		setLayout(new GridLayout(1, 2));
+		
+		graphBuilder = new GraphBuilder();
 
 		this.lockTable = new JTable(model.getLockTableModel());
 		monitorRelatedThreads = new JTree(new DefaultMutableTreeNode("Threads"));
@@ -264,9 +133,8 @@ public class ProfilerView extends JFrame {
 				new LockTableListener(lockTable, model, monitorRelatedThreads));
 
 		this.synchronizedPanel = new JPanel(new GridLayout(1, 1));
-		this.synchronizedLogTextArea = new JTextArea();
-		this.synchronizedLogScrollPane = new JScrollPane(
-				synchronizedLogTextArea);
+		JTable synchronizedTable = new JTable(model.getSynchronizedTableModel());
+		this.synchronizedLogScrollPane = new JScrollPane(synchronizedTable);
 		this.synchronizedPanel.add(synchronizedLogScrollPane);
 
 		this.waitForGraphPanel = new JScrollPane(graphBuilder.getWaitForGraph());
@@ -277,12 +145,15 @@ public class ProfilerView extends JFrame {
 
 		this.timePanel = new JScrollPane(timeTable);
 
+		JScrollPane lockScrollPane = new JScrollPane(lockTable);
+		lockScrollPane.setMinimumSize(new Dimension(700, 250));
 		JSplitPane locksPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				new JScrollPane(lockTable), new JScrollPane(
-						monitorRelatedThreads));
+				lockScrollPane, new JScrollPane(monitorRelatedThreads));
+
+		this.lockTable.setMinimumSize(new Dimension(700, 400));
 
 		this.tabbedPane = new JTabbedPane();
-		this.tabbedPane.add("Overview", overviewPanel);
+		this.tabbedPane.add("Overview", new OverviewPanel(model, model.getTableModel()));
 		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
 		this.tabbedPane.add("Locks", locksPanel);
 		this.tabbedPane.add("Synchronized", synchronizedPanel);
@@ -290,93 +161,32 @@ public class ProfilerView extends JFrame {
 		this.tabbedPane.add("Time", timePanel);
 
 		this.splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		this.splitPane.add(jvmSelection);
 		this.splitPane.add(tabbedPane);
+		
+		
+		JTabbedPane jvmSelection = new JTabbedPane(JTabbedPane.LEFT);
+		jvmSelection.add("Welcome", new WelcomePanel());
+		jvmSelection.add("Main", splitPane);
+		this.add(jvmSelection);
 
-		this.add(splitPane);
-		this.jvmSelectionScrollPane.setMinimumSize(new Dimension(700, 35));
 		this.setSize(700, 800);
 	}
 
-	private ChartPanel setUpOverallThreadStatePieChart() {
 
-		JFreeChart chart = ChartFactory.createPieChart3D(
-				"Overall Threads State", model.getThreadPieDataset(), true,
-				true, false);
 
-		PiePlot3D plot = (PiePlot3D) chart.getPlot();
-		plot.setStartAngle(290);
-		plot.setDirection(Rotation.CLOCKWISE);
-		plot.setForegroundAlpha(0.5f);
-
-		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new Dimension(300, 200));
-		return chartPanel;
-	}
-
-	private ChartPanel setUpThreadStateOverTimeBarChart() {
-
-		JFreeChart chart = ChartFactory.createStackedBarChart3D(
-				"Thread State Over Time", "Threads", "Time",
-				model.getCategoryDataset(), PlotOrientation.HORIZONTAL, true,
-				true, false);
-
-		StackedBarRenderer3D renderer = (StackedBarRenderer3D) chart
-				.getCategoryPlot().getRenderer();
-		renderer.setRenderAsPercentages(true);
-		renderer.setDrawBarOutline(false);
-
-		for (int i = 0; i < 6; ++i) {
-			renderer.setSeriesItemLabelGenerator(
-					i,
-					new StandardCategoryItemLabelGenerator("{3}", NumberFormat
-							.getIntegerInstance(), new DecimalFormat("0.0%")));
-			renderer.setSeriesItemLabelsVisible(i, true);
-			renderer.setSeriesPositiveItemLabelPosition(i,
-					new ItemLabelPosition(ItemLabelAnchor.CENTER,
-							TextAnchor.CENTER));
-			renderer.setSeriesNegativeItemLabelPosition(i,
-					new ItemLabelPosition(ItemLabelAnchor.CENTER,
-							TextAnchor.CENTER));
-		}
-
-		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new Dimension(300, 200));
-		return chartPanel;
-	}
+	
 
 	private void setUpLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public void addJVMSelectionListener(
-			JVMSelectionListener jvmSelectionListener) {
-		this.list.addListSelectionListener(jvmSelectionListener);
-	}
-
-	public void addNextEventListener(ActionListener actionListener) {
-		this.nextEvent.addActionListener(actionListener);
-	}
-
-	public void addPreviousEventListener(ActionListener actionListener) {
-		this.previousEvent.addActionListener(actionListener);
-	}
-
-	public void setEnabledPreviousEventButton(boolean isEnabled) {
-		previousEvent.setEnabled(isEnabled);
 	}
 }

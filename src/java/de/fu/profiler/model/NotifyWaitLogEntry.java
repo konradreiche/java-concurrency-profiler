@@ -18,9 +18,11 @@ public class NotifyWaitLogEntry {
 	final String monitorClass;
 	final long systemTime;
 	final List<StackTrace> stackTraces;
+	
+	ThreadInfo owningThread;
 
 	public enum Type {
-		INVOKED_WAIT, LEFT_WAIT, INVOKED_NOTIFY_ALL, INVOKED_NOTIFY,
+		INVOKED_WAIT, LEFT_WAIT, INVOKED_NOTIFY_ALL, INVOKED_NOTIFY, CONTENDED, ENTERED,
 	}
 
 	public NotifyWaitLogEntry(ThreadInfo threadInfo, String oldState,

@@ -44,11 +44,11 @@ public class Elf extends Thread {
 
 	public synchronized void showIn() {
 		santa_is_listening = true;
-		notifyAll();
+		notify();
 	}
 
 	public synchronized void showOut() {
 		santa_is_listening = false;
-		notifyAll();
+		notify();
 	}
 }

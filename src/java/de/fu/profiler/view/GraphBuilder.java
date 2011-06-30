@@ -2,13 +2,10 @@ package de.fu.profiler.view;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
@@ -17,7 +14,6 @@ import com.mxgraph.view.mxStylesheet;
 
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.Monitor;
-import de.fu.profiler.model.NotifyWaitLogEntry;
 import de.fu.profiler.model.ThreadInfo;
 
 /**
@@ -124,101 +120,6 @@ public class GraphBuilder {
 		}
 
 		waitForGraph.getModel().endUpdate();
-	}
-
-	public void createNotifyWaitGraph(JVM jvm) {
-
-		Object parent = notifyWaitGraph.getDefaultParent();
-		notifyWaitGraph.removeCells(notifyWaitGraph.getChildVertices(parent));
-		notifyWaitGraph.getModel().beginUpdate();
-
-		try {
-			int index = 0;
-			List<ThreadInfo> threads = initializeThreadList(jvm.getThreads());
-			Map<ThreadInfo, Object> threadToLastNode = new TreeMap<ThreadInfo, Object>();
-			Object initialState = null;
-			for (ThreadInfo threadInfo : threads) {
-
-				index = threads.indexOf(threadInfo);
-				Object root = notifyWaitGraph.insertVertex(parent, null,
-						threadInfo.getName(), 30 + (150 * index), 20,
-						THREAD_VERTEX_WIDTH, THREAD_VERTEX_HEIGHT,
-						"THREAD_START_STATE");
-
-				initialState = notifyWaitGraph.insertVertex(parent, null,
-						"RUNNABLE", 20 + (150 * index), 150,
-						STATE_VERTEX_WIDTH, STATE_VERTEX_HEIGHT,
-						"RUNNABLE_STATE");
-
-				threadToLastNode.put(threadInfo, initialState);
-
-				notifyWaitGraph.insertEdge(parent, null, null, root,
-						initialState);
-			}
-
-			int j = 1;
-			for (NotifyWaitLogEntry entry : jvm.getNotifyWaitLog().values()) {
-
-				Object previousState = threadToLastNode.get(entry
-						.getThreadInfo());
-				Object nextState = null;
-				String edgeLabel = null;
-
-				switch (entry.getType()) {
-				case INVOKED_WAIT:
-					edgeLabel = "wait()";
-					break;
-				case LEFT_WAIT:
-					edgeLabel = "exit wait()";
-					break;
-				case INVOKED_NOTIFY_ALL:
-					edgeLabel = "notifyAll()";
-					break;
-				case INVOKED_NOTIFY:
-					edgeLabel = "notify()";
-					break;
-				}
-
-				edgeLabel += "\n";
-				edgeLabel += entry.getMonitorClass() + "."
-						+ entry.getMethodContext();
-
-				index = threads.indexOf(entry.getThreadInfo());
-
-				nextState = notifyWaitGraph.insertVertex(parent, null,
-						entry.getState(), 20 + (150 * index), 150 + (j * 100),
-						STATE_VERTEX_WIDTH, STATE_VERTEX_HEIGHT,
-						entry.getState() + "_STATE");
-
-				notifyWaitGraph.insertEdge(parent, null, edgeLabel,
-						previousState, nextState, "EDGE");
-
-				threadToLastNode.put(entry.getThreadInfo(), nextState);
-				++j;
-			}
-		} finally {
-			notifyWaitGraph.getModel().endUpdate();
-		}
-	}
-
-	public List<ThreadInfo> initializeThreadList(Set<ThreadInfo> threads) {
-
-		ArrayList<ThreadInfo> result = new ArrayList<ThreadInfo>();
-		for (ThreadInfo threadInfo : threads) {
-
-			String threadName = threadInfo.getName();
-
-			if (!(threadName.equals("Signal Dispatcher")
-					|| threadName.equals("main")
-					|| threadName.equals("Finalizer")
-					|| threadName.equals("Reference Handler") || threadName
-					.equals("DestroyJavaVM"))) {
-
-				result.add(threadInfo);
-			}
-		}
-
-		return result;
 	}
 
 	private void initializeStylesheets() {
