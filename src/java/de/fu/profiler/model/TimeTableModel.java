@@ -36,8 +36,9 @@ public class TimeTableModel extends AbstractTableModel {
 	 * 
 	 * @param threadPieChartDataset
 	 */
-	public TimeTableModel() {
+	public TimeTableModel(JVM jvm) {
 		super();
+		this.jvm = jvm;
 	}
 
 	/**

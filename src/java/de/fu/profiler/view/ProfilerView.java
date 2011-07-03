@@ -1,22 +1,19 @@
 package de.fu.profiler.view;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.tree.DefaultMutableTreeNode;
 
-import de.fu.profiler.controller.LockTableListener;
+import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ProfilerModel;
 
 /**
@@ -27,154 +24,70 @@ import de.fu.profiler.model.ProfilerModel;
  * @author Konrad Johannes Reiche
  * 
  */
-public class ProfilerView extends JFrame {
+public class ProfilerView extends JFrame implements Observer {
 
-	
 	/**
-	 * generated serial version ID 
+	 * generated serial version ID
 	 */
 	private static final long serialVersionUID = -6276797391162392835L;
+	
+	private static final int WIDTH = 1400;
+
+	private static final int HEIGHT = 800;
+
+	// BOGUS
+	List<JVM> jvms = new ArrayList<JVM>();
 
 	/**
 	 * The profiler model
 	 */
 	ProfilerModel model;
 
-	/**
-	 * This panel shows information about the locks used by the profiled JVM.
-	 */
-	JPanel locksPanel;
+	JTabbedPane mainSelection;
 
-	/**
-	 * This panel shows information about the synchronized events which occur.
-	 */
-	JPanel synchronizedPanel;
-
-	/**
-	 * The tabbed pane enables to select different views in the profiler.
-	 */
-	JTabbedPane tabbedPane;
-
-	/**
-	 * The tabbed pane enables to select different diagrams.
-	 */
-	JTabbedPane tabbedDiagramPane;
-
-	
-
-	/**
-	 * The split pane splits the whole frame into two sides. One side is for the
-	 * JVM selection and one is for the information views.
-	 */
-	JSplitPane splitPane;
-
-	/**
-	 * The scroll pane for the notify wait log.
-	 */
-	JScrollPane notifyWaitLogScrollPane;
-
-	/**
-	 * The scroll pane for the synchronized log.
-	 */
-	JScrollPane synchronizedLogScrollPane;
-
-	JTable lockTable;
-
-	/**
-	 * Displays the current event number.
-	 */
-	JLabel eventLabel;
-
-	/**
-	 * Helper class to create the graphs.
-	 */
-	GraphBuilder graphBuilder;
-
-	/**
-	 * The component displaying the notify wait graph.
-	 */
-	Component notifyWaitGraph;
-
-	/**
-	 * Table for displaying the statistical numbers about the threads concerned
-	 * with notify and wait
-	 */
-	JTable threadStatsTable;
-
-	/**
-	 * The panel displaying the constructed wait-for graph
-	 */
-	JScrollPane waitForGraphPanel;
-
-	/**
-	 * The panel containing the table with all the information about the methods
-	 * which were profiled.
-	 */
-	JScrollPane timePanel;
-
-	JTree monitorRelatedThreads;
-
-	NotifyWaitPanel notifyWaitPanel;
+	Map<JVM, MonitorLogView> notifyWaitViews;
+	Map<JVM, ResourceAllocationGraph> resourceAllocationGraphs;
 
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
-		super.setTitle("Java Concurrency Profiler");
-		
+		notifyWaitViews = new ConcurrentSkipListMap<JVM, MonitorLogView>();
+		resourceAllocationGraphs = new ConcurrentSkipListMap<JVM, ResourceAllocationGraph>();
+		model.addObserver(this);
 		setUpLookAndFeel();
+
+		setTitle("Java Concurrency Profiler");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new GridLayout(1, 2));
-		
-		graphBuilder = new GraphBuilder();
 
-		this.lockTable = new JTable(model.getLockTableModel());
-		monitorRelatedThreads = new JTree(new DefaultMutableTreeNode("Threads"));
-		this.lockTable.getSelectionModel().addListSelectionListener(
-				new LockTableListener(lockTable, model, monitorRelatedThreads));
-
-		this.synchronizedPanel = new JPanel(new GridLayout(1, 1));
-		JTable synchronizedTable = new JTable(model.getSynchronizedTableModel());
-		this.synchronizedLogScrollPane = new JScrollPane(synchronizedTable);
-		this.synchronizedPanel.add(synchronizedLogScrollPane);
-
-		this.waitForGraphPanel = new JScrollPane(graphBuilder.getWaitForGraph());
-
-		JTable timeTable = new JTable(model.getTimeTableModel());
-		timeTable.getTableHeader().setReorderingAllowed(false);
-		timeTable.setAutoCreateRowSorter(true);
-
-		this.timePanel = new JScrollPane(timeTable);
-
-		JScrollPane lockScrollPane = new JScrollPane(lockTable);
-		lockScrollPane.setMinimumSize(new Dimension(700, 250));
-		JSplitPane locksPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				lockScrollPane, new JScrollPane(monitorRelatedThreads));
-
-		this.lockTable.setMinimumSize(new Dimension(700, 400));
-
-		this.tabbedPane = new JTabbedPane();
-		this.tabbedPane.add("Overview", new OverviewPanel(model, model.getTableModel()));
-		this.tabbedPane.add("Notify/Wait", notifyWaitPanel);
-		this.tabbedPane.add("Locks", locksPanel);
-		this.tabbedPane.add("Synchronized", synchronizedPanel);
-		this.tabbedPane.add("Wait-For Graph", waitForGraphPanel);
-		this.tabbedPane.add("Time", timePanel);
-
-		this.splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		this.splitPane.add(tabbedPane);
-		
-		
-		JTabbedPane jvmSelection = new JTabbedPane(JTabbedPane.LEFT);
-		jvmSelection.add("Welcome", new WelcomePanel());
-		jvmSelection.add("Main", splitPane);
-		this.add(jvmSelection);
-
-		this.setSize(700, 800);
+		mainSelection = new JTabbedPane(JTabbedPane.LEFT);
+		mainSelection.add("Welcome", new WelcomePanel());
+		this.add(mainSelection);
+		this.setSize(WIDTH, HEIGHT);
 	}
 
+	private void createView(JVM jvm) {
+		GeneralView generalView = new GeneralView(model, jvm);
+		MonitorLogView notifyWaitPanel = new MonitorLogView(model, jvm);
+		MonitorView locks = new MonitorView(model, jvm);
+		ResourceAllocationGraph resourceAllocationGraph = new ResourceAllocationGraph(
+				model);
+		MethodProfilingView methodProfilingView = new MethodProfilingView(model,jvm);
 
+		notifyWaitViews.put(jvm, notifyWaitPanel);
+		resourceAllocationGraphs.put(jvm, resourceAllocationGraph);
 
-	
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.add("General", generalView);
+		tabbedPane.add("Monitor Log", notifyWaitPanel);
+		tabbedPane.add("Monitor", locks);
+		tabbedPane.add("Resource Allocation Graph", resourceAllocationGraph);
+		tabbedPane.add("Method Profiling", methodProfilingView);
+
+		mainSelection.add(jvm.getHost() + " (PID " + jvm.getPid() + ")",
+				tabbedPane);
+		mainSelection.setSelectedComponent(tabbedPane);
+	}
 
 	private void setUpLookAndFeel() {
 		try {
@@ -187,6 +100,17 @@ public class ProfilerView extends JFrame {
 			e.printStackTrace();
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+
+		// TODO: different Observable for adding jvm and chaning its state
+		if (arg != null && o instanceof ProfilerModel && !jvms.contains(arg)) {
+			JVM jvm = (JVM) arg;
+			jvms.add(jvm);
+			createView(jvm);
 		}
 	}
 }

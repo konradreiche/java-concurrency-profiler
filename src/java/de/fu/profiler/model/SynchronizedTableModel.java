@@ -30,8 +30,9 @@ public class SynchronizedTableModel extends AbstractTableModel {
 	 * @param stackTracesTree
 	 * 
 	 */
-	public SynchronizedTableModel(final StackTracesTree stackTracesTree) {
+	public SynchronizedTableModel(JVM jvm) {
 		super();
+		this.jvm = jvm;
 	}
 
 	/**
@@ -131,10 +132,6 @@ public class SynchronizedTableModel extends AbstractTableModel {
 
 	public void setCurrentJVM(JVM jvm) {
 		this.jvm = jvm;
-	}
-
-	public JVM getJvm() {
-		return jvm;
 	}
 
 }

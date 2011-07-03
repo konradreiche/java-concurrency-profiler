@@ -32,8 +32,8 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-//static MessageService messageService("192.168.1.101", "50000");
-static MessageService messageService("127.0.0.1", "50000");
+static MessageService messageService("192.168.1.101", "50000");
+//static MessageService messageService("127.0.0.1", "50000");
 
 static int jvmPid;
 
@@ -515,6 +515,8 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 		}
 		exit_critical_section(jvmti);
 	}
+
+	messageService.await();
 }
 
 /** Get a name for a jthread */

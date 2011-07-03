@@ -12,7 +12,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.LockTableModel;
-import de.fu.profiler.model.Monitor;
+import de.fu.profiler.model.MonitorInfo;
 import de.fu.profiler.model.ProfilerModel;
 import de.fu.profiler.model.StackTrace;
 import de.fu.profiler.model.ThreadInfo;
@@ -43,7 +43,7 @@ public class LockTableListener implements ListSelectionListener {
 				return;
 			}
 			
-			Monitor monitor = new ArrayList<Monitor>(jvm.getMonitors().values())
+			MonitorInfo monitor = new ArrayList<MonitorInfo>(jvm.getMonitors().values())
 					.get(row);
 			
 

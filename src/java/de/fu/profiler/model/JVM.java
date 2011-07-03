@@ -1,9 +1,8 @@
 package de.fu.profiler.model;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Models a Java Virtual Machine.
@@ -11,12 +10,17 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author Konrad Johannes Reiche
  * 
  */
-public class JVM {
+public class JVM implements Comparable<JVM> {
 
 	/**
-	 * Generated id by the profiling agent.
+	 * pid
 	 */
-	final int id;
+	final int pid;
+
+	/**
+	 * The host address of the Java Virtual Machine.
+	 */
+	final String host;
 
 	/**
 	 * The name of the executed java program.
@@ -26,31 +30,25 @@ public class JVM {
 	/**
 	 * A list of threads of the JVM.
 	 */
-	final Set<ThreadInfo> threads;
+	final Map<Integer, ThreadInfo> threads;
 
 	/**
 	 * A list of events where its timestamp is mapped to a certain notify and
 	 * wait log entry with a textual representation.
 	 */
 	final Map<Long, String> notifyWaitTextualLog;
-	
+
 	/**
 	 * A list of events where its timestamp is mapped to a certain notify and
 	 * wait log entry.
 	 */
-	final Map<Long, NotifyWaitLogEntry> notifyWaitLog;	
-
-	/**
-	 * A list of events where its timestamp is mapped to a certain synchronized
-	 * log entry.
-	 */
-	final Map<Long, NotifyWaitLogEntry> synchronizedLog;
+	final Map<Long, MonitorLogEntry> monitorLog;
 
 	/**
 	 * A list of monitors mapped by their ids.
 	 */
-	final Map<Long, Monitor> monitors;
-	
+	final Map<Long, MonitorInfo> monitors;
+
 	/**
 	 * A list of invoked methods mapped by their class name + method name.
 	 */
@@ -63,28 +61,25 @@ public class JVM {
 	 *            generated id by the profiling agent.
 	 * @param name
 	 *            the name of the executed java program.
+	 * @param host
 	 */
-	public JVM(int id, String name) {
+	public JVM(int id, String name, String host) {
 		super();
-		this.id = id;
+		this.pid = id;
+		this.host = host;
 		this.name = name;
-		this.threads = new CopyOnWriteArraySet<ThreadInfo>();
+		this.threads = new ConcurrentSkipListMap<Integer, ThreadInfo>();
 		this.notifyWaitTextualLog = new ConcurrentHashMap<Long, String>();
-		this.notifyWaitLog = new ConcurrentHashMap<Long, NotifyWaitLogEntry>();
-		this.synchronizedLog = new ConcurrentHashMap<Long, NotifyWaitLogEntry>();
-		this.monitors = new ConcurrentHashMap<Long, Monitor>();
+		this.monitorLog = new ConcurrentHashMap<Long, MonitorLogEntry>();
+		this.monitors = new ConcurrentHashMap<Long, MonitorInfo>();
 		this.methods = new ConcurrentHashMap<String, MethodInfo>();
-	}
-
-	public int getId() {
-		return id;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Set<ThreadInfo> getThreads() {
+	public Map<Integer, ThreadInfo> getThreads() {
 		return threads;
 	}
 
@@ -96,11 +91,7 @@ public class JVM {
 	 *            a thread.
 	 */
 	public void addThread(ThreadInfo threadInfo) {
-
-		if (threads.contains(threadInfo)) {
-			threads.remove(threadInfo);
-		}
-		threads.add(threadInfo);
+		threads.put(threadInfo.getId(), threadInfo);
 	}
 
 	/**
@@ -118,35 +109,56 @@ public class JVM {
 	 *            Thread id.
 	 */
 	public ThreadInfo getThread(int id) {
-		for (ThreadInfo thread : threads) {
-			if (thread.getId() == id) {
-				return thread;
-			}
-		}
-		return null;
+		return threads.get(id);
 	}
 
 	public Map<Long, String> getNotifyWaitTextualLog() {
 		return notifyWaitTextualLog;
 	}
 
-	public Map<Long, NotifyWaitLogEntry> getNotifyWaitLog() {
-		return notifyWaitLog;
+	public Map<Long, MonitorLogEntry> getMonitorLog() {
+		return monitorLog;
 	}
 
-	public Map<Long, Monitor> getMonitors() {
+	public Map<Long, MonitorInfo> getMonitors() {
 		return monitors;
 	}
 
-	public Map<Long, NotifyWaitLogEntry> getSynchronizedLog() {
-		return synchronizedLog;
-	}
 
-	public Monitor getMonitor(long id) {
+	public MonitorInfo getMonitor(long id) {
 		return monitors.get(id);
 	}
 
 	public Map<String, MethodInfo> getMethods() {
 		return methods;
-	}	
+	}
+
+	public int getPid() {
+		return pid;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	@Override
+	public int compareTo(JVM o) {
+
+		String identifier = pid + "@" + host;
+		String identifier2 = o.pid + "@" + o.host;
+
+		return identifier.compareTo(identifier2);
+	}
+
+	public void removeThread(int id) {
+		threads.remove(id);
+	}
+
+	public void addMonitor(MonitorInfo monitorInfo) {
+		monitors.put(monitorInfo.getId(), monitorInfo);
+	}
+
+	public void removeMonitor(long id) {
+		monitors.remove(id);		
+	}
 }

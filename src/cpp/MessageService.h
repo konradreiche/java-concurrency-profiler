@@ -6,6 +6,7 @@
  */
 
 #include <deque>
+#include <signal.h>
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/bind.hpp>
@@ -27,8 +28,8 @@ class MessageService {
 public:
 	MessageService(std::string ip, std::string port);
 	virtual ~MessageService();
-
 	void write(AgentMessage agentMessage, long systemTime, int JVM_ID);
+	void await();
 
 private:
 	boost::asio::io_service io_service;

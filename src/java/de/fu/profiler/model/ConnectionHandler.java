@@ -60,7 +60,6 @@ public class ConnectionHandler implements Runnable {
 						
 						if (profilerModel.hasChanged) {
 							profilerModel.hasChanged = false;
-							profilerModel.notifyGUI();
 						}
 						
 						try {
@@ -80,7 +79,8 @@ public class ConnectionHandler implements Runnable {
 					AgentMessageProtos.AgentMessage agentMessage = AgentMessageProtos.AgentMessage
 					.parseDelimitedFrom(socket.getInputStream());
 					
-					profilerModel.applyData(agentMessage,true);					
+					String host = socket.getInetAddress().getCanonicalHostName();
+					profilerModel.applyData(agentMessage,true,host);					
 				} catch (IOException e) {
 					// swallow
 				}

@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
-public class NotifyWaitTableModel extends AbstractTableModel {
+public class MonitorLogTableModel extends AbstractTableModel {
 
 	/**
 	 * generated serial version ID
@@ -30,8 +30,9 @@ public class NotifyWaitTableModel extends AbstractTableModel {
 	 * @param stackTracesTree
 	 * 
 	 */
-	public NotifyWaitTableModel() {
+	public MonitorLogTableModel(JVM jvm) {
 		super();
+		this.jvm = jvm;
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class NotifyWaitTableModel extends AbstractTableModel {
 		if (jvm == null) {
 			return 0;
 		} else {
-			return jvm.getNotifyWaitLog().size();
+			return jvm.getMonitorLog().size();
 		}
 	}
 
@@ -69,9 +70,9 @@ public class NotifyWaitTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		NotifyWaitLogEntry notifyWaitLogEntry = null;
+		MonitorLogEntry notifyWaitLogEntry = null;
 		SortedSet<Long> sortedTimestamp = new TreeSet<Long>(
-				jvm.notifyWaitLog.keySet());
+				jvm.monitorLog.keySet());
 
 		long timestamp = -1;
 		Iterator<Long> it = sortedTimestamp.iterator();
@@ -83,7 +84,7 @@ public class NotifyWaitTableModel extends AbstractTableModel {
 			return null;
 		}
 
-		notifyWaitLogEntry = jvm.notifyWaitLog.get(timestamp);
+		notifyWaitLogEntry = jvm.monitorLog.get(timestamp);
 
 		switch (columnIndex) {
 		case 0:
@@ -101,6 +102,14 @@ public class NotifyWaitTableModel extends AbstractTableModel {
 				return "invoked notifyAll";
 			case LEFT_WAIT:
 				return "left wait";
+			case CONTENDED_WITH_THREAD:
+				String result = (notifyWaitLogEntry.owningThread == null) ? "did not contend"
+						: "contended with "
+								+ notifyWaitLogEntry.owningThread.name;
+				return result;
+
+			case ENTERED_AFTER_CONTENTION_WITH_THREAD:
+				return "entered";
 			}
 
 		case 3:
@@ -136,8 +145,5 @@ public class NotifyWaitTableModel extends AbstractTableModel {
 	public JVM getJvm() {
 		return jvm;
 	}
-	
-	
-	
 
 }

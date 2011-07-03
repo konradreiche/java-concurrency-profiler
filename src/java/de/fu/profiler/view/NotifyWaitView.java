@@ -10,7 +10,9 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 
 import de.fu.profiler.controller.NotifyWaitTableListener;
+import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ProfilerModel;
+import de.fu.profiler.model.ThreadStatsTableModel;
 
 /**
  * This panel shows information about the notify and wait methods used by the
@@ -19,7 +21,7 @@ import de.fu.profiler.model.ProfilerModel;
  * @author Konrad Johannes Reiche
  * 
  */
-public class NotifyWaitPanel extends JPanel {
+public class NotifyWaitView extends JPanel {
 
 	/**
 	 * 
@@ -28,12 +30,13 @@ public class NotifyWaitPanel extends JPanel {
 
 	JTree stackTraces;
 
-	public NotifyWaitPanel(ProfilerModel model) {
+	public NotifyWaitView(ProfilerModel model, JVM jvm) {
 
 		super(new GridLayout(2, 1));
 		JTable notifyWaitTable = new JTable(model.getNotifyWaitTableModel());
 		JScrollPane notifyWaitLogScrollPane = new JScrollPane(notifyWaitTable);
-		stackTraces = new JTree(model.getTreeNode());
+		stackTraces = new JTree(model.getNotifyWaitStackTracesTrees().get(jvm)
+				.getRoot());
 		stackTraces.setExpandsSelectedPaths(true);
 
 		notifyWaitTable.getSelectionModel()
@@ -41,7 +44,9 @@ public class NotifyWaitPanel extends JPanel {
 						new NotifyWaitTableListener(notifyWaitTable, model,
 								stackTraces));
 
-		JTable threadStatsTable = new JTable(model.getThreadStatsTableModel());
+		ThreadStatsTableModel tableModel = model.getThreadStatsTableModels()
+				.get(jvm);
+		JTable threadStatsTable = new JTable(tableModel);
 
 		JTabbedPane tabbedNotifyWaitPane = new JTabbedPane();
 		tabbedNotifyWaitPane.add("Stack Traces", new JScrollPane(stackTraces));

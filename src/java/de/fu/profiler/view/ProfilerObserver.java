@@ -3,12 +3,12 @@ package de.fu.profiler.view;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
+import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ThreadInfo;
 
 /**
@@ -28,90 +28,79 @@ public class ProfilerObserver implements Observer {
 	}
 
 	@Override
-	public void update(final Observable o, Object arg) {
+	public void update(final Observable o, final Object arg) {
 
-		SwingUtilities.invokeLater(new Runnable() {
+		if (arg != null && view.notifyWaitViews.containsKey(arg)
+				&& view.resourceAllocationGraphs.containsKey(arg)) {
+			JVM jvm = (JVM) arg;
 
-			@Override
-			public void run() {
+			int newCounter = 0;
+			int terminatedCounter = 0;
+			int runnableCounter = 0;
+			int blockedCounter = 0;
+			int waitingCounter = 0;
+			int timedWaitingCounter = 0;
 
-				if (view.model.getCurrentJVM() != null) {
+			for (ThreadInfo thread : jvm.getThreads().values()) {
+				String state = thread.getState();
 
-					int newCounter = 0;
-					int terminatedCounter = 0;
-					int runnableCounter = 0;
-					int blockedCounter = 0;
-					int waitingCounter = 0;
-					int timedWaitingCounter = 0;
-
-					for (ThreadInfo thread : view.model.getCurrentJVM()
-							.getThreads()) {
-						String state = thread.getState();
-
-						if (state.equals("NEW")) {
-							newCounter++;
-						} else if (state.equals("TERMINATED")) {
-							terminatedCounter++;
-						} else if (state.equals("RUNNABLE")) {
-							runnableCounter++;
-						} else if (state.equals("BLOCKED")) {
-							blockedCounter++;
-						} else if (state.equals("WAITING")) {
-							waitingCounter++;
-						} else if (state.equals("TIMED_WAITING")) {
-							timedWaitingCounter++;
-						} else {
-							assert (false);
-						}
-
-						((DefaultPieDataset) view.model.getThreadPieDataset())
-								.setValue("New", newCounter);
-						((DefaultPieDataset) view.model.getThreadPieDataset())
-								.setValue("Terminated", terminatedCounter);
-						((DefaultPieDataset) view.model.getThreadPieDataset())
-								.setValue("Runnable", runnableCounter);
-						((DefaultPieDataset) view.model.getThreadPieDataset())
-								.setValue("Blocked", blockedCounter);
-						((DefaultPieDataset) view.model.getThreadPieDataset())
-								.setValue("Waiting", waitingCounter);
-						((DefaultPieDataset) view.model.getThreadPieDataset())
-								.setValue("Timed Waiting", timedWaitingCounter);
-
-						updateThreadStateOverTimeChart(thread,
-								view.model.getCategoryDataset());
-					}
-
-					((AbstractTableModel) view.model.getTableModel())
-							.fireTableDataChanged();
-					
-					((AbstractTableModel) view.model.getThreadStatsTableModel())
-					.fireTableDataChanged();
-					
-					((AbstractTableModel) view.model.getTimeTableModel())
-					.fireTableDataChanged();
-
-					((AbstractTableModel) view.model.getNotifyWaitTableModel())
-					.fireTableDataChanged();
-					
-					((AbstractTableModel) view.model.getLockTableModel())
-					.fireTableDataChanged();
-					
-					((AbstractTableModel) view.model.getSynchronizedTableModel())
-					.fireTableDataChanged();
-					
-					view.notifyWaitPanel.stackTraces.repaint();				
-
-					view.graphBuilder.createWaitForGraph(view.model.getCurrentJVM());
+				if (state.equals("New")) {
+					newCounter++;
+				} else if (state.equals("Terminated")) {
+					terminatedCounter++;
+				} else if (state.equals("Runnable")) {
+					runnableCounter++;
+				} else if (state.equals("Blocked")) {
+					blockedCounter++;
+				} else if (state.equals("Waiting")) {
+					waitingCounter++;
+				} else if (state.equals("Timed Waiting")) {
+					timedWaitingCounter++;
+				} else {
+					assert (false);
 				}
+
+				DefaultPieDataset pieDataset = ((DefaultPieDataset) view.model
+						.getThreadStatePieDataset().get(jvm));
+
+				pieDataset.setValue("New", newCounter);
+				pieDataset.setValue("Terminated", terminatedCounter);
+				pieDataset.setValue("Runnable", runnableCounter);
+				pieDataset.setValue("Blocked", blockedCounter);
+				pieDataset.setValue("Waiting", waitingCounter);
+				pieDataset.setValue("Timed Waiting", timedWaitingCounter);
+
+				updateThreadStateOverTimeChart(thread, view.model
+						.getThreadStateOverTimeDataset().get(jvm));
 			}
-		});
+
+			((AbstractTableModel) view.model.getThreadTableModels().get(jvm))
+					.fireTableDataChanged();
+
+			((AbstractTableModel) view.model.getThreadStatsTableModels().get(
+					jvm)).fireTableDataChanged();
+
+			((AbstractTableModel) view.model.getTimeTableModels().get(jvm))
+					.fireTableDataChanged();
+
+			((AbstractTableModel) view.model.getMonitorLogTables().get(jvm))
+					.fireTableDataChanged();
+
+			((AbstractTableModel) view.model.getLockTableModels().get(jvm))
+					.fireTableDataChanged();
+
+			view.notifyWaitViews.get(jvm).repaint();
+
+			view.resourceAllocationGraphs.get(jvm).graphBuilder
+					.createWaitForGraph(jvm);
+		}
 	}
 
 	private void updateThreadStateOverTimeChart(ThreadInfo threadInfo,
 			DefaultCategoryDataset threadOverTimeDataSet) {
 
-		String possibleStates[] = new String[] { "NEW", "TERMINATED",
-				"RUNNABLE", "BLOCKED", "WAITING", "TIMED_WAITING" };
+		String possibleStates[] = new String[] { "New", "Terminated",
+				"Runnable", "Blocked", "Waiting", "Timed Waiting" };
 
 		for (String possibleState : possibleStates) {
 

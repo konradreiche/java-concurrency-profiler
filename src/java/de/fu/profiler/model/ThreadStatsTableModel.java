@@ -26,6 +26,11 @@ public class ThreadStatsTableModel extends AbstractTableModel {
 	String[] columnNames = { "Thread", "#wait", "#notify", "#notifyAll",
 			"#contention", "#entered" };
 
+	public ThreadStatsTableModel(JVM jvm) {
+		super();
+		this.jvm = jvm;
+	}
+
 	@Override
 	public int getColumnCount() {
 		return columnNames.length;
@@ -45,10 +50,10 @@ public class ThreadStatsTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
 		List<ThreadInfo> threadList = new ArrayList<ThreadInfo>(jvm
-				.getThreads());
+				.getThreads().values());
 
 		ThreadInfo threadInfo = threadList.get(rowIndex);
-		
+
 		switch (columnIndex) {
 		case 0:
 			return threadInfo.name;

@@ -1,6 +1,8 @@
 package de.fu.profiler.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -11,9 +13,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.fu.profiler.model.JVM;
-import de.fu.profiler.model.NotifyWaitLogEntry;
-import de.fu.profiler.model.NotifyWaitTableModel;
+import de.fu.profiler.model.MonitorLogEntry;
+import de.fu.profiler.model.MonitorLogTableModel;
 import de.fu.profiler.model.ProfilerModel;
+import de.fu.profiler.model.StackTrace;
 
 public class NotifyWaitTableListener implements ListSelectionListener {
 
@@ -34,12 +37,12 @@ public class NotifyWaitTableListener implements ListSelectionListener {
 
 		if (e.getSource() == table.getSelectionModel()) {
 
-			JVM jvm = ((NotifyWaitTableModel) table.getModel()).getJvm();
+			JVM jvm = ((MonitorLogTableModel) table.getModel()).getJvm();
 			int row = e.getFirstIndex();
 
-			NotifyWaitLogEntry notifyWaitLogEntry = null;
+			MonitorLogEntry notifyWaitLogEntry = null;
 			SortedSet<Long> sortedTimestamp = new TreeSet<Long>(jvm
-					.getNotifyWaitLog().keySet());
+					.getMonitorLog().keySet());
 
 			long timestamp = -1;
 			Iterator<Long> it = sortedTimestamp.iterator();
@@ -51,16 +54,17 @@ public class NotifyWaitTableListener implements ListSelectionListener {
 				return;
 			}
 
-			notifyWaitLogEntry = jvm.getNotifyWaitLog().get(timestamp);
-			model.getStackTracesTree().createTree(
-					notifyWaitLogEntry.getStackTraces());
-			((DefaultTreeModel)tree.getModel()).reload();
+			notifyWaitLogEntry = jvm.getMonitorLog().get(timestamp);
+			List<StackTrace> stackTraces = new ArrayList<StackTrace>(
+					notifyWaitLogEntry.getStackTraces().values());
+			model.getNotifyWaitStackTracesTrees().get(jvm)
+					.createTree(stackTraces);
+			((DefaultTreeModel) tree.getModel()).reload();
 			expandAll(tree);
 			tree.repaint();
 
 		}
 	}
-	
 
 	public void expandAll(JTree tree) {
 		int row = 0;

@@ -13,7 +13,7 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
 import de.fu.profiler.model.JVM;
-import de.fu.profiler.model.Monitor;
+import de.fu.profiler.model.MonitorInfo;
 import de.fu.profiler.model.ThreadInfo;
 
 /**
@@ -73,7 +73,7 @@ public class GraphBuilder {
 		Map<Long, Object> monitorNodes = new TreeMap<Long, Object>();
 
 		int counter = 0;
-		for (ThreadInfo thread : jvm.getThreads()) {
+		for (ThreadInfo thread : jvm.getThreads().values()) {
 
 			if (counter % 2 == 0) {
 				Object threadNode = waitForGraph.insertVertex(parent, null, "T"
@@ -90,7 +90,7 @@ public class GraphBuilder {
 		}
 
 		counter = 0;
-		for (Entry<Long, Monitor> entry : jvm.getMonitors().entrySet()) {
+		for (Entry<Long, MonitorInfo> entry : jvm.getMonitors().entrySet()) {
 
 			Object monitorNode = waitForGraph.insertVertex(parent, null, "R"
 					+ entry.getKey(), 90, 50 + (counter * 50),
@@ -99,9 +99,9 @@ public class GraphBuilder {
 			++counter;
 		}
 
-		for (ThreadInfo thread : jvm.getThreads()) {
+		for (ThreadInfo thread : jvm.getThreads().values()) {
 
-			Monitor monitor = thread.getRequestedResource();
+			MonitorInfo monitor = thread.getRequestedResource();
 			if (monitor != null) {
 				waitForGraph.insertEdge(parent, null, null,
 						threadNodes.get(thread.getId()),
@@ -109,9 +109,9 @@ public class GraphBuilder {
 			}
 		}
 
-		for (Entry<Long, Monitor> entry : jvm.getMonitors().entrySet()) {
+		for (Entry<Long, MonitorInfo> entry : jvm.getMonitors().entrySet()) {
 
-			ThreadInfo threadInfo = entry.getValue().getAllocatedToThread();
+			ThreadInfo threadInfo = entry.getValue().getOwningThread();
 			if (threadInfo != null) {
 				waitForGraph.insertEdge(parent, null, null,
 						monitorNodes.get(entry.getKey()),

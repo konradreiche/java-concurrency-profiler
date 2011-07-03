@@ -19,6 +19,13 @@ public class LockTableModel extends AbstractTableModel {
 	String[] columnNames = { "ID", "Class", "Entry Count", "Waiter Count",
 			"Notify Waiter Count" };
 
+	
+	
+	public LockTableModel(JVM jvm) {
+		super();
+		this.jvm = jvm;
+	}
+
 	@Override
 	public int getRowCount() {
 		if (jvm == null) {
@@ -44,7 +51,7 @@ public class LockTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		Monitor monitor = new ArrayList<Monitor>(jvm.monitors.values())
+		MonitorInfo monitor = new ArrayList<MonitorInfo>(jvm.monitors.values())
 				.get(rowIndex);
 
 		switch (columnIndex) {

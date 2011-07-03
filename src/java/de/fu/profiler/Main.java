@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import de.fu.profiler.controller.ProfilerController;
 import de.fu.profiler.model.ProfilerModel;
-import de.fu.profiler.model.Server;
+import de.fu.profiler.service.Server;
 import de.fu.profiler.view.ProfilerObserver;
 import de.fu.profiler.view.ProfilerView;
 

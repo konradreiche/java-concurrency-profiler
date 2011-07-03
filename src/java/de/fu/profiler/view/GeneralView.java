@@ -5,12 +5,11 @@ import java.awt.GridLayout;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.table.TableModel;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -24,36 +23,51 @@ import org.jfree.chart.renderer.category.StackedBarRenderer3D;
 import org.jfree.ui.TextAnchor;
 import org.jfree.util.Rotation;
 
+import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ProfilerModel;
+import de.fu.profiler.model.ThreadTableModel;
 
-public class OverviewPanel extends JPanel {
+public class GeneralView extends JPanel {
 
 	/**
 	 * generated serial version ID
 	 */
 	private static final long serialVersionUID = 4870196876809965787L;
 
-	public OverviewPanel(ProfilerModel model, TableModel threadOverviewTableModel) {
-		
+	public GeneralView(ProfilerModel model, JVM jvm) {
+
 		super(new GridLayout(1, 1));
-		JTable threadOverviewTable = new JTable(threadOverviewTableModel);
+		ThreadTableModel tableModel = model.getThreadTableModels().get(jvm);
+		JTable threadOverviewTable = new JTable(tableModel);
 		JScrollPane threadTableScrollPane = new JScrollPane(threadOverviewTable);
 		threadTableScrollPane.setMinimumSize(new Dimension(300, 300));
-		
-		JTabbedPane tabbedDiagramPane = new JTabbedPane();
-		tabbedDiagramPane.add("Overall Thread State",setUpOverallThreadStatePieChart(model));
-		tabbedDiagramPane.add("Thread State Over Time", new JScrollPane(
-				setUpThreadStateOverTimeBarChart(model)));
-		
-		super.add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				threadTableScrollPane, tabbedDiagramPane));
-	}
-	
-	private ChartPanel setUpOverallThreadStatePieChart(ProfilerModel model) {
 
-		JFreeChart chart = ChartFactory.createPieChart3D(
-				"Overall Threads State", model.getThreadPieDataset(), true,
-				true, false);
+		JPanel diagramPanel = new JPanel(new GridLayout(1, 2));
+		JPanel generalThreadStatePanel = new JPanel(new GridLayout(1, 1));
+		JPanel threadStateOverTimePanel = new JPanel(new GridLayout(1, 1));
+
+		generalThreadStatePanel.setBorder(BorderFactory
+				.createTitledBorder("General Thread State"));
+		generalThreadStatePanel
+				.add(setUpOverallThreadStatePieChart(model, jvm));
+
+		threadStateOverTimePanel.setBorder(BorderFactory
+				.createTitledBorder("Thread State OverTime"));
+		threadStateOverTimePanel.add(new JScrollPane(setUpThreadStateOverTimeBarChart(
+				model, jvm)));
+
+		diagramPanel.add(generalThreadStatePanel);
+		diagramPanel.add(threadStateOverTimePanel);
+
+		super.add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+				threadTableScrollPane, diagramPanel));
+	}
+
+	private ChartPanel setUpOverallThreadStatePieChart(ProfilerModel model,
+			JVM jvm) {
+
+		JFreeChart chart = ChartFactory.createPieChart3D(null, model
+				.getThreadStatePieDataset().get(jvm), true, true, false);
 
 		PiePlot3D plot = (PiePlot3D) chart.getPlot();
 		plot.setStartAngle(290);
@@ -64,13 +78,14 @@ public class OverviewPanel extends JPanel {
 		chartPanel.setPreferredSize(new Dimension(300, 200));
 		return chartPanel;
 	}
-	
-	private ChartPanel setUpThreadStateOverTimeBarChart(ProfilerModel model) {
 
-		JFreeChart chart = ChartFactory.createStackedBarChart3D(
-				"Thread State Over Time", "Threads", "Time", model
-						.getCategoryDataset(), PlotOrientation.HORIZONTAL,
-				true, true, false);
+	private ChartPanel setUpThreadStateOverTimeBarChart(ProfilerModel model,
+			JVM jvm) {
+
+		JFreeChart chart = ChartFactory.createStackedBarChart3D(null,
+				"Threads", "Time",
+				model.getThreadStateOverTimeDataset().get(jvm),
+				PlotOrientation.HORIZONTAL, true, true, false);
 
 		StackedBarRenderer3D renderer = (StackedBarRenderer3D) chart
 				.getCategoryPlot().getRenderer();
@@ -78,7 +93,8 @@ public class OverviewPanel extends JPanel {
 		renderer.setDrawBarOutline(false);
 
 		for (int i = 0; i < 6; ++i) {
-			renderer.setSeriesItemLabelGenerator(i,
+			renderer.setSeriesItemLabelGenerator(
+					i,
 					new StandardCategoryItemLabelGenerator("{3}", NumberFormat
 							.getIntegerInstance(), new DecimalFormat("0.0%")));
 			renderer.setSeriesItemLabelsVisible(i, true);

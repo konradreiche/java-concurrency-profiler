@@ -25,11 +25,18 @@ public class MethodInfo {
 		this.callees.add(firstCallee);
 	}
 	
-	public void wasInvoked(long clockCycles, long time, ThreadInfo callee) {
+	public void update(long clockCycles, long time, ThreadInfo callee) {
 		this.clockCycles += clockCycles;
 		this.time += time;
 		this.numberOfInvocations += 1;
 		this.callees.add(callee);
+	}
+	
+	public void revert(long clockCycles, long time, ThreadInfo callee) {
+		this.clockCycles -= clockCycles;
+		this.time -= time;
+		this.numberOfInvocations -= 1;
+		this.callees.remove(callee);
 	}
 	
 	public void setTimeInPercent(double timePercent) {

@@ -1,4 +1,4 @@
-option java_package = "de.fu.profiler.model";
+option java_package = "de.fu.profiler.service";
 option java_outer_classname = "AgentMessageProtos";
 
 message AgentMessage {
@@ -83,7 +83,8 @@ message AgentMessage {
 
 		required State state = 4 [default = NEW];
 		required bool isContextClassLoaderSet = 5;		
-		optional int64 cpuTime = 6;
+		required bool isDaemon = 6;
+		optional int64 cpuTime = 7;
 	}
 
 	message StackTraceElement {

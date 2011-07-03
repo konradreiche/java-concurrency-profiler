@@ -891,10 +891,17 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
   inline bool iscontextclassloaderset() const;
   inline void set_iscontextclassloaderset(bool value);
   
-  // optional int64 cpuTime = 6;
+  // required bool isDaemon = 6;
+  inline bool has_isdaemon() const;
+  inline void clear_isdaemon();
+  static const int kIsDaemonFieldNumber = 6;
+  inline bool isdaemon() const;
+  inline void set_isdaemon(bool value);
+  
+  // optional int64 cpuTime = 7;
   inline bool has_cputime() const;
   inline void clear_cputime();
-  static const int kCpuTimeFieldNumber = 6;
+  static const int kCpuTimeFieldNumber = 7;
   inline ::google::protobuf::int64 cputime() const;
   inline void set_cputime(::google::protobuf::int64 value);
   
@@ -910,6 +917,8 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
   inline void clear_has_state();
   inline void set_has_iscontextclassloaderset();
   inline void clear_has_iscontextclassloaderset();
+  inline void set_has_isdaemon();
+  inline void clear_has_isdaemon();
   inline void set_has_cputime();
   inline void clear_has_cputime();
   
@@ -920,10 +929,11 @@ class AgentMessage_Thread : public ::google::protobuf::Message {
   ::google::protobuf::int32 priority_;
   int state_;
   bool iscontextclassloaderset_;
+  bool isdaemon_;
   ::google::protobuf::int64 cputime_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
   
   friend void  protobuf_AddDesc_AgentMessage_2eproto();
   friend void protobuf_AssignDesc_AgentMessage_2eproto();
@@ -2264,15 +2274,37 @@ inline void AgentMessage_Thread::set_iscontextclassloaderset(bool value) {
   iscontextclassloaderset_ = value;
 }
 
-// optional int64 cpuTime = 6;
-inline bool AgentMessage_Thread::has_cputime() const {
+// required bool isDaemon = 6;
+inline bool AgentMessage_Thread::has_isdaemon() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }
-inline void AgentMessage_Thread::set_has_cputime() {
+inline void AgentMessage_Thread::set_has_isdaemon() {
   _has_bits_[0] |= 0x00000020u;
 }
-inline void AgentMessage_Thread::clear_has_cputime() {
+inline void AgentMessage_Thread::clear_has_isdaemon() {
   _has_bits_[0] &= ~0x00000020u;
+}
+inline void AgentMessage_Thread::clear_isdaemon() {
+  isdaemon_ = false;
+  clear_has_isdaemon();
+}
+inline bool AgentMessage_Thread::isdaemon() const {
+  return isdaemon_;
+}
+inline void AgentMessage_Thread::set_isdaemon(bool value) {
+  set_has_isdaemon();
+  isdaemon_ = value;
+}
+
+// optional int64 cpuTime = 7;
+inline bool AgentMessage_Thread::has_cputime() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void AgentMessage_Thread::set_has_cputime() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void AgentMessage_Thread::clear_has_cputime() {
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline void AgentMessage_Thread::clear_cputime() {
   cputime_ = GOOGLE_LONGLONG(0);

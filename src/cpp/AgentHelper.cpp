@@ -153,6 +153,7 @@ void Agent::Helper::initializeThreadMessage(jvmtiEnv *jvmti,
 	threadMessage->set_state(state);
 	threadMessage->set_iscontextclassloaderset(
 			jvmtiThreadInfo.context_class_loader == NULL);
+	threadMessage->set_isdaemon(jvmtiThreadInfo.is_daemon);
 
 }
 

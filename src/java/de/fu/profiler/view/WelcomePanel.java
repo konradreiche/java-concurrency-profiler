@@ -29,7 +29,7 @@ public class WelcomePanel extends JPanel {
 				.createTitledBorder("Monitor New Applications"));
 
 		JLabel manual = new JLabel();
-		manual.setPreferredSize(new Dimension(400, 300));
+		manual.setPreferredSize(new Dimension(600, 300));
 
 		manual.setText(readTextFile("doc/help.html"));
 		super.add(manual);

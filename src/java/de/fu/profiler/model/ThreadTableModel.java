@@ -27,7 +27,7 @@ public class ThreadTableModel extends AbstractTableModel {
 	 * Column names.
 	 */
 	String[] columnNames = { "ID", "Name", "Priority", "State",
-			"Context Class Loader", "CPU Time" };
+			"Context Class Loader", "Is Daemon", "CPU Time" };
 
 	/**
 	 * The current actively profiled JVM.
@@ -41,8 +41,9 @@ public class ThreadTableModel extends AbstractTableModel {
 	 * 
 	 * @param threadPieChartDataset
 	 */
-	public ThreadTableModel(PieDataset threadPieDataset) {
+	public ThreadTableModel(JVM jvm, PieDataset threadPieDataset) {
 		super();
+		this.jvm = jvm;
 		this.threadPieChartDataset = (DefaultPieDataset) threadPieDataset;
 	}
 
@@ -82,7 +83,7 @@ public class ThreadTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
 		ThreadInfo threadInfo = null;
-		Iterator<ThreadInfo> it = jvm.getThreads().iterator();
+		Iterator<ThreadInfo> it = jvm.getThreads().values().iterator();
 		for (int i = 0; i <= rowIndex && it.hasNext(); ++i) {
 			threadInfo = it.next();
 		}
@@ -103,6 +104,8 @@ public class ThreadTableModel extends AbstractTableModel {
 		case 4:
 			return threadInfo.isContextClassLoaderSet();
 		case 5:
+			return threadInfo.isDaemon;
+		case 6:
 			return (threadInfo.cpuTime == -1) ? "N/A" : threadInfo.cpuTime;
 		default:
 			throw new RuntimeException("ThreadInfo has no"
@@ -110,7 +113,4 @@ public class ThreadTableModel extends AbstractTableModel {
 		}
 	}
 
-	public void setCurrentJVM(JVM jvm) {
-		this.jvm = jvm;
-	}
 }

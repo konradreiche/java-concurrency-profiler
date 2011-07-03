@@ -168,12 +168,13 @@ void protobuf_AssignDesc_AgentMessage_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(AgentMessage_MethodEvent));
   AgentMessage_Thread_descriptor_ = AgentMessage_descriptor_->nested_type(4);
-  static const int AgentMessage_Thread_offsets_[6] = {
+  static const int AgentMessage_Thread_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, priority_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, iscontextclassloaderset_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, isdaemon_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AgentMessage_Thread, cputime_),
   };
   AgentMessage_Thread_reflection_ =
@@ -287,7 +288,7 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022AgentMessage.proto\"\314\014\n\014AgentMessage\022\021\n"
+    "\n\022AgentMessage.proto\"\336\014\n\014AgentMessage\022\021\n"
     "\ttimestamp\030\001 \002(\003\022\022\n\nsystemTime\030\002 \002(\003\022\016\n\006"
     "jvm_id\030\003 \002(\005\022.\n\013threadEvent\030\004 \001(\0132\031.Agen"
     "tMessage.ThreadEvent\0220\n\014monitorEvent\030\005 \001"
@@ -315,20 +316,21 @@ void protobuf_AddDesc_AgentMessage_2eproto() {
     "dEvent\022\021\n\tclassName\030\001 \002(\t\022\022\n\nmethodName\030"
     "\002 \002(\t\022\023\n\013clockCycles\030\003 \002(\003\022\021\n\ttimeTaken\030"
     "\004 \002(\003\022$\n\006thread\030\005 \002(\0132\024.AgentMessage.Thr"
-    "ead\032\363\001\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t"
+    "ead\032\205\002\n\006Thread\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\t"
     "\022\020\n\010priority\030\003 \002(\005\022.\n\005state\030\004 \002(\0162\032.Agen"
     "tMessage.Thread.State:\003NEW\022\037\n\027isContextC"
-    "lassLoaderSet\030\005 \002(\010\022\017\n\007cpuTime\030\006 \001(\003\"[\n\005"
-    "State\022\007\n\003NEW\020\000\022\014\n\010RUNNABLE\020\001\022\013\n\007BLOCKED\020"
-    "\002\022\013\n\007WAITING\020\003\022\021\n\rTIMED_WAITING\020\004\022\016\n\nTER"
-    "MINATED\020\005\0326\n\021StackTraceElement\022\021\n\tclassN"
-    "ame\030\001 \002(\t\022\016\n\006method\030\002 \002(\t\032\317\001\n\007Monitor\022\n\n"
-    "\002id\030\001 \002(\003\022\024\n\014owningThread\030\002 \001(\005\022\022\n\nentry"
-    "Count\030\003 \002(\005\022\023\n\013waiterCount\030\004 \002(\005\022\031\n\021noti"
-    "fyWaiterCount\030\005 \002(\005\022+\n\rwaiterThreads\030\006 \003"
-    "(\0132\024.AgentMessage.Thread\0221\n\023notifyWaiter"
-    "Threads\030\007 \003(\0132\024.AgentMessage.ThreadB*\n\024d"
-    "e.fu.profiler.modelB\022AgentMessageProtos", 1679);
+    "lassLoaderSet\030\005 \002(\010\022\020\n\010isDaemon\030\006 \002(\010\022\017\n"
+    "\007cpuTime\030\007 \001(\003\"[\n\005State\022\007\n\003NEW\020\000\022\014\n\010RUNN"
+    "ABLE\020\001\022\013\n\007BLOCKED\020\002\022\013\n\007WAITING\020\003\022\021\n\rTIME"
+    "D_WAITING\020\004\022\016\n\nTERMINATED\020\005\0326\n\021StackTrac"
+    "eElement\022\021\n\tclassName\030\001 \002(\t\022\016\n\006method\030\002 "
+    "\002(\t\032\317\001\n\007Monitor\022\n\n\002id\030\001 \002(\003\022\024\n\014owningThr"
+    "ead\030\002 \001(\005\022\022\n\nentryCount\030\003 \002(\005\022\023\n\013waiterC"
+    "ount\030\004 \002(\005\022\031\n\021notifyWaiterCount\030\005 \002(\005\022+\n"
+    "\rwaiterThreads\030\006 \003(\0132\024.AgentMessage.Thre"
+    "ad\0221\n\023notifyWaiterThreads\030\007 \003(\0132\024.AgentM"
+    "essage.ThreadB,\n\026de.fu.profiler.serviceB"
+    "\022AgentMessageProtos", 1699);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "AgentMessage.proto", &protobuf_RegisterTypes);
   AgentMessage::default_instance_ = new AgentMessage();
@@ -2279,6 +2281,7 @@ const int AgentMessage_Thread::kNameFieldNumber;
 const int AgentMessage_Thread::kPriorityFieldNumber;
 const int AgentMessage_Thread::kStateFieldNumber;
 const int AgentMessage_Thread::kIsContextClassLoaderSetFieldNumber;
+const int AgentMessage_Thread::kIsDaemonFieldNumber;
 const int AgentMessage_Thread::kCpuTimeFieldNumber;
 #endif  // !_MSC_VER
 
@@ -2303,6 +2306,7 @@ void AgentMessage_Thread::SharedCtor() {
   priority_ = 0;
   state_ = 0;
   iscontextclassloaderset_ = false;
+  isdaemon_ = false;
   cputime_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -2350,6 +2354,7 @@ void AgentMessage_Thread::Clear() {
     priority_ = 0;
     state_ = 0;
     iscontextclassloaderset_ = false;
+    isdaemon_ = false;
     cputime_ = GOOGLE_LONGLONG(0);
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -2443,12 +2448,28 @@ bool AgentMessage_Thread::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(48)) goto parse_cpuTime;
+        if (input->ExpectTag(48)) goto parse_isDaemon;
         break;
       }
       
-      // optional int64 cpuTime = 6;
+      // required bool isDaemon = 6;
       case 6: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_isDaemon:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &isdaemon_)));
+          set_has_isdaemon();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(56)) goto parse_cpuTime;
+        break;
+      }
+      
+      // optional int64 cpuTime = 7;
+      case 7: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_cpuTime:
@@ -2511,9 +2532,14 @@ void AgentMessage_Thread::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->iscontextclassloaderset(), output);
   }
   
-  // optional int64 cpuTime = 6;
+  // required bool isDaemon = 6;
+  if (has_isdaemon()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->isdaemon(), output);
+  }
+  
+  // optional int64 cpuTime = 7;
   if (has_cputime()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(6, this->cputime(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(7, this->cputime(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2555,9 +2581,14 @@ void AgentMessage_Thread::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->iscontextclassloaderset(), target);
   }
   
-  // optional int64 cpuTime = 6;
+  // required bool isDaemon = 6;
+  if (has_isdaemon()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->isdaemon(), target);
+  }
+  
+  // optional int64 cpuTime = 7;
   if (has_cputime()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(6, this->cputime(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(7, this->cputime(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2603,7 +2634,12 @@ int AgentMessage_Thread::ByteSize() const {
       total_size += 1 + 1;
     }
     
-    // optional int64 cpuTime = 6;
+    // required bool isDaemon = 6;
+    if (has_isdaemon()) {
+      total_size += 1 + 1;
+    }
+    
+    // optional int64 cpuTime = 7;
     if (has_cputime()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int64Size(
@@ -2652,6 +2688,9 @@ void AgentMessage_Thread::MergeFrom(const AgentMessage_Thread& from) {
     if (from.has_iscontextclassloaderset()) {
       set_iscontextclassloaderset(from.iscontextclassloaderset());
     }
+    if (from.has_isdaemon()) {
+      set_isdaemon(from.isdaemon());
+    }
     if (from.has_cputime()) {
       set_cputime(from.cputime());
     }
@@ -2672,7 +2711,7 @@ void AgentMessage_Thread::CopyFrom(const AgentMessage_Thread& from) {
 }
 
 bool AgentMessage_Thread::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
+  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
   
   return true;
 }
@@ -2684,6 +2723,7 @@ void AgentMessage_Thread::Swap(AgentMessage_Thread* other) {
     std::swap(priority_, other->priority_);
     std::swap(state_, other->state_);
     std::swap(iscontextclassloaderset_, other->iscontextclassloaderset_);
+    std::swap(isdaemon_, other->isdaemon_);
     std::swap(cputime_, other->cputime_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);

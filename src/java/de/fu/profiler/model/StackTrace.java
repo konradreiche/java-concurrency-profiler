@@ -3,7 +3,7 @@ package de.fu.profiler.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.fu.profiler.model.AgentMessageProtos.AgentMessage;
+import de.fu.profiler.service.AgentMessageProtos.AgentMessage;
 
 public class StackTrace {
 
@@ -16,18 +16,22 @@ public class StackTrace {
 		this.stackTrace = stackTrace;
 	}
 
-	public StackTrace(ThreadInfo threadInfo, AgentMessage.StackTrace st) {
+	public StackTrace(ThreadInfo threadInfo, AgentMessage.StackTrace stackTrace) {
 
 		this.threadInfo = threadInfo;
 		this.stackTrace = new ArrayList<StackTraceElement>();
-		for (de.fu.profiler.model.AgentMessageProtos.AgentMessage.StackTrace.StackTraceElement ste : st
+		for (AgentMessage.StackTrace.StackTraceElement stackTraceElement : stackTrace
 				.getStackTraceList()) {
-			
-			this.stackTrace.add(new StackTraceElement(ste.getClassName(), ste
-					.getMethodName(), ste.getFileName(), -1));
+
+			String declaringClass = stackTraceElement.getClassName();
+			String methodName = stackTraceElement.getMethodName();
+			String fileName = stackTraceElement.getFileName();
+			int lineNumber = -1;
+
+			this.stackTrace.add(new StackTraceElement(declaringClass,
+					methodName, fileName, lineNumber));
 		}
-		
-		
+
 	}
 
 	public List<StackTraceElement> getStackTrace() {
