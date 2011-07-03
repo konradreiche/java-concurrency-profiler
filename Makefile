@@ -15,7 +15,7 @@ JFLAGS = -sourcepath $(SOURCE_DIR) \
 # JARs
 JCOMMON_JAR = lib/jcommon-1.0.16.jar
 JFREECHAR_JAR = lib/jfreechart-1.0.13.jar
-PROTOBUF_JAR = lib/protobuf-java-2.4.0.jar
+PROTOBUF_JAR = lib/protobuf-java-2.4.1.jar
 TOOLS_JAR = lib/tools.jar
 JGRAPHX_JAR = lib/jgraphx.jar
 
