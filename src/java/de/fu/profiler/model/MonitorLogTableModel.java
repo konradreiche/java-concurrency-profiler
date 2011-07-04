@@ -88,7 +88,8 @@ public class MonitorLogTableModel extends AbstractTableModel {
 
 		switch (columnIndex) {
 		case 0:
-			return notifyWaitLogEntry.systemTime / 1000000;
+			long time = notifyWaitLogEntry.systemTime - jvm.deltaSystemTime;
+			return time / 1000000;
 		case 1:
 			return notifyWaitLogEntry.threadInfo.name;
 		case 2:
@@ -103,13 +104,13 @@ public class MonitorLogTableModel extends AbstractTableModel {
 			case LEFT_WAIT:
 				return "left wait";
 			case CONTENDED_WITH_THREAD:
-				String result = (notifyWaitLogEntry.owningThread == null) ? "did not contend"
+				String result = (notifyWaitLogEntry.owningThread == null) ? "contended with N/A"
 						: "contended with "
 								+ notifyWaitLogEntry.owningThread.name;
 				return result;
 
 			case ENTERED_AFTER_CONTENTION_WITH_THREAD:
-				return "entered";
+				return "entered after contention";
 			}
 
 		case 3:

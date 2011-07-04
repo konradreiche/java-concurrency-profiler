@@ -2,6 +2,7 @@ package de.fu.profiler.view;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -12,8 +13,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionListener;
 
-import de.fu.profiler.controller.NotifyWaitTableListener;
+import de.fu.profiler.controller.MonitorLogTableListener;
 import de.fu.profiler.model.JVM;
 import de.fu.profiler.model.ProfilerModel;
 import de.fu.profiler.model.ThreadStatsTableModel;
@@ -56,6 +58,7 @@ public class MonitorLogView extends JPanel {
 		showEvent.add(cbWaiting);
 		showEvent.add(cbSignaling);
 
+		
 		JPanel showThread = new JPanel(new GridLayout());
 		showThread.setBorder(BorderFactory.createTitledBorder("Show Threads"));
 
@@ -72,10 +75,17 @@ public class MonitorLogView extends JPanel {
 				.getRoot());
 		stackTraces.setExpandsSelectedPaths(true);
 
-		monitorLogTable.getSelectionModel()
-				.addListSelectionListener(
-						new NotifyWaitTableListener(monitorLogTable, model,
-								stackTraces));
+		ListSelectionListener listener = new MonitorLogTableListener(
+				monitorLogTable, model, jvm, stackTraces, cbContendedEnter,
+				cbContendedEntered, cbWaiting, cbSignaling);
+
+		ItemListener itemListener = (ItemListener) listener;
+		cbContendedEnter.addItemListener(itemListener);
+		cbContendedEntered.addItemListener(itemListener);
+		cbWaiting.addItemListener(itemListener);
+		cbSignaling.addItemListener(itemListener);
+		
+		monitorLogTable.getSelectionModel().addListSelectionListener(listener);
 
 		ThreadStatsTableModel tableModel = model.getThreadStatsTableModels()
 				.get(jvm);

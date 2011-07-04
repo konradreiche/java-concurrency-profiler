@@ -63,14 +63,16 @@ public class ConnectionHandler implements Runnable {
 				if (agentMessage == null) {
 					break;
 				}
-				
+
 				String host = socket.getInetAddress().getCanonicalHostName();
 				int pid = agentMessage.getJvmId();
 				long timestamp = agentMessage.getTimestamp();
 				JVM jvm = null;
 
 				synchronized (profiler.getIDsToJVMs()) {
-					jvm = profiler.newJvmInstance(pid, "default", host);
+					long deltaSystemTime = agentMessage.getSystemTime();
+					jvm = profiler.newJvmInstance(pid, "default", host,
+							deltaSystemTime);
 				}
 
 				if (agentMessage.hasThreadEvent()) {
@@ -96,7 +98,7 @@ public class ConnectionHandler implements Runnable {
 
 				profiler.notifyGUI(jvm);
 			} catch (IOException e) {
-//				System.err.println(e.getMessage());
+				// System.err.println(e.getMessage());
 			}
 		}
 

@@ -28,6 +28,17 @@ public class JVM implements Comparable<JVM> {
 	final String name;
 
 	/**
+	 * Identifies the JVM by constructing an identifier with the form: pid@host
+	 */
+	final String identifier;
+
+	/**
+	 * The first system time received of the host machine in order to calculate
+	 * the passed time.
+	 */
+	final long deltaSystemTime;
+
+	/**
 	 * A list of threads of the JVM.
 	 */
 	final Map<Integer, ThreadInfo> threads;
@@ -63,11 +74,13 @@ public class JVM implements Comparable<JVM> {
 	 *            the name of the executed java program.
 	 * @param host
 	 */
-	public JVM(int id, String name, String host) {
+	public JVM(int id, String name, String host, long deltaSystemTime) {
 		super();
 		this.pid = id;
 		this.host = host;
 		this.name = name;
+		this.identifier = pid + "@" + host;
+		this.deltaSystemTime = deltaSystemTime;
 		this.threads = new ConcurrentSkipListMap<Integer, ThreadInfo>();
 		this.notifyWaitTextualLog = new ConcurrentHashMap<Long, String>();
 		this.monitorLog = new ConcurrentHashMap<Long, MonitorLogEntry>();
@@ -124,7 +137,6 @@ public class JVM implements Comparable<JVM> {
 		return monitors;
 	}
 
-
 	public MonitorInfo getMonitor(long id) {
 		return monitors.get(id);
 	}
@@ -143,11 +155,7 @@ public class JVM implements Comparable<JVM> {
 
 	@Override
 	public int compareTo(JVM o) {
-
-		String identifier = pid + "@" + host;
-		String identifier2 = o.pid + "@" + o.host;
-
-		return identifier.compareTo(identifier2);
+		return identifier.compareTo(o.identifier);
 	}
 
 	public void removeThread(int id) {
@@ -159,6 +167,6 @@ public class JVM implements Comparable<JVM> {
 	}
 
 	public void removeMonitor(long id) {
-		monitors.remove(id);		
+		monitors.remove(id);
 	}
 }

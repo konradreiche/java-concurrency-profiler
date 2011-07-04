@@ -210,7 +210,7 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 	 */
 	@Override
 	public int compareTo(ThreadInfo threadInfo) {
-		return new Integer(id).compareTo(new Integer(threadInfo.id));
+		return Integer.valueOf(id).compareTo(Integer.valueOf(threadInfo.id));
 	}
 
 	/**
@@ -220,7 +220,12 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 	 */
 	@Override
 	public boolean equals(Object o) {
-		return new Integer(id).equals(new Integer(((ThreadInfo) o).id));
+
+		if (!(o instanceof ThreadInfo)) {
+			return false;
+		} else {
+			return new Integer(id).equals(new Integer(((ThreadInfo) o).id));
+		}
 	}
 
 	public void setState(String state) {
@@ -277,10 +282,6 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 		if (this.isContextClassLoaderSet != isContextClassLoaderSet) {
 			this.isContextClassLoaderSet = isContextClassLoaderSet;
 		}
-	}
-
-	public Object clone() {
-		return null;
 	}
 
 	public Map<String, Long> getStateToDuration() {

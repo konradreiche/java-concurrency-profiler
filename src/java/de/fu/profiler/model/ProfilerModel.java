@@ -13,7 +13,6 @@ import org.jfree.data.general.PieDataset;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
-import de.fu.profiler.service.AgentMessageProtos.AgentMessage;
 import de.fu.profiler.service.Message;
 import de.fu.profiler.service.MethodMessage;
 import de.fu.profiler.service.MonitorMessage;
@@ -45,12 +44,6 @@ public class ProfilerModel extends Observable {
 	final ConcurrentMap<JVM, ConcurrentMap<Long, Message>> monitorMessageHistory;
 	final ConcurrentMap<JVM, ConcurrentMap<Long, Message>> methodMessageHistory;
 
-	/**
-	 * The current event being displayed.
-	 */
-	AgentMessage currentEvent;
-
-	volatile boolean hasChanged;
 
 	/**
 	 * At the start of the profiler all available JVMs are read and listed.
@@ -82,12 +75,12 @@ public class ProfilerModel extends Observable {
 		return IDsToJVMs;
 	}
 
-	public JVM newJvmInstance(int id, String name, String host) {
+	public JVM newJvmInstance(int id, String name, String host, long deltaSystemTime) {
 
 		JVM jvm = IDsToJVMs.get(id);
 
 		if (jvm == null) {
-			jvm = new JVM(id, name, host);
+			jvm = new JVM(id, name, host, deltaSystemTime);
 			IDsToJVMs.put(id, jvm);
 			PieDataset pieDataset = new DefaultPieDataset();
 			threadTableModels.put(jvm, new ThreadTableModel(jvm, pieDataset));
@@ -119,7 +112,7 @@ public class ProfilerModel extends Observable {
 		for (VirtualMachineDescriptor vmd : VirtualMachine.list()) {
 			IDsToJVMs.put(Integer.parseInt(vmd.id()),
 					new JVM(Integer.parseInt(vmd.id()), vmd.displayName(),
-							"localhost"));
+							"localhost", 0));
 		}
 		// TODO: notify Observer
 	}
@@ -184,9 +177,5 @@ public class ProfilerModel extends Observable {
 
 	public Map<JVM, DefaultCategoryDataset> getThreadStateOverTimeDataset() {
 		return threadStateOverTimeDataset;
-	}
-
-	public boolean isHasChanged() {
-		return hasChanged;
 	}
 }
