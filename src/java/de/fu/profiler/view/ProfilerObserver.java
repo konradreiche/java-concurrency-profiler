@@ -83,8 +83,12 @@ public class ProfilerObserver implements Observer {
 			((AbstractTableModel) view.model.getTimeTableModels().get(jvm))
 					.fireTableDataChanged();
 
-			((AbstractTableModel) view.model.getMonitorLogTables().get(jvm))
-					.fireTableDataChanged();
+			synchronized (view.model.getMonitorLogTables().get(jvm)) {
+				((AbstractTableModel) view.model.getMonitorLogTables().get(jvm))
+				.fireTableDataChanged();
+			}
+	
+			
 
 			((AbstractTableModel) view.model.getLockTableModels().get(jvm))
 					.fireTableDataChanged();

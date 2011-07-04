@@ -88,8 +88,8 @@ public class MonitorLogTableListener implements ListSelectionListener,
 			notifyWaitLogEntry = jvm.getMonitorLog().get(timestamp);
 			List<StackTrace> stackTraces = new ArrayList<StackTrace>(
 					notifyWaitLogEntry.getStackTraces().values());
-			model.getNotifyWaitStackTracesTrees().get(jvm)
-					.createTree(stackTraces);
+			model.getNotifyWaitStackTracesTrees().get(jvm).createTree(
+					stackTraces);
 			((DefaultTreeModel) tree.getModel()).reload();
 			expandAll(tree);
 			tree.repaint();
@@ -120,10 +120,11 @@ public class MonitorLogTableListener implements ListSelectionListener,
 			removerOrAdd(b, filter4);
 		}
 
-		RowFilter<Object, Object> filter = RowFilter.notFilter(RowFilter
-				.orFilter(filterList));
-		sorter.setRowFilter(filter);
-
+		synchronized (tableModel) {
+			RowFilter<Object, Object> filter = RowFilter.notFilter(RowFilter
+					.orFilter(filterList));
+			sorter.setRowFilter(filter);
+		}
 	}
 
 	private void removerOrAdd(boolean b, RowFilter<Object, Object> filter) {
