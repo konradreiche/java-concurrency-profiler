@@ -36,7 +36,7 @@ public class ProfilerModel extends Observable {
 	final Map<JVM, StackTracesTree> notifyWaitStackTracesTrees;
 	final Map<JVM, StackTracesTree> lockStackTracesTrees;
 	final Map<JVM, MonitorLogTableModel> notifyWaitTables;
-	final Map<JVM, TimeTableModel> timeTableModels;
+	final Map<JVM, MethodProfilingTableModel> timeTableModels;
 	final Map<JVM, DefaultPieDataset> threadStatePieDataset;
 	final Map<JVM, DefaultCategoryDataset> threadStateOverTimeDataset;
 
@@ -60,7 +60,7 @@ public class ProfilerModel extends Observable {
 		notifyWaitStackTracesTrees = new ConcurrentSkipListMap<JVM, StackTracesTree>();
 		lockStackTracesTrees = new ConcurrentSkipListMap<JVM, StackTracesTree>();
 		notifyWaitTables = new ConcurrentSkipListMap<JVM, MonitorLogTableModel>();
-		timeTableModels = new ConcurrentSkipListMap<JVM, TimeTableModel>();
+		timeTableModels = new ConcurrentSkipListMap<JVM, MethodProfilingTableModel>();
 		threadStatePieDataset = new ConcurrentSkipListMap<JVM, DefaultPieDataset>();
 		threadStateOverTimeDataset = new ConcurrentSkipListMap<JVM, DefaultCategoryDataset>();
 
@@ -89,7 +89,7 @@ public class ProfilerModel extends Observable {
 			notifyWaitStackTracesTrees.put(jvm, new StackTracesTree());
 			notifyWaitTables.put(jvm, new MonitorLogTableModel(jvm));
 			lockStackTracesTrees.put(jvm, new StackTracesTree());
-			timeTableModels.put(jvm, new TimeTableModel(jvm));
+			timeTableModels.put(jvm, new MethodProfilingTableModel(jvm));
 			threadStatePieDataset.put(jvm, new DefaultPieDataset());
 			threadStateOverTimeDataset.put(jvm, new DefaultCategoryDataset());
 
@@ -167,7 +167,7 @@ public class ProfilerModel extends Observable {
 		return notifyWaitTables;
 	}
 
-	public Map<JVM, TimeTableModel> getTimeTableModels() {
+	public Map<JVM, MethodProfilingTableModel> getTimeTableModels() {
 		return timeTableModels;
 	}
 

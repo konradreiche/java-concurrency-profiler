@@ -140,14 +140,9 @@ void Agent::Helper::initializeThreadMessage(jvmtiEnv *jvmti,
 		break;
 	}
 
-	jvmti->GetTag(thread, &thr_id_ptr);
-	if (thr_id_ptr == 0) {
-		jvmti->SetTag(thread, objectId);
-		++objectId;
-		jvmti->GetTag(thread, &thr_id_ptr);
-	}
+	jlong currentObjectId = getId(jvmti,thread);
 
-	threadMessage->set_id(thr_id_ptr);
+	threadMessage->set_id(currentObjectId);
 	threadMessage->set_name(jvmtiThreadInfo.name);
 	threadMessage->set_priority(jvmtiThreadInfo.priority);
 	threadMessage->set_state(state);
@@ -155,6 +150,20 @@ void Agent::Helper::initializeThreadMessage(jvmtiEnv *jvmti,
 			jvmtiThreadInfo.context_class_loader == NULL);
 	threadMessage->set_isdaemon(jvmtiThreadInfo.is_daemon);
 
+}
+
+long Agent::Helper::getId(jvmtiEnv *jvmti, jobject object) {
+
+	jlong id;
+
+	jvmti->GetTag(object, &id);
+	if (id == 0) {
+		jvmti->SetTag(object, objectId);
+		++objectId;
+		jvmti->GetTag(object, &id);
+	}
+
+	return id;
 }
 
 /** Every JVMTI interface returns an error code, which should be checked

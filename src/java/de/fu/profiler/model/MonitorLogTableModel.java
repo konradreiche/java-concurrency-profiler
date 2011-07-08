@@ -3,6 +3,7 @@ package de.fu.profiler.model;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -12,6 +13,12 @@ public class MonitorLogTableModel extends AbstractTableModel {
 	 * generated serial version ID
 	 */
 	private static final long serialVersionUID = -5087099635014715160L;
+
+	/**
+	 * List of thread names which is collected in order to provide filter
+	 * possibilities.
+	 */
+	SortedSet<String> threadNames;
 
 	/**
 	 * Column names.
@@ -33,6 +40,7 @@ public class MonitorLogTableModel extends AbstractTableModel {
 	public MonitorLogTableModel(JVM jvm) {
 		super();
 		this.jvm = jvm;
+		threadNames = new ConcurrentSkipListSet<String>();
 	}
 
 	/**
@@ -70,9 +78,9 @@ public class MonitorLogTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		MonitorLogEntry notifyWaitLogEntry = null;
-		SortedSet<Long> sortedTimestamp = new TreeSet<Long>(
-				jvm.monitorLog.keySet());
+		MonitorLogEntry monitorLogEntry = null;
+		SortedSet<Long> sortedTimestamp = new TreeSet<Long>(jvm.monitorLog
+				.keySet());
 
 		long timestamp = -1;
 		Iterator<Long> it = sortedTimestamp.iterator();
@@ -84,17 +92,18 @@ public class MonitorLogTableModel extends AbstractTableModel {
 			return null;
 		}
 
-		notifyWaitLogEntry = jvm.monitorLog.get(timestamp);
+		monitorLogEntry = jvm.monitorLog.get(timestamp);
 
 		switch (columnIndex) {
 		case 0:
-			long time = notifyWaitLogEntry.systemTime - jvm.deltaSystemTime;
+			long time = monitorLogEntry.systemTime - jvm.deltaSystemTime;
 			return time / 1000000;
 		case 1:
-			return notifyWaitLogEntry.threadInfo.name;
+			threadNames.add(monitorLogEntry.threadInfo.name);
+			return monitorLogEntry.threadInfo.name;
 		case 2:
 
-			switch (notifyWaitLogEntry.type) {
+			switch (monitorLogEntry.type) {
 			case INVOKED_WAIT:
 				return "invoked wait";
 			case INVOKED_NOTIFY:
@@ -104,9 +113,8 @@ public class MonitorLogTableModel extends AbstractTableModel {
 			case LEFT_WAIT:
 				return "left wait";
 			case CONTENDED_WITH_THREAD:
-				String result = (notifyWaitLogEntry.owningThread == null) ? "contended with N/A"
-						: "contended with "
-								+ notifyWaitLogEntry.owningThread.name;
+				String result = (monitorLogEntry.owningThread == null) ? "contended with N/A"
+						: "contended with " + monitorLogEntry.owningThread.name;
 				return result;
 
 			case ENTERED_AFTER_CONTENTION_WITH_THREAD:
@@ -114,21 +122,21 @@ public class MonitorLogTableModel extends AbstractTableModel {
 			}
 
 		case 3:
-			return notifyWaitLogEntry.monitorClass;
+			return monitorLogEntry.monitorClass;
 		case 4:
-			return notifyWaitLogEntry.methodContext;
+			return monitorLogEntry.methodContext;
 		case 5:
 
-			if (notifyWaitLogEntry.oldState != null) {
-				return notifyWaitLogEntry.oldState;
+			if (monitorLogEntry.oldState != null) {
+				return monitorLogEntry.oldState;
 			} else {
 				return "-";
 			}
 
 		case 6:
 
-			if (notifyWaitLogEntry.newState != null) {
-				return notifyWaitLogEntry.newState;
+			if (monitorLogEntry.newState != null) {
+				return monitorLogEntry.newState;
 			} else {
 				return "-";
 			}
@@ -147,4 +155,7 @@ public class MonitorLogTableModel extends AbstractTableModel {
 		return jvm;
 	}
 
+	public SortedSet<String> getThreadNames() {
+		return threadNames;
+	}
 }

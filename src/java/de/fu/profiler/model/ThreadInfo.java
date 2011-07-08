@@ -15,12 +15,12 @@ import de.fu.profiler.service.AgentMessageProtos.AgentMessage;
  * 
  */
 public class ThreadInfo implements Comparable<ThreadInfo>,
-		Cloneable<ThreadInfo> {
+		Cloneable<ThreadInfo>, Node<ThreadInfo> {
 
 	/**
 	 * A generated id by the profiler.
 	 */
-	final int id;
+	final long id;
 
 	/**
 	 * The threads name.
@@ -119,7 +119,7 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 	 *            whether the context class loader is set.
 	 * @param notiyWaitController
 	 */
-	public ThreadInfo(int id, String name, int priority, String state,
+	public ThreadInfo(long id, String name, int priority, String state,
 			boolean ccl, boolean isDaemon, long timestamp) {
 		super();
 		this.id = id;
@@ -147,10 +147,22 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 	}
 
 	public static String formatThreadState(AgentMessage.Thread.State state) {
+
 		String result = state.toString();
+		int index;
+		while ((index = result.indexOf("_")) != -1) {
+			String head = result.substring(0, index);
+			String firstLetter = result.substring(index + 1, index + 2);
+			String tail = result.substring(index + 2);
+			result = head.toLowerCase() + " " + firstLetter.toUpperCase()
+					+ tail.toLowerCase();
+		}
+
 		String firstLetter = result.substring(0, 1);
-		String remainder = result.substring(1);
-		result = firstLetter.toUpperCase() + remainder.toLowerCase();
+		String remainder = result.contains(" ") ? result.substring(1) : result
+				.substring(1).toLowerCase();
+		result = firstLetter.toUpperCase() + remainder;
+
 		return result;
 	}
 
@@ -176,7 +188,7 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 		return thread;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -210,7 +222,7 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 	 */
 	@Override
 	public int compareTo(ThreadInfo threadInfo) {
-		return Integer.valueOf(id).compareTo(Integer.valueOf(threadInfo.id));
+		return Long.valueOf(id).compareTo(Long.valueOf(threadInfo.id));
 	}
 
 	/**
@@ -224,7 +236,7 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 		if (!(o instanceof ThreadInfo)) {
 			return false;
 		} else {
-			return new Integer(id).equals(new Integer(((ThreadInfo) o).id));
+			return Long.valueOf(id).equals(Long.valueOf(((ThreadInfo) o).id));
 		}
 	}
 
@@ -318,10 +330,6 @@ public class ThreadInfo implements Comparable<ThreadInfo>,
 
 	public MonitorInfo getRequestedResource() {
 		return requestedResource;
-	}
-
-	public void setRequestedResource(MonitorInfo monitorInfo) {
-		requestedResource = monitorInfo;
 	}
 
 	public void increaseMonitorContendedCount() {

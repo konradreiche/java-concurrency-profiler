@@ -32,8 +32,8 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-//static MessageService messageService("192.168.1.101", "50000");
-static MessageService messageService("127.0.0.1", "50000");
+static MessageService messageService("192.168.1.101", "50000");
+//static MessageService messageService("127.0.0.1", "50000");
 
 static int jvmPid;
 
@@ -195,14 +195,7 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 	{
 		jvmtiMonitorUsage monitorUseage;
 		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
-		jlong currentObjectId;
-
-		jvmti->GetTag(object, &currentObjectId);
-		if (currentObjectId == 0) {
-			jvmti->SetTag(object, Agent::Helper::objectId);
-			++Agent::Helper::objectId;
-			jvmti->GetTag(object, &currentObjectId);
-		}
+		jlong currentObjectId = Agent::Helper::getId(jvmti,object);
 
 		AgentMessage agentMessage;
 
@@ -232,14 +225,7 @@ static void JNICALL callbackMonitorContendedEntered(jvmtiEnv *jvmti_env,
 	{
 		jvmtiMonitorUsage monitorUseage;
 		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
-		jlong currentObjectId;
-
-		jvmti->GetTag(object, &currentObjectId);
-		if (currentObjectId == 0) {
-			jvmti->SetTag(object, Agent::Helper::objectId);
-			++Agent::Helper::objectId;
-			jvmti->GetTag(object, &currentObjectId);
-		}
+		jlong currentObjectId = Agent::Helper::getId(jvmti,object);
 
 		AgentMessage agentMessage;
 
@@ -269,14 +255,7 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 	{
 		jvmtiMonitorUsage monitorUseage;
 		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
-		jlong currentObjectId;
-
-		jvmti->GetTag(object, &currentObjectId);
-		if (currentObjectId == 0) {
-			jvmti->SetTag(object, Agent::Helper::objectId);
-			++Agent::Helper::objectId;
-			jvmti->GetTag(object, &currentObjectId);
-		}
+		jlong currentObjectId = Agent::Helper::getId(jvmti,object);
 
 		Agent::Helper::StackTraceElement stackTraceElement =
 				Agent::Helper::getStackTraceElement(jvmti_env, thread, 2);
@@ -304,14 +283,7 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 	{
 		jvmtiMonitorUsage monitorUseage;
 		jvmti_env->GetObjectMonitorUsage(object, &monitorUseage);
-		jlong currentObjectId;
-
-		jvmti->GetTag(object, &currentObjectId);
-		if (currentObjectId == 0) {
-			jvmti->SetTag(object, Agent::Helper::objectId);
-			++Agent::Helper::objectId;
-			jvmti->GetTag(object, &currentObjectId);
-		}
+		jlong currentObjectId = Agent::Helper::getId(jvmti,object);
 
 		Agent::Helper::StackTraceElement stackTraceElement =
 				Agent::Helper::getStackTraceElement(jvmti_env, thread, 2);
@@ -368,8 +340,7 @@ static void JNICALL callbackMethodEntry(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 		jlong currentTime;
 		jvmti->GetTime(&currentTime);
 
-		jlong currentObjectId;
-		jvmti->GetTag(thread, &currentObjectId);
+		jlong currentObjectId = Agent::Helper::getId(jvmti,thread);
 
 		std::map<long, timestampStack>::iterator it1 = threadToTimestamps.find(
 				currentObjectId);
@@ -442,8 +413,7 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 		jlong currentTime;
 		jvmti->GetTime(&currentTime);
 
-		jlong currentObjectId;
-		jvmti->GetTag(thread, &currentObjectId);
+		jlong currentObjectId = Agent::Helper::getId(jvmti,thread);
 
 		std::map<long, timestampStack>::iterator it1 = threadToTimestamps.find(
 				currentObjectId);

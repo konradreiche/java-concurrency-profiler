@@ -60,6 +60,7 @@ public class MonitorMessage extends Message {
 	private void processEventType(MonitorEvent event, MonitorInfo monitorInfo,
 			ThreadInfo threadInfo, String currentState, String nextState) {
 
+		long timestamp = agentMessage.getTimestamp();
 		Monitor monitor = event.getMonitor();
 		long systemTime = agentMessage.getSystemTime();
 		String className = event.getClassName();
@@ -75,9 +76,12 @@ public class MonitorMessage extends Message {
 					Type.CONTENDED_WITH_THREAD, methodName, className,
 					systemTime, allStackTraces);
 
-			monitorInfo.setOwningThread(owningThread);
+			if (owningThread != null) {
+				jvm.assignResource(timestamp, owningThread, monitorInfo);
+			}
+			
+			jvm.requestResource(timestamp + 1, threadInfo, monitorInfo);
 			logEntry.setOwningThread(owningThread);
-			threadInfo.setRequestedResource(monitorInfo);
 			threadInfo.increaseMonitorContendedCount();
 			break;
 		case ENTERED:
@@ -86,8 +90,15 @@ public class MonitorMessage extends Message {
 					Type.ENTERED_AFTER_CONTENTION_WITH_THREAD, methodName,
 					className, systemTime, allStackTraces);
 
-			monitorInfo.setOwningThread(threadInfo);
-			threadInfo.setRequestedResource(null);
+			owningThread = monitorInfo.getOwningThread();
+			
+			if (owningThread != null) {
+				jvm.unassignResource(timestamp, owningThread, monitorInfo);				
+			}
+
+			jvm.stopRequestResource(timestamp, threadInfo, monitorInfo);
+			jvm.assignResource(timestamp, threadInfo, monitorInfo);
+
 			threadInfo.increaseMonitorEnteredCount();
 			break;
 		case NONE:
@@ -126,9 +137,7 @@ public class MonitorMessage extends Message {
 			break;
 		}
 
-		long timestamp = agentMessage.getTimestamp();
-		jvm.getMonitorLog().put(timestamp, logEntry);
-
+		jvm.addMonitorLogEntry(timestamp, logEntry);
 	}
 
 	private MonitorInfo processMonitorInfo(MonitorEvent event) {

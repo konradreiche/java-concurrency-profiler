@@ -52,6 +52,8 @@ void insertAllStackTraces(jvmtiEnv *jvmti,
  */
 void checkError(jvmtiEnv *jvmti, jvmtiError errnum, const char *str);
 
+long getId(jvmtiEnv *jvmti, jobject object);
+
 /**
  * When this is a native call, the class signature is read from the stack trace element depth-1
  */

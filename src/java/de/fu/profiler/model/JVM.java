@@ -1,8 +1,13 @@
 package de.fu.profiler.model;
 
 import java.util.Map;
+import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+
+import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
  * Models a Java Virtual Machine.
@@ -10,7 +15,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * @author Konrad Johannes Reiche
  * 
  */
-public class JVM implements Comparable<JVM> {
+public class JVM extends Observable implements Comparable<JVM> {
 
 	/**
 	 * pid
@@ -41,13 +46,7 @@ public class JVM implements Comparable<JVM> {
 	/**
 	 * A list of threads of the JVM.
 	 */
-	final Map<Integer, ThreadInfo> threads;
-
-	/**
-	 * A list of events where its timestamp is mapped to a certain notify and
-	 * wait log entry with a textual representation.
-	 */
-	final Map<Long, String> notifyWaitTextualLog;
+	final Map<Long, ThreadInfo> threads;
 
 	/**
 	 * A list of events where its timestamp is mapped to a certain notify and
@@ -66,6 +65,17 @@ public class JVM implements Comparable<JVM> {
 	final Map<String, MethodInfo> methods;
 
 	/**
+	 * The graph presenting the resource allocation graph constructed due to
+	 * thread contention on monitor acquisition.
+	 */
+	final Graph<Node<?>, Long> resourceAllocationGraph;
+
+	/**
+	 * Whether the JVM is deadlocked.
+	 */
+	boolean isDeadlocked;
+
+	/**
 	 * Standard constructor.
 	 * 
 	 * @param id
@@ -81,18 +91,18 @@ public class JVM implements Comparable<JVM> {
 		this.name = name;
 		this.identifier = pid + "@" + host;
 		this.deltaSystemTime = deltaSystemTime;
-		this.threads = new ConcurrentSkipListMap<Integer, ThreadInfo>();
-		this.notifyWaitTextualLog = new ConcurrentHashMap<Long, String>();
+		this.threads = new ConcurrentSkipListMap<Long, ThreadInfo>();
 		this.monitorLog = new ConcurrentHashMap<Long, MonitorLogEntry>();
 		this.monitors = new ConcurrentHashMap<Long, MonitorInfo>();
 		this.methods = new ConcurrentHashMap<String, MethodInfo>();
+		this.resourceAllocationGraph = new DirectedSparseMultigraph<Node<?>, Long>();
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Map<Integer, ThreadInfo> getThreads() {
+	public Map<Long, ThreadInfo> getThreads() {
 		return threads;
 	}
 
@@ -104,7 +114,79 @@ public class JVM implements Comparable<JVM> {
 	 *            a thread.
 	 */
 	public void addThread(ThreadInfo threadInfo) {
-		threads.put(threadInfo.getId(), threadInfo);
+		threads.put(threadInfo.id, threadInfo);
+		resourceAllocationGraph.addVertex(threadInfo);
+	}
+
+	public void removeThread(long id) {
+		ThreadInfo thread = threads.get(id);
+		threads.remove(id);
+		resourceAllocationGraph.removeVertex(thread);
+	}
+
+	public void assignResource(long timestamp, ThreadInfo thread,
+			MonitorInfo monitor) {
+
+		monitor.ownedByThread = thread;
+		if (resourceAllocationGraph.findEdge(thread, monitor) == null) {
+			resourceAllocationGraph.addEdge(timestamp, thread, monitor,
+					EdgeType.DIRECTED);
+		}
+	}
+
+	public void unassignResource(long timestamp, ThreadInfo thread,
+			MonitorInfo monitor) {
+
+		monitor.ownedByThread = null;
+		Long edge = resourceAllocationGraph.findEdge(thread, monitor);
+		resourceAllocationGraph.removeEdge(edge);
+	}
+
+	public void requestResource(long timestamp, ThreadInfo thread,
+			MonitorInfo monitor) {
+
+		thread.requestedResource = monitor;
+		if (resourceAllocationGraph.findEdge(monitor, thread) == null) {
+			resourceAllocationGraph.addEdge(timestamp, monitor, thread,
+					EdgeType.DIRECTED);
+		}
+		
+		if (isDeadlocked(thread)) {
+			isDeadlocked = true;
+			setChanged();
+			notifyObservers(this);
+		}
+	}
+
+	public boolean isDeadlocked(ThreadInfo thread) {
+
+		MonitorInfo requestedMonitor = thread.getRequestedResource();
+		ThreadInfo owningThread = requestedMonitor.ownedByThread;
+		
+		while (true) {
+			if (owningThread != null) {
+				requestedMonitor = owningThread.requestedResource;
+				if (requestedMonitor != null) {
+					owningThread = requestedMonitor.ownedByThread;
+					if (owningThread.equals(thread)) {
+						return true;
+					}
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+
+	}
+
+	public void stopRequestResource(long timestamp, ThreadInfo thread,
+			MonitorInfo monitor) {
+
+		thread.requestedResource = null;
+		Long edge = resourceAllocationGraph.findEdge(monitor, thread);
+		resourceAllocationGraph.removeEdge(edge);
 	}
 
 	/**
@@ -115,18 +197,22 @@ public class JVM implements Comparable<JVM> {
 		threads.clear();
 	}
 
+	public void addMonitorLogEntry(long timestamp,
+			MonitorLogEntry monitorLogEntry) {
+
+		monitorLog.put(timestamp, monitorLogEntry);
+		setChanged();
+		notifyObservers(monitorLogEntry.getThreadInfo());
+	}
+
 	/**
 	 * Returns the thread based on its id.
 	 * 
 	 * @param id
 	 *            Thread id.
 	 */
-	public ThreadInfo getThread(int id) {
+	public ThreadInfo getThread(long id) {
 		return threads.get(id);
-	}
-
-	public Map<Long, String> getNotifyWaitTextualLog() {
-		return notifyWaitTextualLog;
 	}
 
 	public Map<Long, MonitorLogEntry> getMonitorLog() {
@@ -158,15 +244,25 @@ public class JVM implements Comparable<JVM> {
 		return identifier.compareTo(o.identifier);
 	}
 
-	public void removeThread(int id) {
-		threads.remove(id);
-	}
-
 	public void addMonitor(MonitorInfo monitorInfo) {
-		monitors.put(monitorInfo.getId(), monitorInfo);
+		long id = monitorInfo.id;
+		monitors.put(id, monitorInfo);
+		resourceAllocationGraph.addVertex(monitorInfo);
 	}
 
 	public void removeMonitor(long id) {
+		MonitorInfo monitor = monitors.get(id);
 		monitors.remove(id);
+		resourceAllocationGraph.removeVertex(monitor);
 	}
+
+	public Graph<Node<?>, Long> getResourceAllocationGraph() {
+		return resourceAllocationGraph;
+	}
+
+	public boolean isDeadlocked() {
+		return isDeadlocked;
+	}
+	
+	
 }

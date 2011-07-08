@@ -1,5 +1,6 @@
 package de.fu.profiler.view;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ProfilerView extends JFrame implements Observer {
 	 * generated serial version ID
 	 */
 	private static final long serialVersionUID = -6276797391162392835L;
-	
+
 	private static final int WIDTH = 1400;
 
 	private static final int HEIGHT = 800;
@@ -45,14 +46,16 @@ public class ProfilerView extends JFrame implements Observer {
 
 	JTabbedPane mainSelection;
 
-	Map<JVM, MonitorLogView> notifyWaitViews;
-	Map<JVM, ResourceAllocationGraph> resourceAllocationGraphs;
+	final Map<JVM, MonitorLogView> monitorLogViews;
+	final Map<JVM, ResourceAllocationGraphView> resourceAllocationGraphs;
+	final Map<JVM, JTabbedPane> tabbedPanes;
 
 	public ProfilerView(ProfilerModel model) {
 
 		this.model = model;
-		notifyWaitViews = new ConcurrentSkipListMap<JVM, MonitorLogView>();
-		resourceAllocationGraphs = new ConcurrentSkipListMap<JVM, ResourceAllocationGraph>();
+		monitorLogViews = new ConcurrentSkipListMap<JVM, MonitorLogView>();
+		resourceAllocationGraphs = new ConcurrentSkipListMap<JVM, ResourceAllocationGraphView>();
+		tabbedPanes = new ConcurrentSkipListMap<JVM, JTabbedPane>();
 		model.addObserver(this);
 		setUpLookAndFeel();
 
@@ -68,25 +71,30 @@ public class ProfilerView extends JFrame implements Observer {
 
 	private void createView(JVM jvm) {
 		GeneralView generalView = new GeneralView(model, jvm);
-		MonitorLogView notifyWaitPanel = new MonitorLogView(model, jvm);
+		MonitorLogView monitorLogPanel = new MonitorLogView(model, jvm);
 		MonitorView locks = new MonitorView(model, jvm);
-		ResourceAllocationGraph resourceAllocationGraph = new ResourceAllocationGraph(
-				model);
-		MethodProfilingView methodProfilingView = new MethodProfilingView(model,jvm);
+		ResourceAllocationGraphView resourceAllocationGraph = new ResourceAllocationGraphView(
+				model, jvm);
+		MethodProfilingView methodProfilingView = new MethodProfilingView(
+				model, jvm);
 
-		notifyWaitViews.put(jvm, notifyWaitPanel);
+		monitorLogViews.put(jvm, monitorLogPanel);
 		resourceAllocationGraphs.put(jvm, resourceAllocationGraph);
 
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.add("General", generalView);
-		tabbedPane.add("Monitor Log", notifyWaitPanel);
+		tabbedPane.add("Monitor Log", monitorLogPanel);
 		tabbedPane.add("Monitor", locks);
 		tabbedPane.add("Resource Allocation Graph", resourceAllocationGraph);
 		tabbedPane.add("Method Profiling", methodProfilingView);
-
+		tabbedPanes.put(jvm, tabbedPane);
+		
 		mainSelection.add(jvm.getHost() + " (PID " + jvm.getPid() + ")",
 				tabbedPane);
 		mainSelection.setSelectedComponent(tabbedPane);
+
+		jvm.addObserver(monitorLogPanel);
+		jvm.addObserver(this);
 	}
 
 	private void setUpLookAndFeel() {
@@ -111,6 +119,13 @@ public class ProfilerView extends JFrame implements Observer {
 			JVM jvm = (JVM) arg;
 			jvms.add(jvm);
 			createView(jvm);
+		} else if (arg instanceof JVM) {
+			JVM jvm = (JVM)arg;
+			if (jvm.isDeadlocked()) {
+				JTabbedPane pane = tabbedPanes.get(jvm);
+				pane.setForegroundAt(3, Color.RED);
+				pane.setTitleAt(3, "Deadlocked");				
+			}
 		}
 	}
 }

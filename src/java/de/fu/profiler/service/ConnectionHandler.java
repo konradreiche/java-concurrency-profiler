@@ -54,6 +54,8 @@ public class ConnectionHandler implements Runnable {
 	@Override
 	public void run() {
 
+		int i = 0;
+		
 		while (true) {
 
 			try {
@@ -68,6 +70,8 @@ public class ConnectionHandler implements Runnable {
 				int pid = agentMessage.getJvmId();
 				long timestamp = agentMessage.getTimestamp();
 				JVM jvm = null;
+				
+				++i;
 
 				synchronized (profiler.getIDsToJVMs()) {
 					long deltaSystemTime = agentMessage.getSystemTime();
@@ -98,10 +102,8 @@ public class ConnectionHandler implements Runnable {
 
 				profiler.notifyGUI(jvm);
 			} catch (IOException e) {
-				// System.err.println(e.getMessage());
+//				System.err.println(e.getMessage());
 			}
 		}
-
 	}
-
 }

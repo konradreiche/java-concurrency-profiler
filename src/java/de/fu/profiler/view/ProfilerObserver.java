@@ -30,7 +30,7 @@ public class ProfilerObserver implements Observer {
 	@Override
 	public void update(final Observable o, final Object arg) {
 
-		if (arg != null && view.notifyWaitViews.containsKey(arg)
+		if (arg != null && view.monitorLogViews.containsKey(arg)
 				&& view.resourceAllocationGraphs.containsKey(arg)) {
 			JVM jvm = (JVM) arg;
 
@@ -80,23 +80,22 @@ public class ProfilerObserver implements Observer {
 			((AbstractTableModel) view.model.getThreadStatsTableModels().get(
 					jvm)).fireTableDataChanged();
 
-			((AbstractTableModel) view.model.getTimeTableModels().get(jvm))
-					.fireTableDataChanged();
+			synchronized (view.model.getTimeTableModels().get(jvm)) {
+				((AbstractTableModel) view.model.getTimeTableModels().get(jvm))
+						.fireTableDataChanged();
+			}
 
 			synchronized (view.model.getMonitorLogTables().get(jvm)) {
 				((AbstractTableModel) view.model.getMonitorLogTables().get(jvm))
-				.fireTableDataChanged();
+						.fireTableDataChanged();
 			}
-	
-			
 
 			((AbstractTableModel) view.model.getLockTableModels().get(jvm))
 					.fireTableDataChanged();
 
-			view.notifyWaitViews.get(jvm).repaint();
+			view.monitorLogViews.get(jvm).repaint();
 
-			view.resourceAllocationGraphs.get(jvm).graphBuilder
-					.createWaitForGraph(jvm);
+
 		}
 	}
 

@@ -11,7 +11,7 @@ import de.fu.profiler.Cloneable;
  * @author Konrad Johannes Reiche
  * 
  */
-public class MonitorInfo implements Cloneable<MonitorInfo> {
+public class MonitorInfo implements Cloneable<MonitorInfo>, Node<MonitorInfo> {
 
 	/**
 	 * Generated id by the profiling agent.
@@ -46,7 +46,7 @@ public class MonitorInfo implements Cloneable<MonitorInfo> {
 	Map<ThreadInfo, StackTrace> waiter;
 
 	Map<ThreadInfo, StackTrace> notifyWaiter;
-
+	
 	public MonitorInfo(long id, String className, int entryCount,
 			int waiterCount, int notifyWaiterCount,
 			Map<ThreadInfo, StackTrace> waiter,
@@ -68,7 +68,8 @@ public class MonitorInfo implements Cloneable<MonitorInfo> {
 				waiterCount, notifyWaiterCount, waiter, notifyWaiter);
 		monitorInfo.ownedByThread = ownedByThread;
 		monitorInfo.waiter = new TreeMap<ThreadInfo, StackTrace>(waiter);
-		monitorInfo.notifyWaiter =  new TreeMap<ThreadInfo, StackTrace>(notifyWaiter);
+		monitorInfo.notifyWaiter = new TreeMap<ThreadInfo, StackTrace>(
+				notifyWaiter);
 
 		return monitorInfo;
 	}
@@ -132,9 +133,5 @@ public class MonitorInfo implements Cloneable<MonitorInfo> {
 
 	public Map<ThreadInfo, StackTrace> getNotifyWaiter() {
 		return notifyWaiter;
-	}
-
-	public void setOwningThread(ThreadInfo owningThread) {
-		ownedByThread = owningThread;
 	}
 }

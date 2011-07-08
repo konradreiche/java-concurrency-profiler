@@ -13,7 +13,7 @@ import javax.swing.table.TableModel;
  * @author Konrad Johannes Reiche
  * 
  */
-public class TimeTableModel extends AbstractTableModel {
+public class MethodProfilingTableModel extends AbstractTableModel {
 
 	/**
 	 * generated serial version ID
@@ -36,7 +36,7 @@ public class TimeTableModel extends AbstractTableModel {
 	 * 
 	 * @param threadPieChartDataset
 	 */
-	public TimeTableModel(JVM jvm) {
+	public MethodProfilingTableModel(JVM jvm) {
 		super();
 		this.jvm = jvm;
 	}

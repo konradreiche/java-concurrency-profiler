@@ -5,8 +5,10 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
@@ -44,6 +46,8 @@ public class MonitorLogTableListener implements ListSelectionListener,
 	RowFilter<Object, Object> filter3 = RowFilter.regexFilter("wait", 2);
 	RowFilter<Object, Object> filter4 = RowFilter.regexFilter(".*notify.*", 2);
 	List<RowFilter<Object, Object>> filterList = new ArrayList<RowFilter<Object, Object>>();
+
+	Map<String, RowFilter<Object, Object>> threadFilters = new ConcurrentSkipListMap<String, RowFilter<Object, Object>>();
 
 	public MonitorLogTableListener(JTable table, ProfilerModel model, JVM jvm,
 			JTree tree, JCheckBox cbContendedEnter,
@@ -118,11 +122,25 @@ public class MonitorLogTableListener implements ListSelectionListener,
 			removerOrAdd(b, filter3);
 		} else if (source == cbSignaling) {
 			removerOrAdd(b, filter4);
+		} else {
+
+			String threadName = ((JCheckBox) source).getText();
+			if (!b) {
+				threadFilters.remove(threadName);
+			} else {
+				RowFilter<Object, Object> threadFilter = RowFilter.regexFilter(
+						threadName, 1);
+				threadFilters.put(threadName, threadFilter);
+			}
 		}
 
 		synchronized (tableModel) {
+			List<RowFilter<Object, Object>> overallFilter = new ArrayList<RowFilter<Object, Object>>();
+			overallFilter.addAll(filterList);
+			overallFilter.addAll(threadFilters.values());
+
 			RowFilter<Object, Object> filter = RowFilter.notFilter(RowFilter
-					.orFilter(filterList));
+					.orFilter(overallFilter));
 			sorter.setRowFilter(filter);
 		}
 	}
