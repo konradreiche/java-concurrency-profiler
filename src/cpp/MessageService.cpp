@@ -17,12 +17,10 @@ MessageService::MessageService(std::string ip, std::string port) :
 	tcp::resolver::query query(ip, port);
 	endpoint_iterator = resolver.resolve(query);
 
-	tcp::endpoint endpoint = *endpoint_iterator;
+	boost::system::error_code error = boost::asio::error::host_not_found;
+	socket.connect(*endpoint_iterator++,error);
 
-	socket.async_connect(endpoint, boost::bind(&MessageService::handle_connect,
-			this, boost::asio::placeholders::error, ++endpoint_iterator));
-
-	boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
+	//boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
 }
 
 void MessageService::await() {
@@ -47,7 +45,7 @@ void MessageService::write(AgentMessage agentMessage, long systemTime,
 	agentMessage.set_timestamp(Agent::Helper::getCurrentClockCycle());
 	agentMessage.set_jvm_id(JVM_ID);
 	agentMessage.set_systemtime(systemTime);
-	io_service.post(boost::bind(&MessageService::do_write, this, agentMessage));
+	transmitMessage(agentMessage);
 }
 
 void MessageService::do_close() {
@@ -70,8 +68,7 @@ void MessageService::transmitMessage(AgentMessage agentMessage) {
 
 	boost::system::error_code ignored_error;
 
-	boost::asio::async_write(socket, b.data(), boost::bind(
-			&MessageService::handle_write, this, boost::asio::placeholders::error));
+	boost::asio::write(socket, b.data(),boost::asio::transfer_all(), ignored_error);
 }
 
 void MessageService::do_write(AgentMessage agentMessage) {

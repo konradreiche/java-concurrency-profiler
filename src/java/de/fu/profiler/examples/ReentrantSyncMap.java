@@ -1,18 +1,17 @@
 package de.fu.profiler.examples;
 
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ReentrantSyncMap implements IMap {
-    private final Map map;
+public class ReentrantSyncMap<Key, Value> implements IMap<Key, Value> {
+    private final Map<Key, Value> map;
     private final ReentrantLock lock = new ReentrantLock(false);
 
-    public ReentrantSyncMap(Map map) {
+    public ReentrantSyncMap(Map<Key, Value> map) {
         this.map = map;
     }
 
-    public Object put(Object key, Object value) {
+    public Value put(Key key, Value value) {
         lock.lock();
         try {
             return map.put(key, value);
@@ -21,7 +20,7 @@ public class ReentrantSyncMap implements IMap {
         }
     }
 
-    public Object get(Object key) {
+    public Value get(Object key) {
         lock.lock();
         try {
             return map.get(key);

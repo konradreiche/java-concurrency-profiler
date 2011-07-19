@@ -151,16 +151,33 @@ public class JVM extends Observable implements Comparable<JVM> {
 					EdgeType.DIRECTED);
 		}
 		
-		if (isDeadlocked(thread)) {
+		if (!isDeadlocked && isDeadlocked(thread)) {
 			isDeadlocked = true;
 			setChanged();
 			notifyObservers(this);
+		} else if (isDeadlocked) {
+			
+			boolean isStillDeadlocked = false;
+			for (ThreadInfo t : threads.values()) {
+				isStillDeadlocked |= isDeadlocked(t);
+			}
+			
+			if (!isStillDeadlocked) {
+				isDeadlocked = false;
+				setChanged();
+				notifyObservers(this);
+			}
 		}
 	}
 
 	public boolean isDeadlocked(ThreadInfo thread) {
 
-		MonitorInfo requestedMonitor = thread.getRequestedResource();
+		if (thread.getRequestedResource() == null) {
+			return false;
+		}
+		
+		MonitorInfo originalMonitor = thread.getRequestedResource();
+		MonitorInfo requestedMonitor = thread.getRequestedResource();		
 		ThreadInfo owningThread = requestedMonitor.ownedByThread;
 		
 		while (true) {
@@ -168,7 +185,7 @@ public class JVM extends Observable implements Comparable<JVM> {
 				requestedMonitor = owningThread.requestedResource;
 				if (requestedMonitor != null) {
 					owningThread = requestedMonitor.ownedByThread;
-					if (owningThread.equals(thread)) {
+					if (requestedMonitor.equals(originalMonitor)) {
 						return true;
 					}
 				} else {

@@ -12,11 +12,10 @@ message AgentMessage {
 		repeated Thread thread = 1;
 
 		enum EventType {
-				STARTED = 0;
+			STARTED = 0;
 			ENDED = 1;
 			NONE = 2;
 		}
-
 
 		required EventType eventType = 2 [default = NONE];
 	}

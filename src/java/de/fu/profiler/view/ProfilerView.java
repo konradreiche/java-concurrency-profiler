@@ -85,10 +85,10 @@ public class ProfilerView extends JFrame implements Observer {
 		tabbedPane.add("General", generalView);
 		tabbedPane.add("Monitor Log", monitorLogPanel);
 		tabbedPane.add("Monitor", locks);
-		tabbedPane.add("Resource Allocation Graph", resourceAllocationGraph);
+		tabbedPane.add("Resource-Allocation Graph", resourceAllocationGraph);
 		tabbedPane.add("Method Profiling", methodProfilingView);
 		tabbedPanes.put(jvm, tabbedPane);
-		
+
 		mainSelection.add(jvm.getHost() + " (PID " + jvm.getPid() + ")",
 				tabbedPane);
 		mainSelection.setSelectedComponent(tabbedPane);
@@ -120,11 +120,15 @@ public class ProfilerView extends JFrame implements Observer {
 			jvms.add(jvm);
 			createView(jvm);
 		} else if (arg instanceof JVM) {
-			JVM jvm = (JVM)arg;
+			JVM jvm = (JVM) arg;
+			JTabbedPane pane = tabbedPanes.get(jvm);
 			if (jvm.isDeadlocked()) {
-				JTabbedPane pane = tabbedPanes.get(jvm);
 				pane.setForegroundAt(3, Color.RED);
-				pane.setTitleAt(3, "Deadlocked");				
+				pane.setTitleAt(3, "Deadlocked");
+			} else if (pane.getTitleAt(3).equals("Deadlocked")
+					&& !jvm.isDeadlocked()) {
+				pane.setForegroundAt(3, Color.BLACK);
+				pane.setTitleAt(3, "Resource-Allocation Graph");
 			}
 		}
 	}

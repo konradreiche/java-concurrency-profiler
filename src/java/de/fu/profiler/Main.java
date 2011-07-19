@@ -10,14 +10,24 @@ import de.fu.profiler.view.ProfilerView;
 
 public class Main {
 
+	private static int PORT = 49125;
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 
+		if (args.length == 1) {
+			try {
+				PORT = Integer.parseInt(args[0]);				
+			} catch (NumberFormatException e) {
+				System.err.println(e.getMessage());
+			}
+		}
+		
 		try {
 			ProfilerModel model = new ProfilerModel();
-			new Thread(new Server(model, 50000)).start();
+			new Thread(new Server(model, PORT)).start(); 
 			ProfilerView view = new ProfilerView(model);
 			model.addObserver(new ProfilerObserver(view));
 			model.notifyObservers();

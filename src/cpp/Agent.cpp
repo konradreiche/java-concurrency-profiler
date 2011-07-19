@@ -32,8 +32,7 @@ using namespace google::protobuf::io;
 static jvmtiEnv *jvmti = NULL;
 static jvmtiCapabilities capa;
 
-static MessageService messageService("192.168.1.101", "50000");
-//static MessageService messageService("127.0.0.1", "50000");
+static MessageService *messageService;
 
 static int jvmPid;
 
@@ -209,7 +208,7 @@ static void JNICALL callbackMonitorContendedEnter(jvmtiEnv *jvmti_env,
 
 		jlong systemTime;
 		jvmti->GetTime(&systemTime);
-		messageService.write(agentMessage, systemTime, jvmPid);
+		messageService->write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -239,7 +238,7 @@ static void JNICALL callbackMonitorContendedEntered(jvmtiEnv *jvmti_env,
 
 		jlong systemTime;
 		jvmti->GetTime(&systemTime);
-		messageService.write(agentMessage, systemTime, jvmPid);
+		messageService->write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -267,7 +266,7 @@ void JNICALL callbackMonitorWait(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		jlong systemTime;
 		jvmti->GetTime(&systemTime);
-		messageService.write(agentMessage, systemTime, jvmPid);
+		messageService->write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -296,7 +295,7 @@ void JNICALL callbackMonitorWaited(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 		jlong systemTime;
 		jvmti->GetTime(&systemTime);
-		messageService.write(agentMessage, systemTime, jvmPid);
+		messageService->write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -326,7 +325,7 @@ static void JNICALL callbackThreadEnd(jvmtiEnv *jvmti_env, JNIEnv* env,
 
 		jlong systemTime;
 		jvmti->GetTime(&systemTime);
-		messageService.write(agentMessage, systemTime, jvmPid);
+		messageService->write(agentMessage, systemTime, jvmPid);
 	}
 	exit_critical_section(jvmti);
 }
@@ -402,7 +401,7 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 
 			jlong systemTime;
 			jvmti->GetTime(&systemTime);
-			messageService.write(agentMessage, systemTime, jvmPid);
+			messageService->write(agentMessage, systemTime, jvmPid);
 		}
 
 		stackTraceElement = Agent::Helper::getStackTraceElement(jvmti_env,
@@ -438,7 +437,7 @@ static void JNICALL callbackMethodExit(jvmtiEnv *jvmti_env, JNIEnv *jni_env,
 
 		jlong systemTime;
 		jvmti->GetTime(&systemTime);
-		messageService.write(agentMessage, systemTime, jvmPid);
+		messageService->write(agentMessage, systemTime, jvmPid);
 
 		it1->second.pop();
 		it2->second.pop();
@@ -481,12 +480,12 @@ static void JNICALL callbackVMDeath(jvmtiEnv *jvmti_env, JNIEnv* jni_env) {
 
 			jlong systemTime;
 			jvmti->GetTime(&systemTime);
-			messageService.write(agentMessage, systemTime, jvmPid);
+			messageService->write(agentMessage, systemTime, jvmPid);
 		}
 		exit_critical_section(jvmti);
 	}
 
-	messageService.await();
+	messageService->await();
 }
 
 /** Get a name for a jthread */
@@ -593,7 +592,7 @@ static void JNICALL callbackVMInit(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 
 			jlong systemTime;
 			jvmti->GetTime(&systemTime);
-			messageService.write(agentMessage, systemTime, jvmPid);
+			messageService->write(agentMessage, systemTime, jvmPid);
 		}
 	}
 	exit_critical_section(jvmti);
@@ -723,6 +722,15 @@ jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved) {
 	jvmtiError error;
 	jint res;
 	jvmtiEventCallbacks callbacks;
+
+	if (options == 0) {
+		messageService = new MessageService("127.0.0.1", "49125");
+	} else {
+		std::string args = options;
+		std::vector<std::string> optionList;
+		boost::iter_split(optionList, args, boost::first_finder(","));
+		messageService = new MessageService(optionList[0], optionList[1]);
+	}
 
 	jvmPid = getpid();
 

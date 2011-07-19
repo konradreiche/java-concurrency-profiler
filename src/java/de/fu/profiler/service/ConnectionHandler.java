@@ -102,7 +102,7 @@ public class ConnectionHandler implements Runnable {
 
 				profiler.notifyGUI(jvm);
 			} catch (IOException e) {
-//				System.err.println(e.getMessage());
+				System.err.println(e.getMessage());
 			}
 		}
 	}

@@ -1,13 +1,13 @@
 package de.fu.profiler.examples;
 
-public interface IMap {
+public interface IMap<Key,Value> {
 
-	public abstract Object put(Object key, Object value);
+	public abstract Value put(Key key, Value value);
 
-	public abstract Object get(Object key);
+	public abstract Value get(Key key);
 
 	public abstract int size();
 	
-	public abstract boolean containsKey(Object key);
+	public abstract boolean containsKey(Key key);
 
 }

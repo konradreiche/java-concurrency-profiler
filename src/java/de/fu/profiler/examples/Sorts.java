@@ -7,6 +7,7 @@ public class Sorts implements Runnable {
 	static Queue<Thread> threadPool = new LinkedList<Thread>();
 	static int maxThreads;
 	
+	
 	private int low;
 	private int high;
 	

@@ -6,18 +6,18 @@ package de.fu.profiler.examples;
 import java.util.Random;
 
 class Writer implements Runnable {
-	private static final int NR_WRITES_PER_WRITER = 50;
+	private static final int NR_WRITES_PER_WRITER = 20;
 	
-	Writer(IMap rwm){
+	Writer(IMap<Integer,Integer> rwm){
 		this.rwm = rwm;
 	}
-	private int n = 0;
+
 	public void run(){ 
 		doWrites();
 	}
 	private void doWrites(){
 		for (int i=0; i < NR_WRITES_PER_WRITER; i++){
-			for (int j=0; j < 200; j++){
+			for (int j=0; j < 50; j++){
 				Random r = new Random(i);
 				int val = r.nextInt();
 				if (rwm.containsKey(val)){
@@ -28,5 +28,5 @@ class Writer implements Runnable {
 			}
 		}
 	}
-	private final IMap rwm;
+	private final IMap<Integer, Integer> rwm;
 }

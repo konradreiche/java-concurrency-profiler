@@ -6,9 +6,9 @@ package de.fu.profiler.examples;
 import java.util.Random;
 
 class Reader implements Runnable {
-	private static final int NR_READS_PER_READER = 50;
+	private static final int NR_READS_PER_READER = 20;
 	
-	Reader(IMap rwm){
+	Reader(IMap<Integer,Integer> rwm){
 		this.rwm = rwm;
 	}
 	public void run(){
@@ -26,5 +26,5 @@ class Reader implements Runnable {
 			}
 		}
 	}
-	private final IMap rwm;
+	private final IMap<Integer,Integer> rwm;
 }

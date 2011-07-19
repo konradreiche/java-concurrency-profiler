@@ -28,6 +28,8 @@ import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 public class ResourceAllocationGraphView extends JPanel {
 
 	JVM jvm;
+	
+	BasicVisualizationServer<Node<?>, Long> vv;
 
 	/**
 	 * 
@@ -93,7 +95,7 @@ public class ResourceAllocationGraphView extends JPanel {
 		Layout<Node<?>, Long> layout = new FRLayout<Node<?>, Long>(
 				jvm.getResourceAllocationGraph());
 		layout.setSize(new Dimension(1200, 600));
-		BasicVisualizationServer<Node<?>, Long> vv = new BasicVisualizationServer<Node<?>, Long>(
+		vv = new BasicVisualizationServer<Node<?>, Long>(
 				layout);
 		vv.getRenderContext().setVertexLabelTransformer(transformer);
 		vv.getRenderer().setVertexRenderer(

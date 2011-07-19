@@ -4,9 +4,9 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ItemListener;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -16,7 +16,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 
@@ -111,8 +110,8 @@ public class MonitorLogView extends JPanel implements Observer {
 		tabbedNotifyWaitPane
 				.add("Statistic", new JScrollPane(threadStatsTable));
 
-		monitorLogTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		monitorLogTable.setRowSelectionAllowed(true);
+//		monitorLogTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//		monitorLogTable.setRowSelectionAllowed(true);
 		super.add(monitorLogTablePanel);
 		super.add(tabbedNotifyWaitPane);
 

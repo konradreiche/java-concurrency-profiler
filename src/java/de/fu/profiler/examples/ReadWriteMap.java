@@ -5,20 +5,20 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class ReadWriteMap implements IMap {
-    private final Map map;
+public class ReadWriteMap<Key, Value> implements IMap<Key, Value> {
+    private final Map<Key, Value> map;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Lock r = lock.readLock();
     private final Lock w = lock.writeLock();
 
-    public ReadWriteMap(Map map) {
+    public ReadWriteMap(Map<Key, Value> map) {
         this.map = map;
     }
 
     /* (non-Javadoc)
 	 * @see p.IMap#put(java.lang.Object, java.lang.Object)
 	 */
-    public Object put(Object key, Object value) {
+    public Value put(Key key, Value value) {
         w.lock();
         try {
             return map.put(key, value);
@@ -31,7 +31,7 @@ public class ReadWriteMap implements IMap {
     /* (non-Javadoc)
 	 * @see p.IMap#get(java.lang.Object)
 	 */
-    public Object get(Object key) {
+    public Value get(Key key) {
         r.lock();
         try {
             return map.get(key);

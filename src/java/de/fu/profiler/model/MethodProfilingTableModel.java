@@ -1,5 +1,7 @@
 package de.fu.profiler.model;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
 
 import javax.swing.JTable;
@@ -87,20 +89,27 @@ public class MethodProfilingTableModel extends AbstractTableModel {
 		}
 
 		Double result;
-		
+		DecimalFormatSymbols dotSeperatorSymbol = new DecimalFormatSymbols();
+		dotSeperatorSymbol.setDecimalSeparator('.');
+
 		switch (columnIndex) {
 		case 0:
 			return methodInfo.className + "." + methodInfo.methodName;
 		case 1:
 			return methodInfo.timePercent * 100;
 		case 2:
-			result = new Double(
-					(long) (methodInfo.time * 1000000 / (double) methodInfo.numberOfInvocations));
-			return result;
+			DecimalFormat oneDecimalFormatter = new DecimalFormat("0.0",
+					dotSeperatorSymbol);
+			result = new Double(methodInfo.time / 1000000
+					/ (double) methodInfo.numberOfInvocations);
+			return Double.parseDouble(oneDecimalFormatter.format(result));
 		case 3:
-			result = new Double(
-					((long)((double) methodInfo.clockCycles / ((double) methodInfo.numberOfInvocations))));
-			return result;
+			DecimalFormat noDecimalFormatter = new DecimalFormat("0",
+					dotSeperatorSymbol);
+			
+			result = new Double((double) methodInfo.clockCycles
+					/ ((double) methodInfo.numberOfInvocations));
+			return Double.parseDouble(noDecimalFormatter.format(result));
 		case 4:
 			return methodInfo.numberOfInvocations;
 		case 5:

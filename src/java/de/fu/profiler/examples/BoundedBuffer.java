@@ -33,7 +33,8 @@ public class BoundedBuffer<V> extends BaseBoundedBuffer<V> {
 	public static void main(String args[]) {
 		
 		BoundedBuffer<String> boundedBuffer = new BoundedBuffer<String>(1);
-		(new Thread(new Producer(boundedBuffer,3))).start();
+		(new Thread(new Producer(boundedBuffer,4))).start();
+		(new Thread(new Consumer(boundedBuffer))).start();
 		(new Thread(new Consumer(boundedBuffer))).start();
 		(new Thread(new Consumer(boundedBuffer))).start();
 		(new Thread(new Consumer(boundedBuffer))).start();

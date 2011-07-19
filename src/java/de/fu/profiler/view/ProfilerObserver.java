@@ -94,7 +94,7 @@ public class ProfilerObserver implements Observer {
 					.fireTableDataChanged();
 
 			view.monitorLogViews.get(jvm).repaint();
-
+			view.resourceAllocationGraphs.get(jvm).vv.repaint();
 
 		}
 	}

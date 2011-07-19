@@ -1,22 +1,19 @@
 package de.fu.profiler.examples;
 
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class SyncMap implements IMap {
-    private final Map map;
+public class SyncMap<Key, Value> implements IMap<Key, Value> {
+    private final Map<Key, Value> map;
 
-    public SyncMap(Map map) {
+    public SyncMap(Map<Key, Value> map) {
         this.map = map;
     }
 
-    public synchronized Object put(Object key, Object value) {
+    public synchronized Value put(Key key, Value value) {
          return map.put(key, value);
     }
      
-    public synchronized Object get(Object key) {
+    public synchronized Value get(Key key) {
        return map.get(key);
     }
     
